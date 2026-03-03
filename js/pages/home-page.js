@@ -32,6 +32,7 @@ function setupBuyButtons() {
       }
 
       try {
+
         const response = await fetch(`${window.API_URL}/cart/add`, {
           method: 'POST',
           headers: {
@@ -140,7 +141,7 @@ function renderLatestProducts(productos) {
 window.quickView = async function(productId) {
   try {
     const response = await fetch(`${window.API_URL}/productos/${productId}`);
-    if (!response.ok) throw new Error('Error al cargar producto');
+      if (!response.ok) throw new Error('Error al cargar producto');
     
     const producto = await response.json();
     alert(`🔍 ${producto.nombre}\nPrecio: ${producto.precio}€\n${producto.descripcion || 'Sin descripción'}`);
@@ -157,6 +158,7 @@ window.addToCart = async function(productId) {
   }
   
   try {
+
     const response = await fetch(`${window.API_URL}/cart/add`, {
       method: 'POST',
       headers: {

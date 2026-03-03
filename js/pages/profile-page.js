@@ -4,31 +4,28 @@ console.log('📦 profile-page.js cargando...');
 
 window.InitManager.register('ProfilePage', async function () {
     console.log('📋 Inicializando página de perfil');
-    console.log('1. TOKEN_KEY:', window.TOKEN_KEY);
     
-    const token = localStorage.getItem(window.TOKEN_KEY);
-    console.log('2. Token:', token ? 'existe' : 'no existe');
+    // Usar window.TOKEN_KEY o 'token' por defecto
+    const tokenKey = window.TOKEN_KEY || 'token';
+    const token = localStorage.getItem(tokenKey);
+    
+    console.log('Token:', token ? 'existe' : 'no existe');
 
     if (!token) {
-        console.log('3. No hay token, redirigiendo a index');
+        console.log('No hay token, redirigiendo a index');
         window.location.href = 'index.html';
         return;
     }
-
-    console.log('4. Token obtenido, llamando a fetchCurrentUser');
     
     try {
         const user = await fetchCurrentUser(token);
-        console.log('5. Usuario recibido:', user);
+        console.log('Usuario recibido:', user);
         
-        console.log('6. Renderizando perfil');
         renderProfile(user);
-        
-        console.log('7. Configurando eventos');
         setupProfileEvents();
 
     } catch (error) {
-        console.error('❌ Error en catch:', error);
+        console.error('❌ Error:', error);
         showError('No se pudo cargar el perfil. Intenta de nuevo más tarde.');
     }
 }, []);
@@ -101,7 +98,6 @@ function renderProfile(user) {
                         </div>
                         <div class="form-group">
                             <label>Email</label>
-                            <!-- CAMBIADO: readonly para que no se pueda editar -->
                             <input type="email" id="profileEmail" value="${user.email || ''}" readonly class="form-control-plaintext">
                         </div>
                     </div>
@@ -185,12 +181,13 @@ function setupProfileEvents() {
 async function handleProfileUpdate(e) {
     e.preventDefault();
     
-    const token = localStorage.getItem(window.TOKEN_KEY);
+    const tokenKey = window.TOKEN_KEY || 'token';
+    const token = localStorage.getItem(tokenKey);
     if (!token) return;
 
     const userData = {
-        nombre: document.getElementById('profileName').value,
-        email: document.getElementById('profileEmail').value
+        nombre: document.getElementById('profileName').value
+        // NO enviamos email porque no se puede cambiar
     };
 
     try {
@@ -224,7 +221,8 @@ async function handleProfileUpdate(e) {
 async function handleSecurityUpdate(e) {
     e.preventDefault();
 
-    const token = localStorage.getItem(window.TOKEN_KEY);
+    const tokenKey = window.TOKEN_KEY || 'token';
+    const token = localStorage.getItem(tokenKey);
     if (!token) return;
 
     const currentPassword = document.getElementById('currentPassword').value;
@@ -270,7 +268,8 @@ async function loadOrders() {
     const ordersList = document.getElementById('ordersList');
     if (!ordersList) return;
 
-    const token = localStorage.getItem(window.TOKEN_KEY);
+    const tokenKey = window.TOKEN_KEY || 'token';
+    const token = localStorage.getItem(tokenKey);
 
     try {
         const response = await fetch(`${window.API_URL}/orders/my-orders`, {
@@ -294,10 +293,10 @@ async function loadOrders() {
             <div class="order-card">
                 <div class="order-header">
                     <h4>Pedido #${order.id}</h4>
-                    <span class="order-status">${order.status}</span>
+                    <span class="order-status">${order.status || 'pendiente'}</span>
                 </div>
                 <p class="order-date">${new Date(order.date).toLocaleDateString()}</p>
-                <p class="order-total">Total: ${order.total}€</p>
+                <p class="order-total">Total: ${parseFloat(order.total).toFixed(2)}€</p>
                 <button onclick="viewOrderDetails(${order.id})">Ver detalles</button>
             </div>
         `).join('');
@@ -316,6 +315,8 @@ function formatDate(dateString) {
 
 function showError(message) {
     const container = document.getElementById('profileContainer');
+    if (!container) return;
+    
     container.innerHTML = `
         <div class="error-message">
             <i class="fas fa-exclamation-circle"></i>

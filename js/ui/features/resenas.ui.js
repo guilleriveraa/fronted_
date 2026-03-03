@@ -15,6 +15,7 @@ class ResenasManager {
 
     async cargarResenas() {
         try {
+
             const response = await fetch(`${window.API_URL}/productos/${this.productoId}/resenas`);
             const data = await response.json();
             
