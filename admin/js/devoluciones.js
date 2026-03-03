@@ -23,7 +23,7 @@ function setupFiltros() {
 async function cargarDevoluciones() {
     try {
         console.log('📦 Cargando devoluciones...');
-        const response = await fetch(`${API_URL}/admin/devoluciones`);
+        const response = await fetch(`${window.API_URL}/admin/devoluciones`);
         
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
@@ -104,7 +104,7 @@ window.cambiarEstado = async function(id, nuevoEstado) {
             return;
         }
         
-        const response = await fetch(`${API_URL}/admin/devoluciones/${id}`, {
+        const response = await fetch(`${window.API_URL}/admin/devoluciones/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ estado: nuevoEstado })

@@ -1,6 +1,6 @@
 // js/services/session.service.js
 async function request(endpoint, options = {}) {
-    const response = await fetch(`${window.API_URL}${endpoint}`, {
+const response = await fetch(`${window.API_URL}${endpoint.replace('/api', '')}`, {
         headers: {
             'Content-Type': 'application/json',
             ...options.headers
@@ -56,7 +56,7 @@ function logout() {
 }
 
 async function login(email, contraseña) {
-    const data = await request('/api/login', {
+    const data = await request('/login', {
         method: 'POST',
         body: JSON.stringify({ email, contraseña })
     });
@@ -73,7 +73,7 @@ async function login(email, contraseña) {
 }
 
 async function register(nombre, email, contraseña) {
-    const data = await request('/api/register', {
+    const data = await request('/register', {
         method: 'POST',
         body: JSON.stringify({ nombre, email, contraseña })
     });
