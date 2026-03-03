@@ -1,0 +1,9 @@
+ENTIDAD ORIGEN	RELACIÓN	ENTIDAD DESTINO	CARDINALIDAD	EJEMPLO
+USUARIOS	realiza	PEDIDOS	1:N	1 usuario → 0-N pedidos
+USUARIOS	tiene	CARRITOS	1:N	1 usuario → 1-N carritos
+CATEGORÍAS	contiene	PRODUCTOS	1:N	1 categoría → 0-N productos
+PEDIDOS	contiene	ORDER_ITEMS	1:N	1 pedido → 1-N ítems
+PEDIDOS	genera	DEVOLUCIONES	1:N	1 pedido → 0-N devoluciones
+PRODUCTOS	aparece_en	ORDER_ITEMS	1:N	1 producto → 0-N pedidos
+PRODUCTOS	en	CART_ITEMS	1:N	1 producto → 0-N carritos
+USUARIOS	tiene	DIRECCIONES	1:N	1 usuario → 1-N direcciones

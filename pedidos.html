@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gestión de Pedidos - SalamancaVivela</title>
+<link rel="stylesheet" href="css/Style.css">
+<link rel="stylesheet" href="css/pedidos.css">
+<link rel="stylesheet" href="css/devoluciones.css">
+<link rel="stylesheet" href="css/features.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-theme="light">
+
+<!-- Header -->
+<header class="main-header">
+  <div class="container header-container">
+    <div class="logo">
+      <a href="index.html">
+      <img src="img/images.png" 
+         alt="Salamanca Vívela" 
+         class="logo-img">
+        </a>
+    </div>
+    <nav class="nav-desktop">
+      <a href="productos.html">Productos</a>
+      <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+
+    <div id="authButtons" class="auth-buttons">
+      <a href="#" id="loginBtn" class="btn-login">
+        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+      </a>
+      <a href="#" id="registerBtn" class="btn-register">
+        <i class="fas fa-user-plus"></i> Registrarse
+      </a>
+    </div>
+
+    <!-- Menú de usuario -->
+    <div id="userMenu" class="user-menu" style="display:none;">
+      <div class="user-avatar"><span id="userAvatar">U</span>
+        <div class="user-dropdown">
+          <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+          <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
+      </div>
+      <span id="userNameDisplay" class="user-name">Usuario</span>
+    </div>
+
+    <!-- Acciones header -->
+    <div class="header-actions">
+      <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i class="fas fa-minus"></i></button>
+      <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
+      <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i class="fas fa-plus"></i></button>
+      <span class="header-separator"></span>
+      <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></a>
+      <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun" style="display:none"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- Barra de progreso -->
+<div id="progressBar" class="progress-bar"></div>
+
+<!-- Hero / banner -->
+<section class="hero" id="inicio">
+  <div class="hero-overlay"></div>
+  <div class="container">
+    <div class="hero-content animate-on-scroll">
+      <h1>Gestión de Pedidos</h1>
+      <p class="hero-subtitle">Sigue tus compras y gestiona devoluciones en un solo lugar</p>
+    </div>
+  </div>
+</section>
+
+<!-- Main: Gestión de Pedidos -->
+<main class="orders-page">
+  <div class="container">
+
+    <!-- CONTENIDO: MIS PEDIDOS -->
+    <div id="tabPedidos" class="tab-content active">
+      
+      <!-- Filtros de pedidos -->
+      <div class="orders-filters">
+        <button class="filter-btn active" data-filter="todos">Todos</button>
+        <button class="filter-btn" data-filter="pendiente">Pendientes</button>
+        <button class="filter-btn" data-filter="procesando">Procesando</button>
+        <button class="filter-btn" data-filter="enviado">Enviados</button>
+        <button class="filter-btn" data-filter="entregado">Entregados</button>
+        <button class="filter-btn" data-filter="cancelado">Cancelados</button>
+      </div>
+
+      <!-- Contenedor de pedidos -->
+      <div id="ordersContainer" class="orders-container">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Cargando tus pedidos...</p>
+        </div>
+      </div>
+
+      <!-- Estadísticas de pedidos -->
+      <div class="orders-stats">
+        <div class="stat-card">
+          <i class="fas fa-shopping-bag"></i>
+          <div>
+            <span class="stat-value" id="totalOrders">0</span>
+            <span class="stat-label">Total pedidos</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-truck"></i>
+          <div>
+            <span class="stat-value" id="pendingOrders">0</span>
+            <span class="stat-label">En proceso</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-check-circle"></i>
+          <div>
+            <span class="stat-value" id="deliveredOrders">0</span>
+            <span class="stat-label">Entregados</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-euro-sign"></i>
+          <div>
+            <span class="stat-value" id="totalSpent">0</span>
+            <span class="stat-label">Gastado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CONTENIDO: DEVOLUCIONES -->
+    <div id="tabDevoluciones" class="tab-content">
+      
+      <!-- Sección de devoluciones -->
+      <div class="returns-section">
+        
+        <!-- Contenedor para los pedidos elegibles -->
+        <div id="returnsContainer" class="returns-container">
+          <div class="loading-spinner">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Cargando pedidos disponibles para devolución...</p>
+          </div>
+        </div>
+
+        <!-- Formulario de devolución (oculto inicialmente) -->
+        <div id="returnFormContainer" class="return-form-container" style="display: none;">
+          <div class="return-form-card">
+            <h3><i class="fas fa-undo-alt"></i> Solicitar devolución</h3>
+            
+            <form id="returnForm" class="return-form">
+              <div class="form-group">
+                <label>Motivo de la devolución</label>
+                <select name="returnReason" required>
+                  <option value="">Selecciona un motivo</option>
+                  <option value="producto_defectuoso">Producto defectuoso</option>
+                  <option value="cambio_de_opinion">Cambio de opinión</option>
+                  <option value="talla_incorrecta">Talla incorrecta</option>
+                  <option value="producto_equivocado">Producto equivocado</option>
+                  <option value="plazo_entrega">Plazo de entrega excedido</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Tipo de devolución</label>
+                <select name="returnType" required>
+                  <option value="">Selecciona una opción</option>
+                  <option value="reembolso">Reembolso</option>
+                  <option value="cambio">Cambio por otro producto</option>
+                  <option value="tarjeta_regalo">Tarjeta regalo</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Comentarios adicionales</label>
+                <textarea id="returnComments" rows="4" placeholder="Explica brevemente el motivo..."></textarea>
+              </div>
+
+              <div class="form-actions">
+                <button type="submit" class="btn-submit-return">
+                  <i class="fas fa-paper-plane"></i> Enviar solicitud
+                </button>
+                <button type="button" class="btn-cancel-return" onclick="cancelReturn()">
+                  <i class="fas fa-times"></i> Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Información de políticas de devolución -->
+        <div class="returns-info">
+          <h3><i class="fas fa-info-circle"></i> Política de devoluciones</h3>
+          <div class="info-grid">
+            <div class="info-card">
+              <i class="fas fa-calendar-alt"></i>
+              <h4>Plazo</h4>
+              <p>Tienes hasta 30 días desde la recepción del pedido para solicitar una devolución.</p>
+            </div>
+            <div class="info-card">
+              <i class="fas fa-box-open"></i>
+              <h4>Estado del producto</h4>
+              <p>El producto debe estar sin usar y en su embalaje original.</p>
+            </div>
+            <div class="info-card">
+              <i class="fas fa-truck"></i>
+              <h4>Gastos de envío</h4>
+              <p>Los gastos de devolución son gratuitos para cambios. Para reembolsos, pueden aplicar gastos.</p>
+            </div>
+            <div class="info-card">
+              <i class="fas fa-clock"></i>
+              <h4>Procesamiento</h4>
+              <p>Las devoluciones se procesan en un plazo de 3-5 días hábiles.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- Modal de autenticación -->
+<div id="authModal" class="auth-modal">
+  <div class="auth-modal-content">
+    <span class="auth-close">&times;</span>
+    <div class="auth-forms">
+      <form id="loginForm" class="auth-form" data-form="login">
+        <h3>Iniciar Sesión</h3>
+        <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+        <input type="password" id="loginPassword" placeholder="Contraseña" required>
+        <button type="submit" class="btn-auth-submit">Entrar</button>
+      </form>
+      <form id="registerForm" class="auth-form" data-form="register" style="display:none;">
+        <h3>Registrarse</h3>
+        <input type="text" id="registerName" placeholder="Nombre" required>
+        <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
+        <input type="password" id="registerPassword" placeholder="Contraseña" required>
+        <button type="submit" class="btn-auth-submit">Registrar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- BANNER DE COOKIES -->
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-content">
+    <div class="cookie-text">
+      <h4><i class="fas fa-cookie-bite"></i> Uso de cookies</h4>
+      <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, analizar el tráfico y personalizar contenidos. Puedes aceptar todas las cookies o configurar tus preferencias.</p>
+    </div>
+    <div class="cookie-buttons">
+      <button class="cookie-btn cookie-essential" id="cookieEssential">
+        Solo necesarias
+      </button>
+      <button class="cookie-btn cookie-accept" id="cookieAccept">
+        Aceptar todas
+      </button>
+      <button class="cookie-btn cookie-settings" id="cookieSettings">
+        <i class="fas fa-cog"></i> Configurar
+      </button>
+    </div>
+  </div>
+  
+  <!-- Configuración avanzada de cookies -->
+  <div class="cookie-settings-panel" id="cookieSettingsPanel">
+    <div class="settings-header">
+      <h4>Configuración de cookies</h4>
+      <button class="settings-close" id="settingsClose">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="settings-content">
+      <div class="cookie-category">
+        <div class="category-header">
+          <input type="checkbox" id="cookieEssentialToggle" checked disabled>
+          <label for="cookieEssentialToggle">
+            <strong>Cookies esenciales</strong>
+            <span class="badge required">Siempre activas</span>
+          </label>
+        </div>
+        <p>Necesarias para el funcionamiento básico del sitio.</p>
+      </div>
+      
+      <div class="cookie-category">
+        <div class="category-header">
+          <input type="checkbox" id="cookieAnalyticsToggle">
+          <label for="cookieAnalyticsToggle">
+            <strong>Cookies analíticas</strong>
+          </label>
+        </div>
+        <p>Nos permiten analizar el uso del sitio y mejorar tu experiencia.</p>
+      </div>
+      
+      <div class="cookie-category">
+        <div class="category-header">
+          <input type="checkbox" id="cookieMarketingToggle">
+          <label for="cookieMarketingToggle">
+            <strong>Cookies de marketing</strong>
+          </label>
+        </div>
+        <p>Para personalizar los anuncios según tus intereses.</p>
+      </div>
+      
+      <div class="settings-actions">
+        <button class="btn-save" id="saveCookieSettings">
+          Guardar preferencias
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay para cookies -->
+<div class="cookie-overlay" id="cookieOverlay"></div>
+
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SalamancaVivela</h3>
+                <p>Tu tienda online de productos artesanales y típicos de Salamanca.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/SalamancaVivelaES"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/salamancavivela/"><i class="fab fa-instagram"></i></a>
+                    <a href="https://x.com/SalamancaVivela"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.tiktok.com/@salamancavivela"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="productos.html">Productos</a></li>
+                    <li><a href="carrito.html">Carrito</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> Calle Azafranal 26, Salamanca</li>
+                    <li><i class="fas fa-phone"></i> +34 644 16 46 57</li>
+                    <li><i class="fas fa-envelope"></i> administracion@salamancavivela.com</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 SalamancaVivela. Todos los derechos reservados.</p>
+            <div class="footer-links">
+                <a href="AvisoLegal.html">Aviso Legal</a>
+                <a href="Cookies.html">Cookies</a>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Botón Volver Arriba -->
+<button id="backToTop" class="back-to-top">
+  <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- 1. CORE -->
+<script src="js/core/constant.js"></script>
+<script src="js/core/init-manager.js"></script>
+<script src="js/core/cart.core.js"></script>
+
+<!-- 2. SERVICIOS -->
+<script src="js/services/api.services.js"></script>
+<script src="js/services/session.service.js"></script>
+<script src="js/core/auth-interceptor.js"></script>
+
+<!-- 3. UI -->
+<script src="js/ui/session.ui.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.updateSessionUI) {
+            window.updateSessionUI();
+        }
+    });
+</script>
+<script src="js/ui/auth.ui.js"></script>
+<script src="js/components/DarkMode.js"></script>
+<script src="js/components/cart.js"></script>
+
+<!-- 4. MAIN -->
+<script src="js/core/Main.js"></script>
+
+<!-- 5. PÁGINAS -->
+<script src="js/pages/gestion-pedidos-page.js"></script>
+
+<!-- 6. FEATURES -->
+<script src="js/ui/features/progress-bar.ui.js"></script>
+<script src="js/ui/features/back-to-top.ui.js"></script>
+<script src="js/ui/features/cookie-manager.ui.js"></script>
+<script src="js/ui/features/accessibility.ui.js"></script>
+
+</body>
+</html>

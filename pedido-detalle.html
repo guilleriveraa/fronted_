@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Pedido - SalamancaVivela</title>
+    
+    <!-- Estilos -->
+    <link rel="stylesheet" href="css/Style.css">
+    <link rel="stylesheet" href="css/pedido-detalle.css">
+    <link rel="stylesheet" href="css/features.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body data-theme="light">
+
+<!-- Header -->
+<header class="main-header">
+    <div class="container header-container">
+        <div class="logo">
+            <a href="index.html">
+            <img src="img/images.png" 
+         alt="Salamanca Vívela" 
+         class="logo-img">
+         </a>
+        </div>
+        <nav class="nav-desktop">
+            <a href="productos.html">Productos</a>
+            <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
+            <a href="contacto.html">Contacto</a>
+        </nav>
+
+        <div id="authButtons" class="auth-buttons">
+            <a href="#" id="loginBtn" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </a>
+            <a href="#" id="registerBtn" class="btn-register">
+                <i class="fas fa-user-plus"></i> Registrarse
+            </a>
+        </div>
+
+        <!-- Menú de usuario -->
+        <div id="userMenu" class="user-menu" style="display:none;">
+            <div class="user-avatar"><span id="userAvatar">U</span>
+                <div class="user-dropdown">
+                    <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+            <span id="userNameDisplay" class="user-name">Usuario</span>
+        </div>
+
+        <!-- Acciones header -->
+        <div class="header-actions">
+            <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i class="fas fa-minus"></i></button>
+            <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
+            <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i class="fas fa-plus"></i></button>
+            <span class="header-separator"></span>
+            <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></a>
+            <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun" style="display:none"></i></button>
+        </div>
+    </div>
+</header>
+
+<!-- Barra de progreso -->
+<div id="progressBar" class="progress-bar"></div>
+
+<!-- Contenido principal -->
+<main class="order-detail-page">
+    <div class="container">
+        
+        <!-- Cabecera con navegación -->
+        <div class="page-header">
+            <div class="header-left">
+                <a href="pedidos.html" class="btn-back">
+                    <i class="fas fa-arrow-left"></i> Volver a mis pedidos
+                </a>
+                <h1><i class="fas fa-file-invoice"></i> Detalle del Pedido <span id="orderIdDisplay">#0000</span></h1>
+            </div>
+            <div class="order-status-badge" id="orderStatusBadge">
+                <span class="status-pendiente">Pendiente</span>
+            </div>
+        </div>
+
+        <!-- Contenedor principal de detalles (se llena con JS) -->
+        <div id="orderDetailContainer">
+            <div class="loading-spinner">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Cargando detalles del pedido...</p>
+            </div>
+        </div>
+
+        <!-- Acciones del pedido -->
+        <div class="order-actions-footer" id="orderActions">
+            <button class="btn-print" onclick="window.print()">
+                <i class="fas fa-print"></i> Imprimir
+            </button>
+            <button class="btn-return" id="requestReturnBtn" style="display: none;">
+                <i class="fas fa-undo-alt"></i> Solicitar devolución
+            </button>
+        </div>
+    </div>
+</main>
+
+<!-- Modal de autenticación -->
+<div id="authModal" class="auth-modal">
+    <div class="auth-modal-content">
+        <span class="auth-close">&times;</span>
+        <div class="auth-forms">
+            <form id="loginForm" class="auth-form" data-form="login">
+                <h3>Iniciar Sesión</h3>
+                <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+                <input type="password" id="loginPassword" placeholder="Contraseña" required>
+                <button type="submit" class="btn-auth-submit">Entrar</button>
+            </form>
+            <form id="registerForm" class="auth-form" data-form="register" style="display:none;">
+                <h3>Registrarse</h3>
+                <input type="text" id="registerName" placeholder="Nombre" required>
+                <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
+                <input type="password" id="registerPassword" placeholder="Contraseña" required>
+                <button type="submit" class="btn-auth-submit">Registrar</button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- BANNER DE COOKIES -->
+<div class="cookie-banner" id="cookieBanner">
+    <div class="cookie-content">
+        <div class="cookie-text">
+            <h4><i class="fas fa-cookie-bite"></i> Uso de cookies</h4>
+            <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, analizar el tráfico y personalizar contenidos. Puedes aceptar todas las cookies o configurar tus preferencias.</p>
+        </div>
+        <div class="cookie-buttons">
+            <button class="cookie-btn cookie-essential" id="cookieEssential">Solo necesarias</button>
+            <button class="cookie-btn cookie-accept" id="cookieAccept">Aceptar todas</button>
+            <button class="cookie-btn cookie-settings" id="cookieSettings"><i class="fas fa-cog"></i> Configurar</button>
+        </div>
+    </div>
+</div>
+<div class="cookie-overlay" id="cookieOverlay"></div>
+
+<!-- Footer -->
+<footer class="main-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SalamancaVivela</h3>
+                <p>Tu tienda online de productos artesanales y típicos de Salamanca.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/SalamancaVivelaES"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/salamancavivela/"><i class="fab fa-instagram"></i></a>
+                    <a href="https://x.com/SalamancaVivela"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.tiktok.com/@salamancavivela"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="productos.html">Productos</a></li>
+                    <li><a href="carrito.html">Carrito</a></li>
+                    <li><a href="pedidos.html">Mis Pedidos</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> Calle Azafranal 26, Salamanca</li>
+                    <li><i class="fas fa-phone"></i> +34 644 16 46 57</li>
+                    <li><i class="fas fa-envelope"></i> administracion@salamancavivela.com</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 SalamancaVivela. Todos los derechos reservados.</p>
+            <div class="footer-links">
+                <a href="Cookies.html">Cookies</a>
+                <a href="AvisoLegal.html">Aviso legal</a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- Botón Volver Arriba -->
+<button id="backToTop" class="back-to-top">
+    <i class="fas fa-chevron-up"></i>
+</button>
+
+<!-- Scripts -->
+<script src="js/core/constant.js"></script>
+<script src="js/core/init-manager.js"></script>
+<script src="js/core/cart.core.js"></script>
+<script src="js/services/api.services.js"></script>
+<script src="js/services/session.service.js"></script>
+<script src="js/core/auth-interceptor.js"></script>
+<script src="js/ui/session.ui.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.updateSessionUI) window.updateSessionUI();
+    });
+</script>
+<script src="js/ui/auth.ui.js"></script>
+<script src="js/components/DarkMode.js"></script>
+<script src="js/components/cart.js"></script>
+<script src="js/core/Main.js"></script>
+<script src="js/pages/pedido-detalle-page.js"></script>
+<script src="js/ui/features/progress-bar.ui.js"></script>
+<script src="js/ui/features/back-to-top.ui.js"></script>
+<script src="js/ui/features/cookie-manager.ui.js"></script>
+<script src="js/ui/features/accessibility.ui.js"></script>
+
+</body>
+</html>

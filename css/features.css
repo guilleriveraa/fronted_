@@ -1,0 +1,619 @@
+﻿/* =====================
+   FUNCIONALIDADES ADICIONALES
+===================== */
+
+/* 1. PROGRESS BAR (Marcador de lectura) */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #d81b60, #ff80ab);
+  width: 0%;
+  z-index: 1001;
+  transition: width 0.1s ease;
+  box-shadow: 0 2px 10px rgba(198, 40, 40, 0.3);
+}
+
+/* 2. MENÚ MEJORADO */
+.menu-header {
+  display: none;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 15px;
+}
+
+.menu-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.menu-close:hover {
+  background-color: var(--gray-light);
+}
+
+.menu-accessibility {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: var(--gray-light);
+  border-radius: var(--border-radius);
+}
+
+.accessibility-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px;
+  background: var(--bg-card);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  cursor: pointer;
+  margin-bottom: 10px;
+  transition: all 0.3s ease;
+}
+body:not(.high-contrast):not(.dark-mode) .accessibility-btn {
+  background-color: #333;
+  color: #fff;
+}
+.accessibility-btn:hover {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.font-size-controls {
+  display: flex;
+  gap: 5px;
+  justify-content: center;
+}
+
+.font-size-btn {
+  flex: 1;
+  padding: 8px;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-weight: bold;
+  transition: all 0.3s ease;
+}
+
+.font-size-btn:hover {
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Estilos para móvil */
+@media (max-width: 768px) {
+  .main-nav {
+    position: fixed;
+    top: 0;
+    left: -100%;
+    width: 85%;
+    max-width: 300px;
+    height: 100vh;
+    background-color: var(--bg-header);
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 20px 0;
+    transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 5px 0 25px rgba(0, 0, 0, 0.15);
+    z-index: 1002;
+    overflow-y: auto;
+  }
+  
+  .main-nav.active {
+    left: 0;
+  }
+  
+  .menu-header {
+    display: flex;
+  }
+  
+  .main-nav a {
+    width: 100%;
+    padding: 15px 25px;
+    border-left: 4px solid transparent;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  .main-nav a:hover,
+  .main-nav a.active {
+    border-left-color: var(--primary);
+    background-color: var(--gray-light);
+  }
+  
+  .main-nav a::after {
+    display: none;
+  }
+}
+
+/* 3. MODO ALTO CONTRASTE */
+body.high-contrast:not(.dark-mode) {
+  --bg-body: #000000 !important;
+  --bg-card: #000000 !important;
+  --bg-header: #111111 !important;
+  --text-primary: #ffffff !important;
+  --text-secondary: #cccccc !important;
+  --primary: #ffff00 !important;
+  --primary-dark: #ffcc00 !important;
+  --border-color: #444444 !important;
+  filter: contrast(1.2) !important;
+}
+
+body.large-font {
+  font-size: 1.1rem;
+}
+
+body.large-font h1 { font-size: 2.4rem; }
+body.large-font h2 { font-size: 2rem; }
+body.large-font h3 { font-size: 1.5rem; }
+
+body.small-font {
+  font-size: 0.9rem;
+}
+
+body.small-font h1 { font-size: 1.8rem; }
+body.small-font h2 { font-size: 1.5rem; }
+body.small-font h3 { font-size: 1.2rem; }
+
+/* 4. BOTÓN VOLVER ARRIBA */
+.back-to-top {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 50px;
+  height: 50px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(20px);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+}
+
+.back-to-top.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.back-to-top:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* 5. FORMULARIO INTELIGENTE */
+.contact-section {
+  padding: 60px 0;
+  background-color: var(--bg-body);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.contact-options {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.contact-option {
+  padding: 15px;
+  background: var(--bg-card);
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.contact-option:hover {
+  border-color: var(--primary);
+  transform: translateY(-2px);
+}
+
+.contact-option.active {
+  background-color: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+.contact-option i {
+  font-size: 1.5rem;
+}
+
+.smart-form {
+  background: var(--bg-card);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+}
+
+.form-header {
+  margin-bottom: 25px;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid var(--border-color);
+  border-radius: var(--border-radius);
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1rem;
+  background-color: var(--bg-body);
+  color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.1);
+}
+
+.form-feedback {
+  font-size: 0.85rem;
+  color: var(--primary);
+  margin-top: 5px;
+  min-height: 20px;
+}
+
+.form-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.form-consent input {
+  margin-top: 5px;
+}
+
+.btn-submit {
+  width: 100%;
+  padding: 15px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.btn-submit:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.form-status {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: var(--border-radius);
+  display: none;
+}
+
+.form-status.success {
+  display: block;
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.form-status.error {
+  display: block;
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+/* 6. BANNER DE COOKIES */
+.cookie-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-card);
+    box-shadow: 0 -5px 20px rgba(0,0,0,0.2);
+    z-index: 9999;
+    padding: 20px;
+    display: none;  /* ← DEBE ESTAR EN NONE */
+    border-top: 3px solid var(--primary);
+}
+
+.cookie-banner.show {
+    display: block;  /* ← Se muestra solo con esta clase */
+}
+
+.cookie-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.cookie-text {
+  flex: 1;
+}
+
+.cookie-text h4 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.cookie-buttons {
+  display: flex;
+  gap: 10px;
+  flex-shrink: 0;
+}
+
+.cookie-btn {
+  padding: 10px 20px;
+  border-radius: var(--border-radius);
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.cookie-essential {
+  background-color: transparent;
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
+}
+
+.cookie-accept {
+  background-color: var(--primary);
+  color: white;
+}
+
+.cookie-settings {
+  background-color: var(--gray-light);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cookie-settings-panel {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background-color: var(--bg-card);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  z-index: 10000;
+  width: 90%;
+  max-width: 500px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.cookie-settings-panel.show {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.settings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.settings-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.settings-close:hover {
+  background-color: var(--gray-light);
+}
+
+.cookie-category {
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.category-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.category-header input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+}
+
+.badge.required {
+   background-color: #d81b60;;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  margin-left: 10px;
+}
+
+.btn-save {
+  width: 100%;
+  padding: 12px;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+/* Overlay para cookies */
+.cookie-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9998;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+}
+
+.cookie-overlay.show {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* 7. ANIMACIONES AL SCROLL */
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.animate-on-scroll.animate-in {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Delay para animaciones en cascada */
+.animate-delay-1 { transition-delay: 0.1s; }
+.animate-delay-2 { transition-delay: 0.2s; }
+.animate-delay-3 { transition-delay: 0.3s; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+  
+  .contact-options {
+    grid-template-columns: 1fr;
+  }
+  
+  .cookie-content {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .cookie-buttons {
+    width: 100%;
+    flex-direction: column;
+  }
+  
+  .back-to-top {
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+  }
+}
+/* Notificaciones toast */
+#notification-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 350px;
+    pointer-events: none;
+}
+
+#notification-container > * {
+    pointer-events: auto;
+}
+
+/* Animación para cambios en el carrito */
+.cart-count-changed {
+    animation: cartPulse 0.3s ease-in-out;
+}
+
+@keyframes cartPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); background: var(--primary); color: white; }
+    100% { transform: scale(1); }
+}
+
+/* Mejoras para modo oscuro */
+[data-theme="dark"] #notification-container > div {
+    background: #333;
+    color: #fff;
+}
+
+[data-theme="dark"] #notification-container > div div {
+    color: #fff !important;
+}

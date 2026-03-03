@@ -1,0 +1,241 @@
+/* css/checkout-modal.css - Estilos para el modal de dirección */
+
+/* Modal personalizado */
+#direccionModal .modal-content {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+}
+
+/* Header del modal */
+#direccionModal .modal-header {
+    background: linear-gradient(135deg, #d81b60, #c2185b);
+    color: white;
+    padding: 1.5rem;
+    border: none;
+}
+
+#direccionModal .modal-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#direccionModal .modal-title i {
+    font-size: 1.5rem;
+}
+
+#direccionModal .btn-close {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    padding: 0.8rem;
+    opacity: 1;
+    transition: all 0.3s ease;
+}
+
+#direccionModal .btn-close:hover {
+    background-color: rgba(255, 255, 255, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Body del modal */
+#direccionModal .modal-body {
+    padding: 2rem;
+    background: #fff;
+}
+
+/* Formulario */
+#direccionForm .form-label {
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+#direccionForm .form-label::after {
+    content: " *";
+    color: #d81b60;
+    display: inline;
+}
+
+#direccionForm .form-label[for="direccionLinea2"]::after,
+#direccionForm .form-label[for="direccionLinea2"]::after {
+    content: "";
+}
+
+#direccionForm .form-control {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #f8f9fa;
+}
+
+#direccionForm .form-control:focus {
+    border-color: #d81b60;
+    box-shadow: 0 0 0 4px rgba(216, 27, 96, 0.1);
+    background: #fff;
+    outline: none;
+}
+
+#direccionForm .form-control:hover {
+    background: #fff;
+    border-color: #b0b0b0;
+}
+
+#direccionForm select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23666' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10l-5 5z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    padding-right: 2.5rem;
+}
+
+/* Campos opcionales */
+#direccionForm .form-label[for="direccionLinea2"] {
+    color: #666;
+}
+
+#direccionForm .form-label[for="direccionLinea2"]::after {
+    content: " (opcional)";
+    color: #999;
+    font-weight: 400;
+    font-size: 0.9rem;
+}
+
+/* Footer del modal */
+#direccionModal .modal-footer {
+    padding: 1.5rem;
+    border-top: 2px solid #f0f0f0;
+    background: #f8f9fa;
+}
+
+/* Botones */
+#direccionModal .btn {
+    padding: 0.75rem 1.8rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+#direccionModal .btn-secondary {
+    background: #e0e0e0;
+    color: #333;
+}
+
+#direccionModal .btn-secondary:hover {
+    background: #d0d0d0;
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+#direccionModal .btn-primary {
+    background: linear-gradient(135deg, #d81b60, #c2185b);
+    color: white;
+    padding: 0.75rem 2rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+#direccionModal .btn-primary:hover {
+    background: linear-gradient(135deg, #c2185b, #a01515);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); 
+}
+
+#direccionModal .btn-primary i {
+    font-size: 1.1rem;
+}
+
+/* Animación del modal */
+.modal.fade .modal-dialog {
+    transform: scale(0.8);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: scale(1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    #direccionModal .modal-body {
+        padding: 1.5rem;
+    }
+    
+    #direccionModal .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    #direccionModal .modal-footer {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    #direccionModal .modal-footer .btn {
+        margin: 0;
+    }
+}
+
+/* Validación visual */
+#direccionForm .form-control:invalid:not(:placeholder-shown) {
+    border-color: #dc3545;
+}
+
+#direccionForm .form-control:invalid:not(:placeholder-shown):focus {
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1);
+}
+
+#direccionForm .form-control:valid:not(:placeholder-shown) {
+    border-color: #28a745;
+}
+
+#direccionForm .form-control:valid:not(:placeholder-shown):focus {
+    box-shadow: 0 0 0 4px rgba(40, 167, 69, 0.1);
+}
+
+/* Loading state para el botón */
+#direccionModal .btn-primary.processing {
+    pointer-events: none;
+    opacity: 0.7;
+    position: relative;
+}
+
+#direccionModal .btn-primary.processing i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+/* Tooltip personalizado para campos requeridos */
+#direccionForm .form-control:invalid:focus + .tooltip {
+    display: block;
+}
+
+/* Iconos dentro de los campos (opcional) */
+.input-icon-wrapper {
+    position: relative;
+}
+
+.input-icon-wrapper i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #999;
+}
+
+.input-icon-wrapper .form-control {
+    padding-left: 2.8rem;
+}

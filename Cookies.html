@@ -1,0 +1,364 @@
+﻿﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de Cookies - Salamanca Vivela</title>
+  <meta name="description" content="Política de cookies de Salamanca Vivela. Información sobre el uso de cookies en nuestro sitio web.">
+  
+  <!-- MISMO CSS que tu sitio principal -->
+  <link rel="stylesheet" href="css/Style.css">
+  <link rel="stylesheet" href="css/features.css">
+  <link rel="stylesheet" href="css/legal.css">
+  <link rel="stylesheet" href="css/Cookies.css">
+  
+  <!-- Mismas fuentes -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+  
+  <!-- Mismo Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+  <body data-theme="light">
+    <!-- Header -->
+<header class="main-header">
+  <div class="container header-container">
+    <div class="logo">
+      <a href="index.html">
+      <img src="img/images.png" 
+         alt="Salamanca Vívela" 
+         class="logo-img">
+      </a>
+    </div>
+    <nav class="nav-desktop">
+      <a href="productos.html">Productos</a>
+      <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+
+    <div id="authButtons" class="auth-buttons">
+      <a href="#" id="loginBtn" class="btn-login">
+        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+      </a>
+      <a href="#" id="registerBtn" class="btn-register">
+        <i class="fas fa-user-plus"></i> Registrarse
+      </a>
+    </div>
+
+    <!-- Menú de usuario -->
+    <div id="userMenu" class="user-menu" style="display:none;">
+      <div class="user-avatar"><span id="userAvatar">U</span>
+        <div class="user-dropdown">
+          <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+          <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+        </div>
+      </div>
+      <span id="userNameDisplay" class="user-name">Usuario</span>
+    </div>
+
+    <!-- Acciones header -->
+    <div class="header-actions">
+      <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i class="fas fa-minus"></i></button>
+      <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
+      <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i class="fas fa-plus"></i></button>
+      <span class="header-separator"></span>
+      <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></a>
+      <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun" style="display:none"></i></button>
+    </div>
+  </div>
+</header>
+  <!-- 1. PROGRESS BAR (Marcador de lectura) -->
+  <div class="progress-bar" id="progressBar"></div>
+
+  <!-- 3. CONTENIDO LEGAL DE COOKIES -->
+  <main class="main-content">
+    <div class="legal-container">
+      <div class="legal-header">
+        <h1><i class="fas fa-cookie-bite"></i> Política de Cookies</h1>
+        <p class="subtitle">Información sobre el uso de cookies en SalamancaVivela.es</p>
+      </div>
+      
+      <div class="legal-intro">
+        <p><strong>Al utilizar Salamancavivela.es aceptas el uso de cookies conforme a esta política. Si no estás de acuerdo con el uso de cookies, por favor configura tu navegador adecuadamente o no utilices nuestro sitio web.</strong></p>
+      </div>
+      
+      <div class="legal-content">
+        
+        <div class="legal-section">
+          <h2><i class="fas fa-question-circle"></i> ¿Qué son las cookies?</h2>
+          <p>Las cookies son pequeños archivos de texto que los sitios web que visitas guardan en tu ordenador o dispositivo móvil. Se utilizan para hacer que los sitios web funcionen o funcionen de manera más eficiente, así como para proporcionar información a los propietarios del sitio.</p>
+        </div>
+        
+        <div class="legal-section">
+          <h2><i class="fas fa-bullseye"></i> ¿Por qué utilizamos cookies?</h2>
+          <p>Utilizamos cookies para:</p>
+          <ul>
+            <li><i class="fas fa-check-circle"></i> Garantizar el correcto funcionamiento del sitio web</li>
+            <li><i class="fas fa-check-circle"></i> Recordar tus preferencias y configuraciones</li>
+            <li><i class="fas fa-check-circle"></i> Analizar cómo utilizas nuestro sitio web para poder mejorarlo</li>
+            <li><i class="fas fa-check-circle"></i> Mostrar publicidad relevante para ti</li>
+            <li><i class="fas fa-check-circle"></i> Permitir compartir contenido en redes sociales</li>
+          </ul>
+        </div>
+        
+        <div class="legal-section">
+          <h2><i class="fas fa-filter"></i> Tipos de cookies que utilizamos</h2>
+          
+          <div class="cookie-types-grid">
+            <div class="cookie-type-card">
+              <div class="cookie-type-icon">
+                <i class="fas fa-cog"></i>
+              </div>
+              <h3>Cookies técnicas <span class="cookie-status active">Siempre activas</span></h3>
+              <p>Son necesarias para el funcionamiento básico del sitio web y no se pueden desactivar.</p>
+              <ul>
+                <li>Cookies de sesión</li>
+                <li>Cookies de seguridad</li>
+                <li>Cookies de personalización</li>
+              </ul>
+            </div>
+            
+            <div class="cookie-type-card">
+              <div class="cookie-type-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <h3>Cookies de análisis <span class="cookie-status configurable">Configurable</span></h3>
+              <p>Nos permiten medir y analizar cómo los usuarios navegan por nuestro sitio web para mejorar su funcionamiento.</p>
+            </div>
+            
+            <div class="cookie-type-card">
+              <div class="cookie-type-icon">
+                <i class="fas fa-ad"></i>
+              </div>
+              <h3>Cookies de publicidad <span class="cookie-status configurable">Configurable</span></h3>
+              <p>Se utilizan para mostrar anuncios relevantes y medir la efectividad de las campañas publicitarias.</p>
+            </div>
+            
+            <div class="cookie-type-card">
+              <div class="cookie-type-icon">
+                <i class="fas fa-share-alt"></i>
+              </div>
+              <h3>Cookies de redes sociales <span class="cookie-status configurable">Configurable</span></h3>
+              <p>Permiten compartir contenido en redes sociales y que estas plataformas puedan rastrear tu actividad.</p>
+            </div>
+          </div>
+        </div>
+        
+        <div class="legal-section">
+          <h2><i class="fas fa-users"></i> Cookies de terceros</h2>
+          <p>Algunas cookies son establecidas por servicios de terceros que aparecen en nuestras páginas. Estos incluyen:</p>
+          <ul>
+            <li><i class="fab fa-google"></i> <strong>Google Analytics:</strong> Para análisis de tráfico web</li>
+            <li><i class="fas fa-ad"></i> <strong>Google Adsense:</strong> Para mostrar publicidad</li>
+            <li><i class="fab fa-facebook"></i> <strong>Facebook:</strong> Para compartir contenido</li>
+            <li><i class="fab fa-twitter"></i> <strong>Twitter/X:</strong> Para compartir contenido</li>
+            <li><i class="fab fa-instagram"></i> <strong>Instagram:</strong> Para compartir contenido</li>
+            <li><i class="fab fa-tiktok"></i> <strong>TikTok:</strong> Para compartir contenido</li>
+          </ul>
+          <p>No controlamos las cookies de terceros. Para obtener más información sobre sus políticas de cookies, consulta sus sitios web oficiales.</p>
+        </div>
+        
+        <div class="legal-section">
+          <h2><i class="fas fa-sliders-h"></i> ¿Cómo gestionar las cookies?</h2>
+          <p>Puedes controlar y/o eliminar las cookies según desees. Puedes eliminar todas las cookies que ya están en tu equipo y configurar la mayoría de los navegadores para impedir que se coloquen. Sin embargo, si lo haces, es posible que debas ajustar manualmente algunas preferencias cada vez que visites un sitio y que algunos servicios y funcionalidades no funcionen.</p>
+          
+          <div class="cookie-browser-list">
+            <h3><i class="fas fa-desktop"></i> Configuración por navegador:</h3>
+            <ul>
+              <li>
+                <a href="https://support.google.com/chrome/answer/95647" target="_blank">
+                  <i class="fab fa-chrome"></i> Chrome
+                </a>
+              </li>
+              <li>
+                <a href="https://support.mozilla.org/es/kb/cookies-informacion-que-los-sitios-web-guardan-en-" target="_blank">
+                  <i class="fab fa-firefox"></i> Firefox
+                </a>
+              </li>
+              <li>
+                <a href="https://support.microsoft.com/es-es/help/17442/windows-internet-explorer-delete-manage-cookies" target="_blank">
+                  <i class="fab fa-internet-explorer"></i> Internet Explorer
+                </a>
+              </li>
+              <li>
+                <a href="https://support.apple.com/es-es/guide/safari/sfri11471/mac" target="_blank">
+                  <i class="fab fa-safari"></i> Safari
+                </a>
+              </li>
+              <li>
+                <a href="https://support.microsoft.com/es-es/microsoft-edge/eliminar-las-cookies-en-microsoft-edge-63947406-40ac-c3b8-57b9-2a946a29ae09" target="_blank">
+                  <i class="fab fa-edge"></i> Microsoft Edge
+                </a>
+              </li>
+            </ul>
+          </div>
+          
+          <h3><i class="fas fa-tools"></i> Herramientas de terceros:</h3>
+          <p>Existen herramientas como <a href="https://www.youronlinechoices.com/es/" target="_blank"><i class="fas fa-external-link-alt"></i> Your Online Choices</a> que te permiten gestionar las cookies de publicidad.</p>
+        </div>
+        
+        <div class="legal-section">
+          <h2><i class="fas fa-handshake"></i> Consentimiento</h2>
+          <p>Al utilizar nuestro sitio web, aceptas el uso de cookies conforme a esta política. Si no deseas recibir cookies, puedes configurar tu navegador para rechazarlas.</p>
+          <p>La primera vez que visites nuestro sitio web, verás un banner informativo sobre cookies. Si continúas navegando o haces clic en "Aceptar", estarás dando tu consentimiento para el uso de todas las cookies según lo descrito en esta política.</p>
+          
+          <div class="important-note">
+            <p><i class="fas fa-info-circle"></i> <strong>Nota importante:</strong> Si desactivas las cookies técnicas esenciales, es posible que algunas funcionalidades del sitio web no funcionen correctamente.</p>
+          </div>
+        </div>
+        
+        <div class="legal-section">
+          <h2><i class="fas fa-sync-alt"></i> Actualizaciones de nuestra política de cookies</h2>
+          <p>Podemos actualizar esta política de cookies ocasionalmente para reflejar cambios en nuestras prácticas o por otros motivos operativos, legales o reglamentarios. Te recomendamos que revises periódicamente esta página para estar informado sobre cómo utilizamos las cookies.</p>
+        </div>
+        
+        <div class="legal-section">
+          <h2><i class="fas fa-envelope"></i> Contacto</h2>
+          <p>Si tienes alguna pregunta sobre nuestra política de cookies, puedes contactarnos:</p>
+          <div class="contact-info">
+            <p><i class="fas fa-envelope"></i> <strong>Correo electrónico:</strong> salamancavivela@gmail.com</p>
+            <p><i class="fas fa-phone"></i> <strong>Teléfono:</strong> 644 16 46 57</p>
+            <p><i class="fas fa-map-marker-alt"></i> <strong>Dirección:</strong> Avenida del Canto 14, 1º A, 37185 Villamayor, Salamanca</p>
+          </div>
+        </div>
+        
+        <div class="fecha-actualizacion">
+          <p><i class="far fa-calendar-alt"></i> Última actualización: 5 de febrero de 2026</p>
+        </div>
+        
+        <div style="text-align: center; margin-top: 40px;">
+          <a href="index.html" class="back-button">
+            <i class="fas fa-arrow-left"></i> Volver a la página principal
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+    <!-- BANNER DE COOKIES -->
+<div class="cookie-banner" id="cookieBanner">
+  <div class="cookie-content">
+    <div class="cookie-text">
+      <h4><i class="fas fa-cookie-bite"></i> Uso de cookies</h4>
+      <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, analizar el tráfico y personalizar contenidos. Puedes aceptar todas las cookies o configurar tus preferencias.</p>
+    </div>
+    <div class="cookie-buttons">
+      <button class="cookie-btn cookie-essential" id="cookieEssential">
+        Solo necesarias
+      </button>
+      <button class="cookie-btn cookie-accept" id="cookieAccept">
+        Aceptar todas
+      </button>
+      <button class="cookie-btn cookie-settings" id="cookieSettings">
+        <i class="fas fa-cog"></i> Configurar
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. FOOTER COMPLETO -->
+<footer class="main-footer">
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>SalamancaVivela</h3>
+                <p>Tu tienda online de productos artesanales y típicos de Salamanca.</p>
+                <div class="social-links">
+                    <a href="https://www.facebook.com/SalamancaVivelaES"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/salamancavivela/"><i class="fab fa-instagram"></i></a>
+                    <a href="https://x.com/SalamancaVivela"><i class="fab fa-twitter"></i></a>
+                    <a href="https://www.tiktok.com/@salamancavivela"><i class="fab fa-tiktok"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Enlaces rápidos</h3>
+                <ul>
+                    <li><a href="index.html">Inicio</a></li>
+                    <li><a href="productos.html">Productos</a></li>
+                    <li><a href="carrito.html">Carrito</a></li>
+                    <li><a href="contacto.html">Contacto</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contacto</h3>
+                <ul>
+                    <li><i class="fas fa-map-marker-alt"></i> Calle Azafranal 26, Salamanca</li>
+                    <li><i class="fas fa-phone"></i> +34 644 16 46 57</li>
+                    <li><i class="fas fa-envelope"></i> administracion@salamancavivela.com</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 SalamancaVivela. Todos los derechos reservados.</p>
+            <div class="footer-links">
+                <a href="Cookies.html">Cookies</a>
+                <a href="AvisoLegal.html">Aviso legal</a>
+            </div>
+        </div>
+    </div>
+</footer>
+  
+  <!-- 6. BOTÓN VOLVER ARRIBA -->
+  <button class="back-to-top" id="backToTop" aria-label="Volver al inicio">
+    <i class="fas fa-arrow-up"></i>
+  </button>
+<div id="authModal" class="auth-modal">
+  <div class="auth-modal-content">
+    <span class="auth-close">&times;</span>
+    <div class="auth-forms">
+      <form id="loginForm" class="auth-form" data-form="login">
+        <h3>Iniciar Sesión</h3>
+        <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+        <input type="password" id="loginPassword" placeholder="Contraseña" required>
+        <button type="submit" class="btn-auth-submit">Entrar</button>
+      </form>
+      <form id="registerForm" class="auth-form" data-form="register" style="display:none;">
+        <h3>Registrarse</h3>
+        <input type="text" id="registerName" placeholder="Nombre" required>
+        <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
+        <input type="password" id="registerPassword" placeholder="Contraseña" required>
+        <button type="submit" class="btn-auth-submit">Registrar</button>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- 1. CORE -->
+<script src="js/core/constant.js"></script>
+<script src="js/core/init-manager.js"></script>
+<script src="js/core/cart.core.js"></script>
+
+<!-- 2. SERVICIOS -->
+<script src="js/services/api.services.js"></script>
+<script src="js/services/session.service.js"></script>
+<script src="js/core/auth-interceptor.js"></script>
+
+<!-- 3. UI -->
+<script src="js/ui/session.ui.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if (window.updateSessionUI) {
+            window.updateSessionUI();
+        }
+    });
+</script>
+<script src="js/ui/auth.ui.js"></script>
+<script src="js/components/DarkMode.js"></script>
+<script src="js/components/cart.js"></script>
+
+<!-- 4. MAIN -->
+<script src="js/core/Main.js"></script>
+
+<!-- 5. FEATURES -->
+<script src="js/ui/features/progress-bar.ui.js"></script>
+<script src="js/ui/features/back-to-top.ui.js"></script>
+<script src="js/ui/features/cookie-manager.ui.js"></script>
+<script src="js/ui/features/accessibility.ui.js"></script>
+
+</body>
+</html>
