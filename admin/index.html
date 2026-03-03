@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard - SalamancaVivela Admin</title>
+    
+    <!-- CoreUI CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Fuentes Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- CSS Personalizado -->
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <h3>Salamanca</h3>
+                <p>Panel Administrativo</p>
+            </div>
+            
+            <ul>
+                <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="productos.html"><i class="fas fa-box"></i> Productos</a></li>
+                <li><a href="cupones.html"><i class="fas fa-tag"></i> Cupones</a></li>
+                <li><a href="pedidos.html"><i class="fas fa-shopping-cart"></i> Pedidos</a></li>
+                <li><a href="devoluciones.html"><i class="fas fa-undo-alt"></i> Devoluciones</a></li>
+                <li><a href="resenas-admin.html"><i class="fas fa-star"></i> Reseñas</a></li>
+                <li><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+        </nav>
+
+        <!-- Contenido principal -->
+        <div id="content">
+            <!-- Cabecera -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2><i class="fas fa-tachometer-alt me-2" style="color: #c62828;"></i>Dashboard</h2>
+                <div>
+                    <span id="adminName" class="fw-bold me-2">Cargando...</span>
+                <img src="https://ui-avatars.com/api/?name=A&background=c62828&color=fff&size=40" class="avatar-sm" id="adminAvatar">                </div>
+            </div>
+
+            <!-- Tarjetas de estadísticas -->
+            <div class="row mb-4">
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon primary"><i class="fas fa-box"></i></div>
+                        <div class="stat-value" id="totalProductos">-</div>
+                        <div class="stat-label">Total Productos</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon success"><i class="fas fa-tag"></i></div>
+                        <div class="stat-value" id="totalCupones">-</div>
+                        <div class="stat-label">Cupones Activos</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon warning"><i class="fas fa-shopping-cart"></i></div>
+                        <div class="stat-value" id="totalPedidos">-</div>
+                        <div class="stat-label">Pedidos Totales</div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-3">
+                    <div class="stat-card">
+                        <div class="stat-icon info"><i class="fas fa-euro-sign"></i></div>
+                        <div class="stat-value" id="totalIngresos">-</div>
+                        <div class="stat-label">Ingresos</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Últimos pedidos -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5><i class="fas fa-clock me-2" style="color: #c62828;"></i>Últimos Pedidos</h5>
+                    <a href="pedidos.html" class="btn btn-sm btn-primary">Ver todos</a>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID Pedido</th>
+                                <th>Cliente</th>
+                                <th>Fecha</th>
+                                <th>Total</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ultimos-pedidos">
+                            <tr><td colspan="5" class="text-center">Cargando pedidos...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Botón menú móvil -->
+    <button class="btn btn-primary d-md-none position-fixed bottom-0 end-0 m-3" 
+            onclick="document.getElementById('sidebar').classList.toggle('active')">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- CoreUI JavaScript (obligatorio para componentes) -->
+    <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
+    
+    <!-- SCRIPTS SEPARADOS -->
+    <script src="js/admin.js"></script>
+    <script src="js/dashboard.js"></script>
+</body>
+</html>
