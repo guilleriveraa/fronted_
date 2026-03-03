@@ -45,7 +45,7 @@ function updateSessionUI() {
 async function checkIfAdmin(userId) {
     try {
         const token = localStorage.getItem(window.TOKEN_KEY);
-        const response = await fetch(`${window.API_URL}/api/user/is-admin`, {
+        const response = await fetch(`${window.API_URL}/user/is-admin`, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }

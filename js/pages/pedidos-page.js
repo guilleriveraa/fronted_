@@ -26,7 +26,7 @@ async function loadOrders() {
     const token = localStorage.getItem(window.TOKEN_KEY);
 
     try {
-        const response = await fetch(`${window.API_URL}/api/orders/my-orders`, {
+        const response = await fetch(`${window.API_URL}/orders/my-orders`, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }

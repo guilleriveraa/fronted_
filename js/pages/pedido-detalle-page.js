@@ -61,7 +61,7 @@ window.InitManager.register('PedidoDetallePage', async function () {
 async function checkIfAdmin() {
     try {
         const token = localStorage.getItem(window.TOKEN_KEY);
-        const response = await fetch(`${window.API_URL}/api/user/is-admin`, {
+        const response = await fetch(`${window.API_URL}/user/is-admin`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
         const data = await response.json();
@@ -79,7 +79,7 @@ async function loadOrderDetails(orderId) {
 
     try {
         // Obtener datos del pedido (ruta normal)
-        const response = await fetch(`${window.API_URL}/api/orders/${orderId}`, {
+        const response = await fetch(`${window.API_URL}/orders/${orderId}`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
 
@@ -91,7 +91,7 @@ async function loadOrderDetails(orderId) {
         console.log('📦 Pedido recibido:', order);
 
         // Obtener items del pedido (ruta normal)
-        const itemsResponse = await fetch(`${window.API_URL}/api/orders/${orderId}/items`, {
+        const itemsResponse = await fetch(`${window.API_URL}/orders/${orderId}/items`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
 
@@ -117,7 +117,7 @@ async function loadOrderDetailsAdmin(orderId) {
 
     try {
         // Obtener datos del pedido (ruta admin)
-        const response = await fetch(`${window.API_URL}/api/admin/orders/${orderId}`, {
+        const response = await fetch(`${window.API_URL}/admin/orders/${orderId}`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
 
@@ -129,7 +129,7 @@ async function loadOrderDetailsAdmin(orderId) {
         console.log('📦 Pedido admin recibido:', order);
 
         // Obtener items del pedido (ruta admin)
-        const itemsResponse = await fetch(`${window.API_URL}/api/admin/orders/${orderId}/items`, {
+        const itemsResponse = await fetch(`${window.API_URL}/admin/orders/${orderId}/items`, {
             headers: { 'Authorization': 'Bearer ' + token }
         });
 

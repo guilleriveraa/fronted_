@@ -65,7 +65,7 @@ class CartCore {
                 return this.getEmptyCart();
             }
 
-            const response = await fetch(`${window.API_URL}/api/cart`, {
+            const response = await fetch(`${window.API_URL}/cart`, {
                 headers: {
                     'Authorization': 'Bearer ' + token
                 }
@@ -174,7 +174,7 @@ class CartCore {
             }
 
             // Modo online
-            const response = await fetch(`${window.API_URL}/api/cart/update`, {
+            const response = await fetch(`${window.API_URL}/cart/update`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -222,7 +222,7 @@ class CartCore {
             }
 
             // Modo online
-            const response = await fetch(`${window.API_URL}/api/cart/remove/${productId}`, {
+            const response = await fetch(`${window.API_URL}/cart/remove/${productId}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': 'Bearer ' + token
@@ -317,7 +317,7 @@ class CartCore {
         
         try {
             if (token) {
-                await fetch(`${window.API_URL}/api/cart/clear`, {
+                await fetch(`${window.API_URL}/cart/clear`, {
                     method: 'POST',
                     headers: { 'Authorization': 'Bearer ' + token }
                 });

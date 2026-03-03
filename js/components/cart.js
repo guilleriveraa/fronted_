@@ -233,7 +233,7 @@ window.applyDiscount = async function() {
     try {
         const cart = await window.CartCore.getCart();
         
-        const response = await fetch(`${window.API_URL}/api/cupones/validar`, {
+        const response = await fetch(`${window.API_URL}/cupones/validar`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

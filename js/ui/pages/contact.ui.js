@@ -17,7 +17,7 @@ window.InitManager.register('ContactPage', function() {
         const message = contactForm.querySelector('[name="message"]').value.trim();
 
         try {
-            const response = await fetch(`${window.API_URL}/api/contact`, {
+            const response = await fetch(`${window.API_URL}/contact`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"

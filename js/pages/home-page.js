@@ -32,7 +32,7 @@ function setupBuyButtons() {
       }
 
       try {
-        const response = await fetch(`${window.API_URL}/api/cart/add`, {
+        const response = await fetch(`${window.API_URL}/cart/add`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -74,7 +74,7 @@ async function loadLatestProducts() {
   
   try {
     console.log('📡 Cargando últimos productos...');
-    const response = await fetch(`${window.API_URL}/api/productos`);
+    const response = await fetch(`${window.API_URL}/productos`);
     if (!response.ok) throw new Error('Error al cargar productos');
     
     const productos = await response.json();
@@ -139,7 +139,7 @@ function renderLatestProducts(productos) {
 // ===============================
 window.quickView = async function(productId) {
   try {
-    const response = await fetch(`${window.API_URL}/api/productos/${productId}`);
+    const response = await fetch(`${window.API_URL}/productos/${productId}`);
     if (!response.ok) throw new Error('Error al cargar producto');
     
     const producto = await response.json();
@@ -157,7 +157,7 @@ window.addToCart = async function(productId) {
   }
   
   try {
-    const response = await fetch(`${window.API_URL}/api/cart/add`, {
+    const response = await fetch(`${window.API_URL}/cart/add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

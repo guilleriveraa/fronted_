@@ -21,7 +21,7 @@ async function loadProducts(categoria = '') {
   `;
   
   try {
-    let url = `${window.API_URL}/api/productos`;
+    let url = `${window.API_URL}/productos`;
     if (categoria && categoria !== 'todos') {
       url += `?categoria=${categoria}`;
     }
@@ -96,7 +96,7 @@ window.addToCart = async function(productId) {
   }
   
   try {
-    const response = await fetch(`${window.API_URL}/api/cart/add`, {
+    const response = await fetch(`${window.API_URL}/cart/add`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -121,7 +121,7 @@ window.addToCart = async function(productId) {
 
 window.quickView = async function(productId) {
   try {
-    const response = await fetch(`${window.API_URL}/api/productos/${productId}`);
+    const response = await fetch(`${window.API_URL}/productos/${productId}`);
     if (!response.ok) throw new Error('Error al cargar producto');
     
     const producto = await response.json();

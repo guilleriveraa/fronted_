@@ -5,7 +5,7 @@ window.cargarProductoDetalle = async function(productoId) {
     if (!container) return;
     
     try {
-        const response = await fetch(`${window.API_URL}/api/productos/${productoId}`);
+        const response = await fetch(`${window.API_URL}/productos/${productoId}`);
         if (!response.ok) throw new Error('Error al cargar producto');
         
         const producto = await response.json();

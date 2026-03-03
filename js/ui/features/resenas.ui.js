@@ -15,7 +15,7 @@ class ResenasManager {
 
     async cargarResenas() {
         try {
-            const response = await fetch(`${window.API_URL}/api/productos/${this.productoId}/resenas`);
+            const response = await fetch(`${window.API_URL}/productos/${this.productoId}/resenas`);
             const data = await response.json();
             
             this.renderizarStats(data.stats);
@@ -260,7 +260,7 @@ generarEstrellas(puntuacion) {
         }
 
         try {
-            const response = await fetch(`${window.API_URL}/api/productos/${this.productoId}/resenas`, {
+            const response = await fetch(`${window.API_URL}/productos/${this.productoId}/resenas`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -293,7 +293,7 @@ generarEstrellas(puntuacion) {
         if (!window.sessionService?.isLoggedIn()) return false;
         
         try {
-            const response = await fetch(`${window.API_URL}/api/puede-resenar/${this.productoId}`, {
+            const response = await fetch(`${window.API_URL}/puede-resenar/${this.productoId}`, {
                 headers: {
                     'Authorization': 'Bearer ' + window.sessionService.getToken()
                 }
@@ -314,7 +314,7 @@ window.votarResena = async function(reseñaId, tipo) {
     }
 
     try {
-        const response = await fetch(`${window.API_URL}/api/resenas/${reseñaId}/votar`, {
+        const response = await fetch(`${window.API_URL}/resenas/${reseñaId}/votar`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

@@ -35,7 +35,7 @@ window.InitManager.register('ProfilePage', async function () {
 
 async function fetchCurrentUser(token) {
     console.log('📡 fetchCurrentUser llamado');
-    const response = await fetch(`${window.API_URL}/api/users/me`, {
+    const response = await fetch(`${window.API_URL}/users/me`, {
         method: 'GET',
         headers: {
             'Authorization': 'Bearer ' + token
@@ -194,7 +194,7 @@ async function handleProfileUpdate(e) {
     };
 
     try {
-        const response = await fetch(`${window.API_URL}/api/users/me`, {
+        const response = await fetch(`${window.API_URL}/users/me`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
@@ -242,7 +242,7 @@ async function handleSecurityUpdate(e) {
     }
 
     try {
-        const response = await fetch(`${window.API_URL}/api/users/change-password`, {
+        const response = await fetch(`${window.API_URL}/users/change-password`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -273,7 +273,7 @@ async function loadOrders() {
     const token = localStorage.getItem(window.TOKEN_KEY);
 
     try {
-        const response = await fetch(`${window.API_URL}/api/orders/my-orders`, {
+        const response = await fetch(`${window.API_URL}/orders/my-orders`, {
             headers: {
                 'Authorization': 'Bearer ' + token
             }

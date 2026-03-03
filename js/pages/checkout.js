@@ -143,7 +143,7 @@ async function procesarPagoConDireccion(direccionData) {
         }
 
         // Crear sesión de pago
-        const response = await fetch(`${window.API_URL}/api/create-checkout-session`, {
+        const response = await fetch(`${window.API_URL}/create-checkout-session`, {
             method: 'POST',
             headers: {
                 'Authorization': 'Bearer ' + window.sessionService.getToken(),

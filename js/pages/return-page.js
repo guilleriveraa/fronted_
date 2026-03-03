@@ -33,7 +33,7 @@ async function loadEligibleOrders() {
   }
 
   try {
-      const response = await fetch(`${window.API_URL}/api/orders/eligible-for-return`, {
+      const response = await fetch(`${window.API_URL}/orders/eligible-for-return`, {
       method: 'GET',
       headers: {
         'Authorization': 'Bearer ' + token
@@ -174,7 +174,7 @@ async function handleReturnSubmit(e) {
   };
 
   try {
-    const response = await fetch(`${window.API_URL}/api/returns`, {
+    const response = await fetch(`${window.API_URL}/returns`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
