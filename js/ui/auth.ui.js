@@ -95,37 +95,46 @@ window.InitManager.register('AuthUI', function() {
   }
 
   async function handleLogin(e) {
+  // 👇 Esto DEBE ser lo PRIMERO que se ejecute
+  if (e) {
     e.preventDefault();
-    console.log('🔐 handleLogin ejecutado');
-    
+    e.stopPropagation();
+  }
+  
+  console.log('🔐 handleLogin ejecutado - preventDefault ejecutado');
+  
+  try {
     if (!window.sessionService) {
-      alert("Error: Servicio de autenticación no disponible");
-      return;
+      throw new Error("Servicio de autenticación no disponible");
     }
 
     const email = loginEmail.value;
     const password = loginPassword.value;
-    console.log('🔐 Intentando login con:', email);
-
-    try {
-      const result = await window.sessionService.login(email, password);
-      console.log('🔐 Resultado login:', result);
-      
-      if (result.success) {
-        closeModal();
-        loginEmail.value = '';
-        loginPassword.value = '';
-        if (window.updateSessionUI) {
-          window.updateSessionUI();
-        }
-      } else {
-        alert(result.error || "Error al iniciar sesión");
-      }
-    } catch (error) {
-      console.error("Error en login:", error);
-      alert("Error al conectar con el servidor");
+    
+    if (!email || !password) {
+      alert("Por favor, completa todos los campos");
+      return;
     }
+    
+    console.log('🔐 Intentando login con:', email);
+    const result = await window.sessionService.login(email, password);
+    console.log('🔐 Resultado login:', result);
+    
+    if (result.success) {
+      closeModal();
+      loginEmail.value = '';
+      loginPassword.value = '';
+      if (window.updateSessionUI) {
+        window.updateSessionUI();
+      }
+    } else {
+      alert(result.error || "Error al iniciar sesión");
+    }
+  } catch (error) {
+    console.error("Error en login:", error);
+    alert("Error al conectar con el servidor: " + error.message);
   }
+}
 
   // En auth.ui.js - Reemplaza SOLO la función handleRegister
 async function handleRegister(e) {
@@ -175,6 +184,36 @@ async function handleRegister(e) {
         alert("Error al conectar con el servidor");
     }
 }
+// Función alternativa para el botón (no depende del evento submit)
+window.handleLoginFromButton = async function() {
+  console.log('🔐 handleLoginFromButton ejecutado');
+  
+  try {
+    if (!window.sessionService) {
+      throw new Error("Servicio de autenticación no disponible");
+    }
+
+    const email = document.getElementById('loginEmail').value;
+    const password = document.getElementById('loginPassword').value;
+    
+    if (!email || !password) {
+      alert("Por favor, completa todos los campos");
+      return;
+    }
+    
+    const result = await window.sessionService.login(email, password);
+    
+    if (result.success) {
+      document.getElementById('authModal').style.display = 'none';
+      if (window.updateSessionUI) window.updateSessionUI();
+    } else {
+      alert(result.error || "Error al iniciar sesión");
+    }
+  } catch (error) {
+    console.error("Error:", error);
+    alert("Error al iniciar sesión");
+  }
+};
   
   window.InitManager.log('✅ Interfaz de autenticación inicializada');
 });
