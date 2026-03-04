@@ -159,7 +159,7 @@ generarEstrellas(puntuacion) {
         return `
             <div class="resena-imagenes">
                 ${imagenes.map(img => `
-                    <img src="http://127.0.0.1:5500${img}" alt="Imagen de reseña" class="resena-imagen">
+                    <img src="${img}" alt="Imagen de reseña" class="resena-imagen">
                 `).join('')}
             </div>
         `;

@@ -55,7 +55,7 @@ function renderProducts(productos) {
         <div class="product-card" data-categoria="${p.categoria_nombre?.toLowerCase() || ''}">
             <a href="producto-detalle.html?id=${p.id}" class="product-link">
                 <div class="product-image">
-                    <img src="http://127.0.0.1:5500${p.imagen}" 
+                    <img src="${p.imagen}" 
                          alt="${p.nombre}"
                          onerror="this.src='https://via.placeholder.com/300x300?text=Sin+imagen'">
                     <div class="product-overlay">

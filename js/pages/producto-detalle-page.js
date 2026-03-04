@@ -13,7 +13,7 @@ window.cargarProductoDetalle = async function(productoId) {
         container.innerHTML = `
             <div class="product-detail">
                 <div class="product-gallery">
-                    <img src="http://127.0.0.1:5500${producto.imagen}" 
+                    <img src="${producto.imagen}" 
                          alt="${producto.nombre}"
                          class="main-image"
                          onerror="this.src='https://via.placeholder.com/400x400?text=Producto'">
