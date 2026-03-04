@@ -1,20 +1,28 @@
-﻿// js/ui/auth.ui.js - VERSIÓN DE DEPURACIÓN
+﻿// js/ui/auth.ui.js - VERSIÓN SIN FORMULARIOS
 
 window.InitManager.register('AuthUI', function() {
   console.log('🔐 Inicializando AuthUI');
   
+  // Elementos del modal
   const authModal = document.getElementById("authModal");
   const loginBtn = document.getElementById("loginBtn");
   const registerBtn = document.getElementById("registerBtn");
   const authClose = document.querySelector(".auth-close");
   
-  const loginForm = document.getElementById("loginForm");
-  const registerForm = document.getElementById("registerForm");
+  // Elementos de los contenedores
+  const loginContainer = document.getElementById("loginContainer");
+  const registerContainer = document.getElementById("registerContainer");
+  
+  // Inputs
   const loginEmail = document.getElementById("loginEmail");
   const loginPassword = document.getElementById("loginPassword");
   const registerName = document.getElementById("registerName");
   const registerEmail = document.getElementById("registerEmail");
   const registerPassword = document.getElementById("registerPassword");
+  
+  // Botones
+  const loginButton = document.getElementById("loginButton");
+  const registerButton = document.getElementById("registerButton");
 
   if (!authModal) {
     console.log('📭 No hay modal de autenticación en esta página');
@@ -26,9 +34,7 @@ window.InitManager.register('AuthUI', function() {
   // Abrir modal
   if (loginBtn) {
     loginBtn.addEventListener("click", (e) => {
-      console.log('1️⃣ Click en loginBtn');
       e.preventDefault();
-      console.log('2️⃣ preventDefault ejecutado en botón');
       showAuthModal("login");
     });
   }
@@ -40,16 +46,18 @@ window.InitManager.register('AuthUI', function() {
     });
   }
 
-  if (authClose) {
-    authClose.addEventListener("click", closeModal);
+  // Botones de acción
+  if (loginButton) {
+    loginButton.addEventListener("click", handleLogin);
+  }
+  
+  if (registerButton) {
+    registerButton.addEventListener("click", handleRegister);
   }
 
-  // SOLUCIÓN RADICAL: Cambiar el tipo del botón dinámicamente
-  const loginSubmitBtn = document.querySelector('#loginForm .btn-auth-submit');
-  if (loginSubmitBtn) {
-    console.log('3️⃣ Botón de login encontrado, cambiando tipo a button');
-    loginSubmitBtn.type = 'button';
-    loginSubmitBtn.onclick = handleLoginClick;
+  // Cerrar modal
+  if (authClose) {
+    authClose.addEventListener("click", closeModal);
   }
 
   window.addEventListener("click", (e) => {
@@ -59,34 +67,27 @@ window.InitManager.register('AuthUI', function() {
   window.showAuthModal = showAuthModal;
 
   function closeModal() {
-    console.log('❌ Cerrando modal');
     if (authModal) authModal.style.display = "none";
   }
 
   function showAuthModal(form) {
-    console.log('📱 Mostrando modal:', form);
     if (!authModal) return;
     authModal.style.display = "block";
-    showForm(form);
-  }
-
-  function showForm(form) {
+    
     if (form === "login") {
-      loginForm.style.display = "block";
-      registerForm.style.display = "none";
+      loginContainer.style.display = "block";
+      registerContainer.style.display = "none";
     } else {
-      loginForm.style.display = "none";
-      registerForm.style.display = "block";
+      loginContainer.style.display = "none";
+      registerContainer.style.display = "block";
     }
   }
 
-  // Función para el login (NO usa el evento submit)
-  async function handleLoginClick() {
-    console.log('4️⃣ handleLoginClick ejecutado');
+  async function handleLogin() {
+    console.log('🔐 handleLogin ejecutado');
     
     try {
       if (!window.sessionService) {
-        console.error('5️⃣ ERROR: sessionService no disponible');
         alert("Error: Servicio de autenticación no disponible");
         return;
       }
@@ -94,47 +95,74 @@ window.InitManager.register('AuthUI', function() {
       const email = loginEmail.value;
       const password = loginPassword.value;
       
-      console.log('6️⃣ Email ingresado:', email);
-      console.log('7️⃣ Password ingresado:', password ? '****' : 'vacío');
-
       if (!email || !password) {
-        console.log('8️⃣ ERROR: Campos vacíos');
         alert("Por favor, completa todos los campos");
         return;
       }
 
-      console.log('9️⃣ Llamando a sessionService.login...');
+      console.log('🔐 Intentando login con:', email);
       const result = await window.sessionService.login(email, password);
-      console.log('🔟 Resultado:', result);
+      console.log('🔐 Resultado:', result);
       
       if (result.success) {
-        console.log('1️⃣1️⃣ Login exitoso, cerrando modal');
         closeModal();
         loginEmail.value = '';
         loginPassword.value = '';
         if (window.updateSessionUI) {
-          console.log('1️⃣2️⃣ Actualizando UI');
           window.updateSessionUI();
         }
       } else {
-        console.log('1️⃣3️⃣ Login falló:', result.error);
         alert(result.error || "Error al iniciar sesión");
       }
     } catch (error) {
-      console.error('❌ ERROR CAPTURADO:', error);
-      console.error('Stack:', error.stack);
-      alert("Error al conectar con el servidor: " + error.message);
+      console.error("Error en login:", error);
+      alert("Error al conectar con el servidor");
     }
   }
 
-  // También prevenimos el envío del formulario por si acaso
-  if (loginForm) {
-    loginForm.addEventListener('submit', function(e) {
-      console.log('⚠️ Intento de submit detectado - BLOQUEADO');
-      e.preventDefault();
-      e.stopPropagation();
-      return false;
-    });
+  async function handleRegister() {
+    console.log('📝 handleRegister ejecutado');
+    
+    try {
+      if (!window.sessionService) {
+        alert("Error: Servicio de autenticación no disponible");
+        return;
+      }
+
+      const nombre = registerName.value;
+      const email = registerEmail.value;
+      const password = registerPassword.value;
+      
+      if (!nombre || !email || !password) {
+        alert("Todos los campos son obligatorios");
+        return;
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        alert("Email con formato inválido");
+        return;
+      }
+
+      console.log('📝 Intentando registro con:', { nombre, email });
+      const result = await window.sessionService.register(nombre, email, password);
+      console.log('📝 Resultado:', result);
+      
+      if (result.success) {
+        closeModal();
+        registerName.value = '';
+        registerEmail.value = '';
+        registerPassword.value = '';
+        if (window.updateSessionUI) {
+          window.updateSessionUI();
+        }
+      } else {
+        alert(result.error || "Error al registrarse");
+      }
+    } catch (error) {
+      console.error("Error en registro:", error);
+      alert("Error al conectar con el servidor");
+    }
   }
   
   window.InitManager.log('✅ AuthUI listo');
