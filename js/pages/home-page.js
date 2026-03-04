@@ -67,24 +67,34 @@ function setupBuyButtons() {
 // NUEVA FUNCIÓN: Cargar últimos 3 productos
 // ===============================
 async function loadLatestProducts() {
+  console.log('🚀 loadLatestProducts INICIADO');
   const container = document.getElementById('latestProductsContainer');
+  console.log('📦 Contenedor encontrado:', container ? 'SÍ' : 'NO');
+  
   if (!container) {
     console.log('⚠️ No se encontró el contenedor de últimos productos');
     return;
   }
   
   try {
-    console.log('📡 Cargando últimos productos...');
+    console.log('📡 Fetching productos desde:', `${window.API_URL}/productos`);
     const response = await fetch(`${window.API_URL}/productos`);
+    console.log('📡 Respuesta status:', response.status);
+    
     if (!response.ok) throw new Error('Error al cargar productos');
     
     const productos = await response.json();
-    console.log('📦 Productos recibidos:', productos.length);
+    console.log('📦 Productos recibidos:', productos.length, productos);
     
-    // Ordenar por ID descendente (los últimos añadidos tienen ID más alto)
+    if (productos.length === 0) {
+      console.log('⚠️ No hay productos en la BD');
+      container.innerHTML = '<p class="no-products">No hay productos disponibles</p>';
+      return;
+    }
+    
     const ultimosProductos = productos
-      .sort((a, b) => b.id - a.id)  // Ordenar de más nuevo a más viejo
-      .slice(0, 3);                  // Tomar solo los 3 primeros
+      .sort((a, b) => b.id - a.id)
+      .slice(0, 3);
     
     console.log('✨ Últimos 3 productos:', ultimosProductos.map(p => p.nombre));
     renderLatestProducts(ultimosProductos);
@@ -112,7 +122,7 @@ function renderLatestProducts(productos) {
   container.innerHTML = productos.map(p => `
     <div class="product-card">
       <div class="product-image">
-        <img src="http://127.0.0.1:5500${p.imagen || '/fronted/img/default.jpg'}" 
+        <img src="${p.imagen}"  
              alt="${p.nombre}"
              onerror="this.src='https://via.placeholder.com/300x300?text=Producto'">
         <div class="product-overlay">

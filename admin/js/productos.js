@@ -40,7 +40,7 @@ async function cargarProductos() {
             <tr>
                 <td>${p.id}</td>
                 <td>
-                    <img src="http://127.0.0.1:5500${p.imagen || '/fronted/img/default.jpg'}" 
+                    <img src="${p.imagen}"  
                          width="50" height="50" style="object-fit: cover; border-radius: 5px;"
                          onerror="this.src='https://ui-avatars.com/api/?name=Error&background=ccc&color=fff&size=50'">
                 </td>
