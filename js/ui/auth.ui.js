@@ -1,4 +1,4 @@
-﻿// js/ui/auth.ui.js
+﻿// js/ui/auth.ui.js - VERSIÓN DE DEPURACIÓN
 
 window.InitManager.register('AuthUI', function() {
   console.log('🔐 Inicializando AuthUI');
@@ -8,7 +8,6 @@ window.InitManager.register('AuthUI', function() {
   const registerBtn = document.getElementById("registerBtn");
   const authClose = document.querySelector(".auth-close");
   
-  // Elementos de los formularios
   const loginForm = document.getElementById("loginForm");
   const registerForm = document.getElementById("registerForm");
   const loginEmail = document.getElementById("loginEmail");
@@ -17,21 +16,19 @@ window.InitManager.register('AuthUI', function() {
   const registerEmail = document.getElementById("registerEmail");
   const registerPassword = document.getElementById("registerPassword");
 
-  // Si no hay modal en esta página, salir
   if (!authModal) {
     console.log('📭 No hay modal de autenticación en esta página');
     return;
   }
 
-  console.log('🔐 Elementos encontrados:', { 
-    authModal, loginBtn, registerBtn, loginForm, registerForm 
-  });
+  console.log('🔐 Elementos encontrados');
 
   // Abrir modal
   if (loginBtn) {
     loginBtn.addEventListener("click", (e) => {
+      console.log('1️⃣ Click en loginBtn');
       e.preventDefault();
-      console.log('👆 Click en loginBtn');
+      console.log('2️⃣ preventDefault ejecutado en botón');
       showAuthModal("login");
     });
   }
@@ -39,7 +36,6 @@ window.InitManager.register('AuthUI', function() {
   if (registerBtn) {
     registerBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      console.log('👆 Click en registerBtn');
       showAuthModal("register");
     });
   }
@@ -48,13 +44,12 @@ window.InitManager.register('AuthUI', function() {
     authClose.addEventListener("click", closeModal);
   }
 
-  // Event listeners para los formularios
-  if (loginForm) {
-    loginForm.addEventListener("submit", handleLogin);
-  }
-  
-  if (registerForm) {
-    registerForm.addEventListener("submit", handleRegister);
+  // SOLUCIÓN RADICAL: Cambiar el tipo del botón dinámicamente
+  const loginSubmitBtn = document.querySelector('#loginForm .btn-auth-submit');
+  if (loginSubmitBtn) {
+    console.log('3️⃣ Botón de login encontrado, cambiando tipo a button');
+    loginSubmitBtn.type = 'button';
+    loginSubmitBtn.onclick = handleLoginClick;
   }
 
   window.addEventListener("click", (e) => {
@@ -64,156 +59,83 @@ window.InitManager.register('AuthUI', function() {
   window.showAuthModal = showAuthModal;
 
   function closeModal() {
+    console.log('❌ Cerrando modal');
     if (authModal) authModal.style.display = "none";
   }
 
   function showAuthModal(form) {
+    console.log('📱 Mostrando modal:', form);
     if (!authModal) return;
     authModal.style.display = "block";
     showForm(form);
   }
 
   function showForm(form) {
-    const loginForm = document.getElementById("loginForm");
-    const registerForm = document.getElementById("registerForm");
-    const tabLogin = document.getElementById("tabLogin");
-    const tabRegister = document.getElementById("tabRegister");
-
-    if (!loginForm || !registerForm) return;
-
     if (form === "login") {
       loginForm.style.display = "block";
       registerForm.style.display = "none";
-      if (tabLogin) tabLogin.classList.add("active");
-      if (tabRegister) tabRegister.classList.remove("active");
     } else {
       loginForm.style.display = "none";
       registerForm.style.display = "block";
-      if (tabLogin) tabLogin.classList.remove("active");
-      if (tabRegister) tabRegister.classList.add("active");
     }
   }
 
-  async function handleLogin(e) {
-  // 👇 Esto DEBE ser lo PRIMERO que se ejecute
-  if (e) {
-    e.preventDefault();
-    e.stopPropagation();
-  }
-  
-  console.log('🔐 handleLogin ejecutado - preventDefault ejecutado');
-  
-  try {
-    if (!window.sessionService) {
-      throw new Error("Servicio de autenticación no disponible");
-    }
-
-    const email = loginEmail.value;
-    const password = loginPassword.value;
+  // Función para el login (NO usa el evento submit)
+  async function handleLoginClick() {
+    console.log('4️⃣ handleLoginClick ejecutado');
     
-    if (!email || !password) {
-      alert("Por favor, completa todos los campos");
-      return;
-    }
-    
-    console.log('🔐 Intentando login con:', email);
-    const result = await window.sessionService.login(email, password);
-    console.log('🔐 Resultado login:', result);
-    
-    if (result.success) {
-      closeModal();
-      loginEmail.value = '';
-      loginPassword.value = '';
-      if (window.updateSessionUI) {
-        window.updateSessionUI();
-      }
-    } else {
-      alert(result.error || "Error al iniciar sesión");
-    }
-  } catch (error) {
-    console.error("Error en login:", error);
-    alert("Error al conectar con el servidor: " + error.message);
-  }
-}
-
-  // En auth.ui.js - Reemplaza SOLO la función handleRegister
-async function handleRegister(e) {
-    e.preventDefault();
-    console.log('📝 handleRegister ejecutado');
-    
-    if (!window.sessionService) {
+    try {
+      if (!window.sessionService) {
+        console.error('5️⃣ ERROR: sessionService no disponible');
         alert("Error: Servicio de autenticación no disponible");
         return;
-    }
+      }
 
-    const nombre = registerName.value;
-    const email = registerEmail.value;
-    const password = registerPassword.value;
-    console.log('📝 Intentando registro con:', { nombre, email });
+      const email = loginEmail.value;
+      const password = loginPassword.value;
+      
+      console.log('6️⃣ Email ingresado:', email);
+      console.log('7️⃣ Password ingresado:', password ? '****' : 'vacío');
 
-    if (!nombre || !email || !password) {
-        alert("Todos los campos son obligatorios");
+      if (!email || !password) {
+        console.log('8️⃣ ERROR: Campos vacíos');
+        alert("Por favor, completa todos los campos");
         return;
-    }
+      }
 
-    // Validación básica de formato antes de enviar
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-        alert("Por favor, introduce un email con formato válido");
-        return;
-    }
-
-    try {
-        const result = await window.sessionService.register(nombre, email, password);
-        console.log('📝 Resultado registro:', result);
-        
-        if (result.success) {
-            closeModal();
-            registerName.value = '';
-            registerEmail.value = '';
-            registerPassword.value = '';
-            if (window.updateSessionUI) {
-                window.updateSessionUI();
-            }
-        } else {
-            // Mostrar el mensaje de error del backend
-            alert(result.error || "Error al registrarse");
+      console.log('9️⃣ Llamando a sessionService.login...');
+      const result = await window.sessionService.login(email, password);
+      console.log('🔟 Resultado:', result);
+      
+      if (result.success) {
+        console.log('1️⃣1️⃣ Login exitoso, cerrando modal');
+        closeModal();
+        loginEmail.value = '';
+        loginPassword.value = '';
+        if (window.updateSessionUI) {
+          console.log('1️⃣2️⃣ Actualizando UI');
+          window.updateSessionUI();
         }
+      } else {
+        console.log('1️⃣3️⃣ Login falló:', result.error);
+        alert(result.error || "Error al iniciar sesión");
+      }
     } catch (error) {
-        console.error("Error en registro:", error);
-        alert("Error al conectar con el servidor");
+      console.error('❌ ERROR CAPTURADO:', error);
+      console.error('Stack:', error.stack);
+      alert("Error al conectar con el servidor: " + error.message);
     }
-}
-// Función alternativa para el botón (no depende del evento submit)
-window.handleLoginFromButton = async function() {
-  console.log('🔐 handleLoginFromButton ejecutado');
-  
-  try {
-    if (!window.sessionService) {
-      throw new Error("Servicio de autenticación no disponible");
-    }
-
-    const email = document.getElementById('loginEmail').value;
-    const password = document.getElementById('loginPassword').value;
-    
-    if (!email || !password) {
-      alert("Por favor, completa todos los campos");
-      return;
-    }
-    
-    const result = await window.sessionService.login(email, password);
-    
-    if (result.success) {
-      document.getElementById('authModal').style.display = 'none';
-      if (window.updateSessionUI) window.updateSessionUI();
-    } else {
-      alert(result.error || "Error al iniciar sesión");
-    }
-  } catch (error) {
-    console.error("Error:", error);
-    alert("Error al iniciar sesión");
   }
-};
+
+  // También prevenimos el envío del formulario por si acaso
+  if (loginForm) {
+    loginForm.addEventListener('submit', function(e) {
+      console.log('⚠️ Intento de submit detectado - BLOQUEADO');
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    });
+  }
   
-  window.InitManager.log('✅ Interfaz de autenticación inicializada');
+  window.InitManager.log('✅ AuthUI listo');
 });
