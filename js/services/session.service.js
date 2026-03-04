@@ -55,10 +55,10 @@ function logout() {
     notifyListeners(); // AÑADIR
 }
 
-async function login(email, contraseña) {
+async function login(email, password) {
     const data = await request('/login', {
         method: 'POST',
-        body: JSON.stringify({ email, contraseña })
+        body: JSON.stringify({ email, password })
     });
 
     const user = {
@@ -72,10 +72,10 @@ async function login(email, contraseña) {
     return { success: true, user };
 }
 
-async function register(nombre, email, contraseña) {
+async function register(nombre, email, password) {
     const data = await request('/register', {
         method: 'POST',
-        body: JSON.stringify({ nombre, email, contraseña })
+        body: JSON.stringify({ nombre, email, password })
     });
 
     const user = {
