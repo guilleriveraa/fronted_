@@ -181,36 +181,52 @@
 <script src="js/ui/features/accessibility.ui.js"></script>
 
 <script>
-// FUERZA BRUTA - Vaciar carrito inmediatamente
-window.onload = function() {
-    console.log('🔥 FORZANDO VACIADO DE CARRITO');
+// ESPERAR A QUE TODO ESTÉ LISTO Y VACIAR CARRITO
+console.log('🔥 Script de emergencia cargado');
+
+function intentarVaciarCarrito() {
+    console.log('🔥 Intentando vaciar carrito...');
     
-    // Obtener token de todas las formas posibles
-    let token = null;
-    if (window.sessionService?.getToken) token = window.sessionService.getToken();
-    if (!token) token = localStorage.getItem('auth_token');
-    if (!token) token = localStorage.getItem('token');
-    
-    if (!token) {
-        console.log('❌ No hay token');
-        return;
-    }
-    
-    fetch(`${window.API_URL}/emergency-clear-cart`, {
-        method: 'POST',
-        headers: { 'Authorization': 'Bearer ' + token }
-    })
-    .then(r => r.json())
-    .then(data => {
-        console.log('✅ Resultado:', data);
-        if (data.vaciado && window.CartCore) {
-            window.CartCore.cart = { items: [], subtotal: 0, shipping: 0, total: 0 };
-            window.CartCore.saveCartToStorage(window.CartCore.cart);
-            window.CartCore.notifyListeners();
+    // Esperar un poco a que todo esté listo
+    setTimeout(async () => {
+        // Obtener token
+        const token = window.sessionService?.getToken?.() || 
+                      localStorage.getItem('auth_token') ||
+                      localStorage.getItem('token');
+        
+        console.log('🔑 Token:', token ? 'OK' : 'NO HAY');
+        
+        if (!token) {
+            console.log('❌ No hay token, reintentando en 1 segundo...');
+            setTimeout(intentarVaciarCarrito, 1000);
+            return;
         }
-    })
-    .catch(err => console.error('❌ Error:', err));
-};
+        
+        try {
+            const response = await fetch(`${window.API_URL}/emergency-clear-cart`, {
+                method: 'POST',
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            const data = await response.json();
+            console.log('✅ RESULTADO:', data);
+            
+            if (data.vaciado && window.CartCore) {
+                window.CartCore.cart = { items: [], subtotal: 0, shipping: 0, total: 0 };
+                window.CartCore.saveCartToStorage(window.CartCore.cart);
+                window.CartCore.notifyListeners();
+            }
+        } catch (err) {
+            console.error('❌ Error:', err);
+        }
+    }, 500);
+}
+
+// Intentar cuando la página cargue
+if (document.readyState === 'complete') {
+    intentarVaciarCarrito();
+} else {
+    window.addEventListener('load', intentarVaciarCarrito);
+}
 </script>
 
 </body>
