@@ -194,56 +194,61 @@ async function procesarPagoConDireccion(direccionData) {
 
         console.log('✅ Sesión creada, redirigiendo a Stripe:', data.url);
 
-// ===== GUARDADO OBSESIVO-COMPULSIVO DEL TOKEN =====
-console.log('💾 GUARDANDO TOKEN COMO SI NO HUBIERA UN MAÑANA...');
+// ====================================================
+// 🚀 VACIAR CARRITO AHORA MISMO - SIN ESPERAR NADA
+// ====================================================
+console.log('🧹 VACIANDO CARRITO INMEDIATAMENTE...');
 
 try {
-    const tokenFinal = window.sessionService.getToken();
-    
-    if (tokenFinal) {
-        // LOCALSTORAGE - Múltiples nombres
-        localStorage.setItem('auth_token', tokenFinal);
-        localStorage.setItem('token', tokenFinal);
-        localStorage.setToken = tokenFinal; // Por si acaso
-        localStorage['auth_token'] = tokenFinal; // Otra forma
-        
-        // SESSIONSTORAGE
-        sessionStorage.setItem('auth_token', tokenFinal);
-        sessionStorage.setItem('token', tokenFinal);
-        
-        // COOKIE (la más persistente)
-        document.cookie = `auth_token=${tokenFinal}; path=/; max-age=86400; SameSite=Lax`;
-        document.cookie = `token=${tokenFinal}; path=/; max-age=86400; SameSite=Lax`;
-        
-        // INDEXEDDB (opción nuclear)
-        const request = indexedDB.open('tokenDB', 1);
-        request.onupgradeneeded = function(e) {
-            const db = e.target.result;
-            db.createObjectStore('tokens');
-        };
-        request.onsuccess = function(e) {
-            const db = e.target.result;
-            const tx = db.transaction('tokens', 'readwrite');
-            const store = tx.objectStore('tokens');
-            store.put(tokenFinal, 'auth_token');
-            console.log('💾 Token guardado en IndexedDB');
-        };
-        
-        console.log('✅ TOKEN GUARDADO EN 7 LUGARES DIFERENTES');
-        console.log('   Longitud:', tokenFinal.length);
-        console.log('   Primeros 20:', tokenFinal.substring(0, 20));
-        
-        // VERIFICACIÓN INMEDIATA
-        console.log('🔍 Verificando recuperación inmediata:',
-            localStorage.getItem('auth_token') ? 'OK' : 'FALLÓ');
-    } else {
-        console.error('❌ IMPOSIBLE: No hay token');
+    // 1. Vaciar en backend (opcional, por si acaso)
+    const token = window.sessionService.getToken();
+    if (token) {
+        fetch(`${window.API_URL}/emergency-clear-cart`, {
+            method: 'POST',
+            headers: { 'Authorization': 'Bearer ' + token }
+        }).then(res => res.json())
+          .then(data => console.log('🧹 Backend:', data))
+          .catch(err => console.error('🧹 Error:', err));
     }
+    
+    // 2. VACIAR EN FRONTEND (inmediato)
+    if (window.CartCore) {
+        // Vaciar estructura
+        window.CartCore.cart = { 
+            items: [], 
+            subtotal: 0, 
+            shipping: 0, 
+            total: 0 
+        };
+        
+        // Guardar en localStorage
+        window.CartCore.saveCartToStorage(window.CartCore.cart);
+        
+        // Notificar cambios
+        window.CartCore.notifyListeners();
+        
+        // Actualizar contadores manualmente
+        document.querySelectorAll('.cart-count').forEach(el => {
+            el.textContent = '0';
+        });
+        
+        console.log('✅ CARRITO VACIADO EN FRONTEND');
+    } else {
+        // Vaciar localStorage directamente
+        localStorage.removeItem('cart');
+        localStorage.removeItem('carrito');
+        localStorage.setItem('cart', JSON.stringify({ items: [] }));
+        console.log('✅ localStorage vaciado');
+    }
+    
+    // 3. Evento personalizado
+    window.dispatchEvent(new CustomEvent('cart-updated'));
+    
 } catch (e) {
-    console.error('Error guardando token:', e);
+    console.error('Error vaciando carrito:', e);
 }
 
-// Redirigir
+// Redirigir a Stripe
 window.location.href = data.url;
     } catch (error) {
         console.error('❌ Error completo:', error);
