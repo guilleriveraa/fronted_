@@ -194,21 +194,34 @@ async function procesarPagoConDireccion(direccionData) {
 
         console.log('✅ Sesión creada, redirigiendo a Stripe:', data.url);
 
-// ===== NUEVO: GUARDAR TOKEN ANTES DE REDIRIGIR =====
-console.log('📦 Guardando token en localStorage antes de redirigir...');
-const token = window.sessionService.getToken();
-if (token) {
-    // Guardar en múltiples lugares para asegurar
-    localStorage.setItem('auth_token', token);
-    localStorage.setItem('backup_token', token);
-    localStorage.setItem('session_token', token);
-    console.log('✅ Token guardado en localStorage (longitud:', token.length, ')');
+// ===== GUARDAR TOKEN EN MÚLTIPLES LUGARES =====
+console.log('📦 GUARDANDO TOKEN URGENTE...');
+const tokenParaGuardar = window.sessionService.getToken();
+
+if (tokenParaGuardar) {
+    // Guardar en TODOS los sitios posibles
+    localStorage.setItem('auth_token', tokenParaGuardar);
+    localStorage.setItem('token', tokenParaGuardar);
+    localStorage.setItem('backup_token', tokenParaGuardar);
+    localStorage.setItem('stripe_redirect_token', tokenParaGuardar);
     
-    // Verificar que se guardó
+    // Guardar también en sessionStorage por si acaso
+    sessionStorage.setItem('auth_token', tokenParaGuardar);
+    sessionStorage.setItem('token', tokenParaGuardar);
+    
+    // Guardar en una cookie simple (por si localStorage se borra)
+    document.cookie = `auth_token=${tokenParaGuardar}; path=/; max-age=3600`;
+    
+    console.log('✅ Token guardado en TODOS los sitios');
+    console.log('   - localStorage auth_token:', localStorage.getItem('auth_token') ? 'OK' : 'FAIL');
+    console.log('   - localStorage token:', localStorage.getItem('token') ? 'OK' : 'FAIL');
+    console.log('   - sessionStorage:', sessionStorage.getItem('auth_token') ? 'OK' : 'FAIL');
+    
+    // Verificación extra
     const verificado = localStorage.getItem('auth_token');
-    console.log('🔍 Verificación:', verificado ? 'OK' : 'FALLÓ');
+    console.log('🔍 Verificación final:', verificado ? '✅ Token disponible' : '❌ Token perdido');
 } else {
-    console.error('❌ ERROR: No se pudo obtener el token');
+    console.error('❌ ERROR CRÍTICO: No hay token que guardar');
 }
 
 // Redirigir a Stripe
