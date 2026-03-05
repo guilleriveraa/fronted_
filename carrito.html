@@ -65,23 +65,27 @@
     <div id="cartSummary" class="cart-summary"></div>
   </div>
 </main>
+<!-- Auth Modal -->
 <div id="authModal" class="auth-modal">
   <div class="auth-modal-content">
     <span class="auth-close">&times;</span>
     <div class="auth-forms">
-      <form id="loginForm" class="auth-form" data-form="login">
+      <!-- LOGIN (SIN FORM) -->
+      <div id="loginContainer" class="auth-form">
         <h3>Iniciar Sesión</h3>
         <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
         <input type="password" id="loginPassword" placeholder="Contraseña" required>
-        <button type="submit" class="btn-auth-submit">Entrar</button>
-      </form>
-      <form id="registerForm" class="auth-form" data-form="register" style="display:none;">
+        <button type="button" class="btn-auth-submit" id="loginButton">Entrar</button>
+      </div>
+      
+      <!-- REGISTER (SIN FORM) -->
+      <div id="registerContainer" class="auth-form" style="display:none;">
         <h3>Registrarse</h3>
         <input type="text" id="registerName" placeholder="Nombre" required>
         <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
         <input type="password" id="registerPassword" placeholder="Contraseña" required>
-        <button type="submit" class="btn-auth-submit">Registrar</button>
-      </form>
+        <button type="button" class="btn-auth-submit" id="registerButton">Registrar</button>
+      </div>
     </div>
   </div>
 </div>
