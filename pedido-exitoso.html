@@ -180,5 +180,47 @@
 <script src="js/ui/features/cookie-manager.ui.js"></script>
 <script src="js/ui/features/accessibility.ui.js"></script>
 
+<script>
+// VACIAR CARRITO AUTOMÁTICAMENTE AL CARGAR LA PÁGINA
+document.addEventListener('DOMContentLoaded', async function() {
+    console.log('🔥 Página de éxito cargada, intentando vaciar carrito');
+    
+    const token = window.sessionService?.getToken();
+    if (!token) {
+        console.log('❌ No hay token');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${window.API_URL}/emergency-clear-cart`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+        
+        const data = await response.json();
+        console.log('🔥 Respuesta:', data);
+        
+        if (data.vaciado) {
+            console.log('✅ CARRITO VACIADO POR EMERGENCIA');
+            // Notificar a CartCore
+            if (window.CartCore) {
+                window.CartCore.cart = { items: [], subtotal: 0, shipping: 0, total: 0 };
+                window.CartCore.saveCartToStorage(window.CartCore.cart);
+                window.CartCore.notifyListeners();
+                
+                // Actualizar contadores en la UI
+                if (window.CartCore.updateCartCounters) {
+                    window.CartCore.updateCartCounters();
+                }
+            }
+        }
+    } catch (err) {
+        console.error('❌ Error:', err);
+    }
+});
+</script>
+
 </body>
 </html>
