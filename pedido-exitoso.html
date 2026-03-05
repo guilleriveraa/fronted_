@@ -181,51 +181,45 @@
 <script src="js/ui/features/accessibility.ui.js"></script>
 
 <script>
-// ESPERAR A QUE TODO ESTÉ LISTO Y VACIAR CARRITO
-console.log('🔥 Script de emergencia cargado');
+// RECUPERAR TOKEN DE TODAS PARTES
+console.log('🔥 Buscando token...');
 
-function intentarVaciarCarrito() {
-    console.log('🔥 Intentando vaciar carrito...');
-    
-    // Esperar un poco a que todo esté listo
-    setTimeout(async () => {
-        // Obtener token
-        const token = window.sessionService?.getToken?.() || 
-                      localStorage.getItem('auth_token') ||
-                      localStorage.getItem('token');
+let token = localStorage.getItem('auth_token') ||
+            localStorage.getItem('backup_token') ||
+            localStorage.getItem('token') ||
+            window.sessionService?.getToken?.();
+
+console.log('📦 Token encontrado:', token ? '✅' : '❌');
+
+if (!token) {
+    console.log('❌ No hay token, esperando 2 segundos...');
+    setTimeout(() => {
+        token = localStorage.getItem('auth_token') ||
+                window.sessionService?.getToken?.();
+        console.log('⏳ Segundo intento - Token:', token ? '✅' : '❌');
         
-        console.log('🔑 Token:', token ? 'OK' : 'NO HAY');
-        
-        if (!token) {
-            console.log('❌ No hay token, reintentando en 1 segundo...');
-            setTimeout(intentarVaciarCarrito, 1000);
-            return;
-        }
-        
-        try {
-            const response = await fetch(`${window.API_URL}/emergency-clear-cart`, {
-                method: 'POST',
-                headers: { 'Authorization': 'Bearer ' + token }
-            });
-            const data = await response.json();
-            console.log('✅ RESULTADO:', data);
-            
-            if (data.vaciado && window.CartCore) {
-                window.CartCore.cart = { items: [], subtotal: 0, shipping: 0, total: 0 };
-                window.CartCore.saveCartToStorage(window.CartCore.cart);
-                window.CartCore.notifyListeners();
-            }
-        } catch (err) {
-            console.error('❌ Error:', err);
-        }
-    }, 500);
+        if (token) vaciarCarrito(token);
+    }, 2000);
+} else {
+    vaciarCarrito(token);
 }
 
-// Intentar cuando la página cargue
-if (document.readyState === 'complete') {
-    intentarVaciarCarrito();
-} else {
-    window.addEventListener('load', intentarVaciarCarrito);
+async function vaciarCarrito(token) {
+    console.log('🧹 Vaciando carrito con token:', token.substring(0, 20) + '...');
+    
+    try {
+        const response = await fetch(`${window.API_URL}/emergency-clear-cart`, {
+            method: 'POST',
+            headers: { 
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'application/json'
+            }
+        });
+        const data = await response.json();
+        console.log('✅ Resultado:', data);
+    } catch (err) {
+        console.error('❌ Error:', err);
+    }
 }
 </script>
 

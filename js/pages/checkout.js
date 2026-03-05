@@ -193,12 +193,26 @@ async function procesarPagoConDireccion(direccionData) {
         }
 
         console.log('✅ Sesión creada, redirigiendo a Stripe:', data.url);
-        
-        // Limpiar datos temporales (opcional, se puede hacer después del pago)
-        // localStorage.removeItem('direccion_envio');
-        
-        // Redirigir a Stripe
-        window.location.href = data.url;
+
+// ===== NUEVO: GUARDAR TOKEN ANTES DE REDIRIGIR =====
+console.log('📦 Guardando token en localStorage antes de redirigir...');
+const token = window.sessionService.getToken();
+if (token) {
+    // Guardar en múltiples lugares para asegurar
+    localStorage.setItem('auth_token', token);
+    localStorage.setItem('backup_token', token);
+    localStorage.setItem('session_token', token);
+    console.log('✅ Token guardado en localStorage (longitud:', token.length, ')');
+    
+    // Verificar que se guardó
+    const verificado = localStorage.getItem('auth_token');
+    console.log('🔍 Verificación:', verificado ? 'OK' : 'FALLÓ');
+} else {
+    console.error('❌ ERROR: No se pudo obtener el token');
+}
+
+// Redirigir a Stripe
+window.location.href = data.url;
 
     } catch (error) {
         console.error('❌ Error completo:', error);
