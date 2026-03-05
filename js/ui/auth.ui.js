@@ -83,42 +83,60 @@ window.InitManager.register('AuthUI', function() {
     }
   }
 
-  async function handleLogin() {
-    console.log('🔐 handleLogin ejecutado');
+  // En auth.ui.js, reemplaza handleLogin con esto:
+
+async function handleLogin(e) {
+    // Medidas antirrecarga extremas
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
     
-    try {
-      if (!window.sessionService) {
+    console.log('🔐 handleLogin: INICIO');
+    console.log('🔐 Evento:', e.type);
+    
+    if (!window.sessionService) {
+        console.error('❌ handleLogin: sessionService no disponible');
         alert("Error: Servicio de autenticación no disponible");
-        return;
-      }
-
-      const email = loginEmail.value;
-      const password = loginPassword.value;
-      
-      if (!email || !password) {
-        alert("Por favor, completa todos los campos");
-        return;
-      }
-
-      console.log('🔐 Intentando login con:', email);
-      const result = await window.sessionService.login(email, password);
-      console.log('🔐 Resultado:', result);
-      
-      if (result.success) {
-        closeModal();
-        loginEmail.value = '';
-        loginPassword.value = '';
-        if (window.updateSessionUI) {
-          window.updateSessionUI();
-        }
-      } else {
-        alert(result.error || "Error al iniciar sesión");
-      }
-    } catch (error) {
-      console.error("Error en login:", error);
-      alert("Error al conectar con el servidor");
+        return false;
     }
-  }
+
+    const email = loginEmail.value;
+    const password = loginPassword.value;
+    
+    if (!email || !password) {
+        alert("Por favor, completa todos los campos");
+        return false;
+    }
+    
+    console.log('🔐 handleLogin: Enviando credenciales para', email);
+
+    try {
+        const result = await window.sessionService.login(email, password);
+        console.log('🔐 handleLogin: Respuesta del servicio:', result);
+        
+        if (result.success) {
+            console.log('✅ handleLogin: Login exitoso');
+            closeModal();
+            loginEmail.value = '';
+            loginPassword.value = '';
+            if (window.updateSessionUI) {
+                window.updateSessionUI();
+            }
+        } else {
+            console.error('❌ handleLogin: Login falló (respuesta success=false)');
+            alert(result.error || "Error al iniciar sesión");
+        }
+    } catch (error) {
+        console.error('❌ handleLogin: ERROR CAPTURADO');
+        console.error('   Nombre:', error.name);
+        console.error('   Mensaje:', error.message);
+        console.error('   Stack:', error.stack);
+        alert("Error al conectar con el servidor: " + error.message);
+    }
+    
+    console.log('🔐 handleLogin: FIN');
+    return false; // Por si acaso
+}
 
   async function handleRegister() {
     console.log('📝 handleRegister ejecutado');
