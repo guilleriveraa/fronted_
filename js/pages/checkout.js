@@ -93,11 +93,32 @@ window.guardarDireccionYProceder = async function() {
     // Guardar en localStorage como backup
     localStorage.setItem('direccion_envio', JSON.stringify(direccionData));
 
-    // Cerrar modal
+    // Cerrar modal - VERSIÓN CORREGIDA
     const modalElement = document.getElementById('direccionModal');
     if (modalElement) {
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        if (modal) modal.hide();
+        try {
+            // Verificar si Bootstrap está definido
+            if (typeof bootstrap !== 'undefined') {
+                let modal = bootstrap.Modal.getInstance(modalElement);
+                if (!modal) {
+                    modal = new bootstrap.Modal(modalElement);
+                }
+                modal.hide();
+            } else {
+                console.warn('Bootstrap no está disponible, cerrando modal manualmente');
+                modalElement.style.display = 'none';
+                modalElement.classList.remove('show');
+                document.body.classList.remove('modal-open');
+                document.querySelector('.modal-backdrop')?.remove();
+            }
+        } catch (e) {
+            console.error('Error al cerrar modal:', e);
+            // Fallback: ocultar manualmente
+            modalElement.style.display = 'none';
+            modalElement.classList.remove('show');
+            document.body.classList.remove('modal-open');
+            document.querySelector('.modal-backdrop')?.remove();
+        }
     }
 
     // Proceder al pago
