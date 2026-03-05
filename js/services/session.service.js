@@ -90,15 +90,17 @@ async function register(nombre, email, password) {
 }
 
 // Exponer globalmente (para scripts sin módulos)
-function isLoggedIn() {
-    return !!getToken();
-}
-window.sessionService = {
-    isLoggedIn,
-    getToken,
-    getUser,
-    logout,
-    login,
-    register,
-    onChange  // AÑADIR
+const sessionService = {
+    isLoggedIn: () => !!getToken(),
+    getToken: () => getToken(),
+    getUser: () => getUser(),
+    logout: () => logout(),
+    login: (email, password) => login(email, password),
+    register: (nombre, email, password) => register(nombre, email, password),
+    onChange: (callback) => onChange(callback)
 };
+
+window.sessionService = sessionService;
+window.getToken = getToken; // Por si acaso
+
+console.log('✅ Session Service inicializado');
