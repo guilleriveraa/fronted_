@@ -194,39 +194,57 @@ async function procesarPagoConDireccion(direccionData) {
 
         console.log('✅ Sesión creada, redirigiendo a Stripe:', data.url);
 
-// ===== GUARDAR TOKEN EN MÚLTIPLES LUGARES =====
-console.log('📦 GUARDANDO TOKEN URGENTE...');
-const tokenParaGuardar = window.sessionService.getToken();
+// ===== GUARDADO OBSESIVO-COMPULSIVO DEL TOKEN =====
+console.log('💾 GUARDANDO TOKEN COMO SI NO HUBIERA UN MAÑANA...');
 
-if (tokenParaGuardar) {
-    // Guardar en TODOS los sitios posibles
-    localStorage.setItem('auth_token', tokenParaGuardar);
-    localStorage.setItem('token', tokenParaGuardar);
-    localStorage.setItem('backup_token', tokenParaGuardar);
-    localStorage.setItem('stripe_redirect_token', tokenParaGuardar);
+try {
+    const tokenFinal = window.sessionService.getToken();
     
-    // Guardar también en sessionStorage por si acaso
-    sessionStorage.setItem('auth_token', tokenParaGuardar);
-    sessionStorage.setItem('token', tokenParaGuardar);
-    
-    // Guardar en una cookie simple (por si localStorage se borra)
-    document.cookie = `auth_token=${tokenParaGuardar}; path=/; max-age=3600`;
-    
-    console.log('✅ Token guardado en TODOS los sitios');
-    console.log('   - localStorage auth_token:', localStorage.getItem('auth_token') ? 'OK' : 'FAIL');
-    console.log('   - localStorage token:', localStorage.getItem('token') ? 'OK' : 'FAIL');
-    console.log('   - sessionStorage:', sessionStorage.getItem('auth_token') ? 'OK' : 'FAIL');
-    
-    // Verificación extra
-    const verificado = localStorage.getItem('auth_token');
-    console.log('🔍 Verificación final:', verificado ? '✅ Token disponible' : '❌ Token perdido');
-} else {
-    console.error('❌ ERROR CRÍTICO: No hay token que guardar');
+    if (tokenFinal) {
+        // LOCALSTORAGE - Múltiples nombres
+        localStorage.setItem('auth_token', tokenFinal);
+        localStorage.setItem('token', tokenFinal);
+        localStorage.setToken = tokenFinal; // Por si acaso
+        localStorage['auth_token'] = tokenFinal; // Otra forma
+        
+        // SESSIONSTORAGE
+        sessionStorage.setItem('auth_token', tokenFinal);
+        sessionStorage.setItem('token', tokenFinal);
+        
+        // COOKIE (la más persistente)
+        document.cookie = `auth_token=${tokenFinal}; path=/; max-age=86400; SameSite=Lax`;
+        document.cookie = `token=${tokenFinal}; path=/; max-age=86400; SameSite=Lax`;
+        
+        // INDEXEDDB (opción nuclear)
+        const request = indexedDB.open('tokenDB', 1);
+        request.onupgradeneeded = function(e) {
+            const db = e.target.result;
+            db.createObjectStore('tokens');
+        };
+        request.onsuccess = function(e) {
+            const db = e.target.result;
+            const tx = db.transaction('tokens', 'readwrite');
+            const store = tx.objectStore('tokens');
+            store.put(tokenFinal, 'auth_token');
+            console.log('💾 Token guardado en IndexedDB');
+        };
+        
+        console.log('✅ TOKEN GUARDADO EN 7 LUGARES DIFERENTES');
+        console.log('   Longitud:', tokenFinal.length);
+        console.log('   Primeros 20:', tokenFinal.substring(0, 20));
+        
+        // VERIFICACIÓN INMEDIATA
+        console.log('🔍 Verificando recuperación inmediata:',
+            localStorage.getItem('auth_token') ? 'OK' : 'FALLÓ');
+    } else {
+        console.error('❌ IMPOSIBLE: No hay token');
+    }
+} catch (e) {
+    console.error('Error guardando token:', e);
 }
 
-// Redirigir a Stripe
+// Redirigir
 window.location.href = data.url;
-
     } catch (error) {
         console.error('❌ Error completo:', error);
         
