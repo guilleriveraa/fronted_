@@ -104,7 +104,6 @@ window.editarProducto = async function(id) {
     }
 };
 
-// Guardar producto (crear o actualizar)
 window.guardarProducto = async function() {
     // Validar campos obligatorios
     const nombre = document.getElementById('nombre').value;
@@ -130,14 +129,23 @@ window.guardarProducto = async function() {
     
     console.log('💾 Guardando producto:', producto);
     console.log('📡 URL:', url);
-    console.log('🔑 Token:', localStorage.getItem('token'));
+    
+    // 🔴 OBTENER TOKEN EXPLÍCITAMENTE
+    const token = localStorage.getItem('token');
+    console.log('🔑 Token:', token ? '✅ Sí' : '❌ No');
+    
+    if (!token) {
+        alert('No hay sesión activa. Por favor, inicia sesión de nuevo.');
+        window.location.href = 'login.html';
+        return;
+    }
     
     try {
         const response = await fetch(url, {
             method: method,
             headers: { 
-                'Content-Type': 'application/json'
-                // El token ya lo añade el interceptor en admin.js
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token  // ✅ AÑADIDO EXPLÍCITAMENTE
             },
             body: JSON.stringify(producto)
         });
@@ -146,19 +154,18 @@ window.guardarProducto = async function() {
         console.log('📥 Respuesta:', data);
         
         if (response.ok) {
-            // Cerrar modal
             productoModal?.hide();
             
-            // Mostrar notificación
             if (window.mostrarNotificacion) {
                 window.mostrarNotificacion(id ? '✅ Producto actualizado' : '✅ Producto creado', 'success');
             } else {
                 alert(id ? '✅ Producto actualizado' : '✅ Producto creado');
             }
             
-            cargarProductos(); // Recargar lista
+            cargarProductos();
         } else {
             const mensaje = data.message || 'Error al guardar';
+            console.error('❌ Error del servidor:', data);
             if (window.mostrarNotificacion) {
                 window.mostrarNotificacion('❌ ' + mensaje, 'danger');
             } else {
@@ -175,15 +182,18 @@ window.guardarProducto = async function() {
     }
 };
 
-// Eliminar producto
 window.eliminarProducto = async function(id) {
-    // Usar la función confirmarAccion de admin.js
     if (!window.confirmarAccion('¿Estás seguro de eliminar este producto?')) return;
     
     try {
         console.log('🗑️ Eliminando producto:', id);
+        const token = localStorage.getItem('token');  // ✅ OBTENER TOKEN
+        
         const response = await fetch(`${window.API_URL}/admin/productos/${id}`, {
-            method: 'DELETE'
+            method: 'DELETE',
+            headers: {
+                'Authorization': 'Bearer ' + token  // ✅ AÑADIR TOKEN
+            }
         });
         
         const data = await response.json();
