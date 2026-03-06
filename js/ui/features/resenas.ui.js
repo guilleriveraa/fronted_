@@ -14,18 +14,59 @@ class ResenasManager {
     }
 
     async cargarResenas() {
-        try {
-
-            const response = await fetch(`${window.API_URL}/productos/${this.productoId}/resenas`);
-            const data = await response.json();
-            
-            this.renderizarStats(data.stats);
-            this.renderizarResenas(data.resenas);
-            
-        } catch (error) {
-            console.error('Error cargando reseñas:', error);
-        }
+    try {
+        const response = await fetch(`${window.API_URL}/productos/${this.productoId}/resenas`);
+        const resenas = await response.json();
+        
+        // Calcular stats a partir de las reseñas
+        const stats = this.calcularStats(resenas);
+        
+        this.renderizarStats(stats);
+        this.renderizarResenas(resenas);
+        
+    } catch (error) {
+        console.error('Error cargando reseñas:', error);
     }
+}
+
+calcularStats(resenas) {
+    if (!resenas || resenas.length === 0) {
+        return {
+            promedio: 0,
+            total: 0,
+            cinco_estrellas: 0,
+            cuatro_estrellas: 0,
+            tres_estrellas: 0,
+            dos_estrellas: 0,
+            una_estrella: 0
+        };
+    }
+
+    const total = resenas.length;
+    let suma = 0;
+    const conteo = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+
+    resenas.forEach(r => {
+        // Usar 'puntuacion' (del backend) o 'calificacion' (del frontend)
+        const punt = r.puntuacion || r.calificacion;
+        suma += punt;
+        if (punt >= 5) conteo[5]++;
+        else if (punt >= 4) conteo[4]++;
+        else if (punt >= 3) conteo[3]++;
+        else if (punt >= 2) conteo[2]++;
+        else conteo[1]++;
+    });
+
+    return {
+        promedio: suma / total,
+        total: total,
+        cinco_estrellas: conteo[5],
+        cuatro_estrellas: conteo[4],
+        tres_estrellas: conteo[3],
+        dos_estrellas: conteo[2],
+        una_estrella: conteo[1]
+    };
+}
 
     renderizarStats(stats) {
     if (!this.statsContainer) return;
@@ -244,51 +285,58 @@ generarEstrellas(puntuacion) {
     }
 
     async enviarResena(e) {
-        e.preventDefault();
-        
-        const titulo = document.getElementById('resena-titulo').value;
-        const comentario = document.getElementById('resena-comentario').value;
-        const calificacion = window.calificacionSeleccionada;
+    e.preventDefault();
+    
+    const titulo = document.getElementById('resena-titulo').value;
+    const comentario = document.getElementById('resena-comentario').value;
+    const calificacion = window.calificacionSeleccionada;
 
-        if (!calificacion) {
-            alert('Por favor, selecciona una valoración');
-            return;
-        }
-
-        if (!comentario) {
-            alert('Por favor, escribe un comentario');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${window.API_URL}/productos/${this.productoId}/resenas`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + window.sessionService.getToken()
-                },
-                body: JSON.stringify({ titulo, comentario, calificacion })
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-    alert('✅ Reseña publicada correctamente. ¡Gracias por tu opinión!');
-    this.formContainer.innerHTML = `
-        <div class="resena-enviada">
-            <i class="fas fa-check-circle"></i>
-            <p>¡Gracias por tu reseña! Ya puedes verla publicada.</p>
-        </div>
-    `;
-    await this.cargarResenas(); // Recargar reseñas para mostrarla
-} else {
-    alert(data.message || 'Error al enviar la reseña');
-}
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error de conexión');
-        }
+    if (!calificacion) {
+        alert('Por favor, selecciona una valoración');
+        return;
     }
+
+    if (!comentario) {
+        alert('Por favor, escribe un comentario');
+        return;
+    }
+
+    try {
+        // 🔴 CAMBIO 1: URL CORRECTA (sin /productos/)
+        const response = await fetch(`${window.API_URL}/resenas`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + window.sessionService.getToken()
+            },
+            // 🔴 CAMBIO 2: Cuerpo con los nombres correctos que espera el backend
+            body: JSON.stringify({ 
+                productoId: this.productoId,  // El backend espera productoId
+                puntuacion: calificacion,      // El backend espera puntuacion
+                comentario: comentario,
+                titulo: titulo || null
+            })
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            alert('✅ Reseña enviada correctamente. Pendiente de aprobación.');
+            this.formContainer.innerHTML = `
+                <div class="resena-enviada">
+                    <i class="fas fa-check-circle"></i>
+                    <p>¡Gracias por tu reseña! Será visible tras ser aprobada.</p>
+                </div>
+            `;
+            await this.cargarResenas(); // Recargar reseñas
+        } else {
+            alert(data.message || 'Error al enviar la reseña');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    }
+}
 
     async verificarPuedeResenar() {
         if (!window.sessionService?.isLoggedIn()) return false;
