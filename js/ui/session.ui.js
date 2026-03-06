@@ -72,7 +72,7 @@ function addAdminLinkToMenu() {
     
     // Crear el nuevo enlace
     const adminLink = document.createElement('a');
-    adminLink.href = '/fronted/admin/index.html';
+    adminLink.href = '/admin/index.html';
     adminLink.className = 'dropdown-item admin-link';
     adminLink.innerHTML = '<i class="fas fa-cog"></i> Panel Administrador';
     
