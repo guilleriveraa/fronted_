@@ -84,51 +84,61 @@
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
     
     <script>
-        const API_URL = window.API_URL || 'http://localhost:3000/api';
+    const API_URL = 'https://json-production-48ce.up.railway.app/api';
 
-        document.getElementById('loginForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
+    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        const loginBtn = document.getElementById('loginBtn');
+        
+        loginBtn.disabled = true;
+        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando...';
+        
+        try {
+            // 1. Login normal
+            const loginRes = await fetch(`${API_URL}/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
             
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const loginBtn = document.getElementById('loginBtn');
+            const loginData = await loginRes.json();
             
-            loginBtn.disabled = true;
-            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando...';
-            
-            try {
-                const loginRes = await fetch(`${API_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email, contraseña: password })
-                });
-                
-                const loginData = await loginRes.json();
-                
-                if (!loginRes.ok) {
-                    throw new Error(loginData.message || 'Error al iniciar sesión');
-                }
-                
-                // Verificar si el usuario es admin (por email)
-                const adminEmails = ['pruba@gmail.com', 'admin@salamancavivela.com']; // AÑADE TU EMAIL AQUÍ
-                
-                if (adminEmails.includes(email)) {
-                    localStorage.setItem('token', loginData.token);
-                    window.location.href = 'index.html';
-                } else {
-                    document.getElementById('errorAlert').style.display = 'block';
-                    document.getElementById('errorAlert').textContent = 'No tienes permisos de administrador';
-                }
-                
-            } catch (error) {
-                console.error('Error:', error);
-                document.getElementById('errorAlert').style.display = 'block';
-                document.getElementById('errorAlert').textContent = error.message || 'Error al conectar';
-            } finally {
-                loginBtn.disabled = false;
-                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión';
+            if (!loginRes.ok) {
+                throw new Error(loginData.message || 'Credenciales incorrectas');
             }
-        });
-    </script>
+            
+            // 2. Verificar si es admin
+            const adminRes = await fetch(`${API_URL}/user/is-admin`, {
+                method: 'GET',
+                headers: { 'Authorization': 'Bearer ' + loginData.token }
+            });
+            
+            const adminData = await adminRes.json();
+            
+            if (adminData.isAdmin) {
+                localStorage.setItem('token', loginData.token);
+                localStorage.setItem('user', JSON.stringify({ 
+                    email: loginData.email,
+                    nombre: loginData.nombre 
+                }));
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('errorAlert').style.display = 'block';
+                document.getElementById('errorAlert').textContent = 'No tienes permisos de administrador';
+            }
+            
+        } catch (error) {
+            console.error('Error:', error);
+            document.getElementById('errorAlert').style.display = 'block';
+            document.getElementById('errorAlert').textContent = error.message || 'Error al conectar';
+        } finally {
+            loginBtn.disabled = false;
+            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión';
+        }
+    });
+</script>
 </body>
 </html>
