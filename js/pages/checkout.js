@@ -150,7 +150,7 @@ async function procesarPagoConDireccion(direccionData) {
         console.log('Token:', window.sessionService.getToken()?.substring(0, 20) + '...');
 
         // En checkout.js, dentro de procesarPagoConDireccion
-// Obtener cupón guardado - VERSIÓN CORREGIDA
+// Obtener cupón guardado - VERSIÓN CORREGIDA (campo 'descuento')
 const cuponGuardado = localStorage.getItem('cupon_aplicado');
 let cuponId = null;
 
@@ -158,22 +158,27 @@ if (cuponGuardado) {
     try {
         const cupon = JSON.parse(cuponGuardado);
         
-        // Mostrar el objeto completo para depurar
         console.log('🎫 Cupón completo desde localStorage:', cupon);
         
-        // Intentar obtener el ID de diferentes formas
-        cuponId = cupon.id || cupon.cuponId || null;
+        // Obtener el ID
+        cuponId = cupon.id;
         
-        // Mostrar toda la información disponible
+        // Obtener el valor del campo 'descuento' (que es el que tiene)
+        const valorDescuento = cupon.descuento;
+        
         console.log('🎫 Cupón aplicado ID:', cuponId);
-        console.log('🎫 Código:', cupon.codigo || cupon.code);
-        console.log('🎫 Tipo:', cupon.tipo || cupon.tipo_descuento || cupon.type);
-        console.log('🎫 Valor:', cupon.valor || cupon.valor_descuento || cupon.value);
+        console.log('🎫 Código:', cupon.codigo);
+        console.log('🎫 Tipo:', cupon.tipo);
+        console.log('🎫 Valor (descuento):', valorDescuento);
         
-        // Si no hay valor, mostrar advertencia
-        if (!cupon.valor && !cupon.valor_descuento) {
-            console.warn('⚠️ El cupón no tiene campo "valor" o "valor_descuento"');
-            console.warn('Campos disponibles:', Object.keys(cupon));
+        // AHORA SÍ tenemos el valor correctamente
+        
+        // Opcional: guardar el valor en el objeto para usarlo después si es necesario
+        cupon.valor = valorDescuento; // Añadimos el campo 'valor' para compatibilidad
+        
+        // Verificar que el valor existe
+        if (valorDescuento === undefined || valorDescuento === null) {
+            console.warn('⚠️ El cupón no tiene campo "descuento" válido');
         }
     } catch (e) {
         console.warn('Error parsing cupón:', e);
