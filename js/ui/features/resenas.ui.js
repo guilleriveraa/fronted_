@@ -310,12 +310,12 @@ generarEstrellas(puntuacion) {
                 'Authorization': 'Bearer ' + window.sessionService.getToken()
             },
             // 🔴 CAMBIO 2: Cuerpo con los nombres correctos que espera el backend
-            body: JSON.stringify({ 
-                productoId: this.productoId,  // El backend espera productoId
-                puntuacion: calificacion,      // El backend espera puntuacion
-                comentario: comentario,
-                titulo: titulo || null
-            })
+           body: JSON.stringify({ 
+    productoId: this.productoId,
+    puntuacion: calificacion,      // IMPORTANTE: se llama puntuacion en el backend
+    comentario: comentario,
+    titulo: titulo || null
+})
         });
 
         const data = await response.json();
