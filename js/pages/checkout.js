@@ -150,17 +150,31 @@ async function procesarPagoConDireccion(direccionData) {
         console.log('Token:', window.sessionService.getToken()?.substring(0, 20) + '...');
 
         // En checkout.js, dentro de procesarPagoConDireccion
+// Obtener cupón guardado - VERSIÓN CORREGIDA
 const cuponGuardado = localStorage.getItem('cupon_aplicado');
 let cuponId = null;
 
 if (cuponGuardado) {
     try {
         const cupon = JSON.parse(cuponGuardado);
-        cuponId = cupon.id;
+        
+        // Mostrar el objeto completo para depurar
+        console.log('🎫 Cupón completo desde localStorage:', cupon);
+        
+        // Intentar obtener el ID de diferentes formas
+        cuponId = cupon.id || cupon.cuponId || null;
+        
+        // Mostrar toda la información disponible
         console.log('🎫 Cupón aplicado ID:', cuponId);
-        console.log('🎫 Código:', cupon.codigo);
-        console.log('🎫 Tipo:', cupon.tipo);
-        console.log('🎫 Valor:', cupon.valor);
+        console.log('🎫 Código:', cupon.codigo || cupon.code);
+        console.log('🎫 Tipo:', cupon.tipo || cupon.tipo_descuento || cupon.type);
+        console.log('🎫 Valor:', cupon.valor || cupon.valor_descuento || cupon.value);
+        
+        // Si no hay valor, mostrar advertencia
+        if (!cupon.valor && !cupon.valor_descuento) {
+            console.warn('⚠️ El cupón no tiene campo "valor" o "valor_descuento"');
+            console.warn('Campos disponibles:', Object.keys(cupon));
+        }
     } catch (e) {
         console.warn('Error parsing cupón:', e);
     }
