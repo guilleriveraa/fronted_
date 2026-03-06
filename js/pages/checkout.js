@@ -149,19 +149,22 @@ async function procesarPagoConDireccion(direccionData) {
         console.log('📤 Enviando petición a Stripe...');
         console.log('Token:', window.sessionService.getToken()?.substring(0, 20) + '...');
 
-        // Obtener cupón guardado
-        const cuponGuardado = localStorage.getItem('cupon_aplicado');
-        let cuponId = null;
-        
-        if (cuponGuardado) {
-            try {
-                const cupon = JSON.parse(cuponGuardado);
-                cuponId = cupon.id;
-                console.log('🎫 Cupón aplicado:', cupon.codigo);
-            } catch (e) {
-                console.warn('Error parsing cupón:', e);
-            }
-        }
+        // En checkout.js, dentro de procesarPagoConDireccion
+const cuponGuardado = localStorage.getItem('cupon_aplicado');
+let cuponId = null;
+
+if (cuponGuardado) {
+    try {
+        const cupon = JSON.parse(cuponGuardado);
+        cuponId = cupon.id;
+        console.log('🎫 Cupón aplicado ID:', cuponId);
+        console.log('🎫 Código:', cupon.codigo);
+        console.log('🎫 Tipo:', cupon.tipo);
+        console.log('🎫 Valor:', cupon.valor);
+    } catch (e) {
+        console.warn('Error parsing cupón:', e);
+    }
+}
 
         // Crear sesión de pago
         const response = await fetch(`${window.API_URL}/create-checkout-session`, {
