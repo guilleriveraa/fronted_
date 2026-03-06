@@ -106,79 +106,110 @@ window.editarProducto = async function(id) {
 
 window.guardarProducto = async function() {
     // Validar campos obligatorios
-    const nombre = document.getElementById('nombre').value;
+    const nombre = document.getElementById('nombre').value.trim();
     const precio = document.getElementById('precio').value;
     const categoria = document.getElementById('categoria_id').value;
-    
-    if (!nombre || !precio || !categoria) {
-        alert('Por favor completa los campos obligatorios');
+
+    if (!nombre) {
+        alert('El nombre es obligatorio');
         return;
     }
-    
+    if (!precio || isNaN(parseFloat(precio)) || parseFloat(precio) <= 0) {
+        alert('El precio debe ser un número válido mayor que 0');
+        return;
+    }
+    if (!categoria || isNaN(parseInt(categoria))) {
+        alert('La categoría no es válida');
+        return;
+    }
+
+    // --- Construir el objeto solo con los campos que tienen valor ---
     const producto = {
         nombre: nombre,
-        descripcion: document.getElementById('descripcion').value,
         precio: parseFloat(precio),
-        categoria_id: parseInt(categoria),
-        imagen: document.getElementById('imagen').value
+        categoria_id: parseInt(categoria)
     };
-    
+
+    // Añadir descripción solo si tiene contenido
+    const descripcion = document.getElementById('descripcion').value.trim();
+    if (descripcion) {
+        producto.descripcion = descripcion;
+    }
+
+    // Añadir imagen solo si tiene contenido y parece una URL
+    const imagen = document.getElementById('imagen').value.trim();
+    if (imagen) {
+        // Validación básica de URL (opcional, pero ayuda)
+        try {
+            new URL(imagen); // Lanza error si no es URL válida
+            producto.imagen = imagen;
+        } catch (e) {
+            alert('La URL de la imagen no es válida');
+            return;
+        }
+    }
+
     const id = document.getElementById('productoId').value;
     const url = id ? `${window.API_URL}/admin/productos/${id}` : `${window.API_URL}/admin/productos`;
     const method = id ? 'PUT' : 'POST';
-    
-    console.log('💾 Guardando producto:', producto);
+
+    console.log('💾 Datos a enviar (limpios):', producto);
     console.log('📡 URL:', url);
-    
-    // 🔴 OBTENER TOKEN EXPLÍCITAMENTE
+
     const token = localStorage.getItem('token');
-    console.log('🔑 Token:', token ? '✅ Sí' : '❌ No');
-    
     if (!token) {
         alert('No hay sesión activa. Por favor, inicia sesión de nuevo.');
         window.location.href = 'login.html';
         return;
     }
-    
+
     try {
         const response = await fetch(url, {
             method: method,
-            headers: { 
+            headers: {
                 'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token  // ✅ AÑADIDO EXPLÍCITAMENTE
+                'Authorization': 'Bearer ' + token
             },
             body: JSON.stringify(producto)
         });
-        
-        const data = await response.json();
-        console.log('📥 Respuesta:', data);
-        
+
+        // --- Leer la respuesta como texto primero para ver qué devuelve ---
+        const responseText = await response.text();
+        console.log('📥 Respuesta del servidor (texto):', responseText);
+
+        let data;
+        try {
+            data = JSON.parse(responseText);
+        } catch (e) {
+            console.error('La respuesta no es JSON válido:', responseText);
+            throw new Error('Respuesta inválida del servidor');
+        }
+
         if (response.ok) {
+            console.log('✅ Éxito:', data);
             productoModal?.hide();
-            
             if (window.mostrarNotificacion) {
                 window.mostrarNotificacion(id ? '✅ Producto actualizado' : '✅ Producto creado', 'success');
             } else {
                 alert(id ? '✅ Producto actualizado' : '✅ Producto creado');
             }
-            
             cargarProductos();
         } else {
-            const mensaje = data.message || 'Error al guardar';
-            console.error('❌ Error del servidor:', data);
-            if (window.mostrarNotificacion) {
-                window.mostrarNotificacion('❌ ' + mensaje, 'danger');
+            // --- Mostrar el error detallado que viene del servidor ---
+            console.error('❌ Error del servidor (código 400):', data);
+            let mensajeError = 'Error al guardar. ';
+            if (data.message) {
+                mensajeError += data.message;
+            } else if (data.errors && data.errors.length > 0) {
+                mensajeError += data.errors.map(e => e.msg || e.message).join(', ');
             } else {
-                alert('❌ ' + mensaje);
+                mensajeError += 'Revise los datos e intente de nuevo.';
             }
+            alert('❌ ' + mensajeError);
         }
     } catch (error) {
-        console.error('❌ Error guardando producto:', error);
-        if (window.mostrarNotificacion) {
-            window.mostrarNotificacion('❌ Error de conexión', 'danger');
-        } else {
-            alert('Error de conexión');
-        }
+        console.error('❌ Error en la petición:', error);
+        alert('Error de conexión: ' + error.message);
     }
 };
 
