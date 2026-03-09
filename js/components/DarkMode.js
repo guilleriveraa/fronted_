@@ -27,7 +27,7 @@ window.InitManager.register('DarkMode', function() {
 
 
   // Aplicar tema guardado o preferencia del sistema
-  const savedTheme = localStorage.getItem('theme');
+  const savedTheme = localStorage.getItem('theme') || 'light';
 
   if (savedTheme) {
     setTheme(savedTheme);
