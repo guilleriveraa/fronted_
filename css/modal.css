@@ -176,3 +176,20 @@
 .social-btn.facebook:hover {
   background-color: #365899;
 }
+/* Estilo para el enlace de recuperación de contraseña */
+.forgot-password-link {
+    text-align: right;
+    margin: 10px 0 15px;
+}
+
+.forgot-password-link a {
+    color: #c62828;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: color 0.3s ease;
+}
+
+.forgot-password-link a:hover {
+    color: #8e0000;
+    text-decoration: underline;
+}
