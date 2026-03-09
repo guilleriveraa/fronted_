@@ -45,54 +45,73 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        try {
-            console.log('🌐 Enviando a:', window.API_URL + '/contact');
-            
-            const response = await fetch(window.API_URL + '/contact', {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name, email, subject, message })
-            });
-            
-            console.log('📥 Respuesta recibida. Status:', response.status);
-            
-            let data;
-            const contentType = response.headers.get('content-type');
-            
-            if (contentType && contentType.includes('application/json')) {
-                data = await response.json();
-                console.log('📦 Datos JSON:', data);
-            } else {
-                const text = await response.text();
-                console.log('📦 Respuesta texto:', text);
-                data = { message: text };
-            }
-            
-            if (response.ok) {
-                const msg = "✅ ¡Mensaje enviado correctamente! Gracias por contactarnos.";
-                console.log(msg);
-                if (status) {
-                    status.textContent = msg;
-                    status.style.color = "#008800";
-                }
-                contactForm.reset();
-            } else {
-                const msg = "❌ Error: " + (data.message || 'Error desconocido');
-                console.error(msg);
-                if (status) {
-                    status.textContent = msg;
-                    status.style.color = "#cc0000";
-                }
-            }
-            
-        } catch (err) {
-            console.error('❌ Error de conexión:', err);
-            if (status) {
-                status.textContent = "❌ Error al conectar con el servidor";
-                status.style.color = "#cc0000";
-            }
+        // Reemplaza el try/catch actual con esto:
+
+try {
+    console.log('🌐 Enviando a:', window.API_URL + '/contact');
+    
+    // Añadir timeout de 10 segundos
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
+    const response = await fetch(window.API_URL + '/contact', {
+        method: 'POST',
+        headers: { 
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, email, subject, message }),
+        signal: controller.signal
+    });
+    
+    clearTimeout(timeoutId);
+    
+    console.log('📥 Respuesta recibida. Status:', response.status);
+    console.log('📥 Headers:', [...response.headers.entries()]);
+    
+    // Leer la respuesta como texto primero para ver qué devuelve
+    const textResponse = await response.text();
+    console.log('📥 Respuesta texto:', textResponse);
+    
+    let data;
+    try {
+        data = JSON.parse(textResponse);
+        console.log('📥 Respuesta JSON:', data);
+    } catch (e) {
+        console.log('📥 No es JSON, es texto plano');
+        data = { message: textResponse };
+    }
+    
+    if (response.ok) {
+        const msg = "✅ ¡Mensaje enviado correctamente! Gracias por contactarnos.";
+        console.log(msg);
+        if (status) {
+            status.textContent = msg;
+            status.style.color = "#008800";
         }
+        contactForm.reset();
+    } else {
+        const msg = "❌ Error del servidor: " + (data.message || textResponse || 'Error desconocido');
+        console.error(msg);
+        if (status) {
+            status.textContent = msg;
+            status.style.color = "#cc0000";
+        }
+    }
+    
+} catch (err) {
+    console.error('❌ Error de conexión:', err);
+    console.error('❌ Nombre del error:', err.name);
+    console.error('❌ Mensaje:', err.message);
+    
+    let errorMsg = "❌ Error al conectar con el servidor";
+    if (err.name === 'AbortError') {
+        errorMsg = "❌ Tiempo de espera agotado (10 segundos)";
+    }
+    
+    if (status) {
+        status.textContent = errorMsg;
+        status.style.color = "#cc0000";
+    }
+}
     });
 });
