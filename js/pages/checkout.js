@@ -52,14 +52,36 @@ window.proceedToCheckout = async function() {
 window.guardarDireccionYProceder = async function() {
     console.log('📍 guardarDireccionYProceder llamado');
     
-    // 🔥 VERIFICAR SESIÓN OTRA VEZ (por si acaso)
+    // Verificar método de entrega
+    const metodo = document.querySelector('input[name="metodoEntrega"]:checked')?.value;
+    
+    if (!metodo) {
+        alert('Por favor, selecciona un método de entrega');
+        return;
+    }
+    
+    // 🔥 CASO 1: RECOGER EN TIENDA
+    if (metodo === 'tienda') {
+        console.log('🏪 Opción recogida en tienda seleccionada');
+        
+        if (!window.sessionService?.isLoggedIn()) {
+            alert('Debes iniciar sesión para continuar');
+            if (window.showAuthModal) window.showAuthModal('login');
+            return;
+        }
+        
+        await procesarRecogidaTienda();
+        return;
+    }
+    
+    // 🔥 CASO 2: ENVÍO A DOMICILIO (código actual)
     if (!window.sessionService?.isLoggedIn()) {
         alert('Debes iniciar sesión para continuar');
         if (window.showAuthModal) window.showAuthModal('login');
         return;
     }
     
-    // Obtener valores del formulario
+    // Obtener valores del formulario (tu código actual de validación)
     const nombre = document.getElementById('direccionNombre')?.value;
     const linea1 = document.getElementById('direccionLinea1')?.value;
     const ciudad = document.getElementById('direccionCiudad')?.value;
@@ -67,19 +89,17 @@ window.guardarDireccionYProceder = async function() {
     const pais = document.getElementById('direccionPais')?.value;
     const linea2 = document.getElementById('direccionLinea2')?.value || '';
 
-    // Validar campos obligatorios
     if (!nombre || !linea1 || !ciudad || !cp || !pais) {
         alert('Por favor, completa todos los campos obligatorios');
         return;
     }
 
-    // Construir dirección formateada
+    // Construir dirección (tu código actual)
     let direccion = `${linea1}, ${ciudad}, ${cp}, ${pais}`;
     if (linea2) {
         direccion = `${linea1} ${linea2}, ${ciudad}, ${cp}, ${pais}`;
     }
 
-    // Crear objeto de dirección completo
     const direccionData = {
         nombre: nombre,
         direccion_completa: direccion,
@@ -90,40 +110,80 @@ window.guardarDireccionYProceder = async function() {
         pais: pais
     };
 
-    // Guardar en localStorage como backup
     localStorage.setItem('direccion_envio', JSON.stringify(direccionData));
-
-    // Cerrar modal - VERSIÓN CORREGIDA
+    
+    // Cerrar modal (tu código actual)
     const modalElement = document.getElementById('direccionModal');
     if (modalElement) {
-        try {
-            // Verificar si Bootstrap está definido
-            if (typeof bootstrap !== 'undefined') {
-                let modal = bootstrap.Modal.getInstance(modalElement);
-                if (!modal) {
-                    modal = new bootstrap.Modal(modalElement);
-                }
-                modal.hide();
-            } else {
-                console.warn('Bootstrap no está disponible, cerrando modal manualmente');
-                modalElement.style.display = 'none';
-                modalElement.classList.remove('show');
-                document.body.classList.remove('modal-open');
-                document.querySelector('.modal-backdrop')?.remove();
-            }
-        } catch (e) {
-            console.error('Error al cerrar modal:', e);
-            // Fallback: ocultar manualmente
-            modalElement.style.display = 'none';
-            modalElement.classList.remove('show');
-            document.body.classList.remove('modal-open');
-            document.querySelector('.modal-backdrop')?.remove();
-        }
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) modal.hide();
     }
-
-    // Proceder al pago
+    
     await procesarPagoConDireccion(direccionData);
 };
+
+// ===== NUEVA FUNCIÓN PARA RECOGIDA EN TIENDA =====
+async function procesarRecogidaTienda() {
+    console.log('🏪 Procesando recogida en tienda');
+    
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const originalText = checkoutBtn ? checkoutBtn.innerHTML : '';
+    
+    try {
+        checkoutBtn.disabled = true;
+        checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+        
+        // 1. Obtener carrito actual
+        const cart = await window.CartCore.getCart();
+        
+        if (!cart || cart.items.length === 0) {
+            throw new Error('El carrito está vacío');
+        }
+        
+        // 2. Crear pedido en backend
+        const response = await fetch(`${window.API_URL}/pedidos/recogida-tienda`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + window.sessionService.getToken(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                items: cart.items,
+                subtotal: cart.subtotal
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Error al crear pedido');
+        }
+        
+        // 3. Vaciar carrito
+        window.CartCore.cart = { items: [], subtotal: 0, shipping: 0, total: 0 };
+        window.CartCore.saveCartToStorage(window.CartCore.cart);
+        window.CartCore.notifyListeners();
+        
+        // 4. Mostrar confirmación
+        alert(`✅ ¡Pedido #${data.pedidoId} creado!\n\nPasa por nuestra tienda a recogerlo. Te esperamos.`);
+        
+        // 5. Redirigir a página de confirmación (opcional)
+        window.location.href = `recogida-confirmada.html?pedido=${data.pedidoId}`;
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error: ' + error.message);
+        checkoutBtn.disabled = false;
+        checkoutBtn.innerHTML = originalText;
+    } finally {
+        // Cerrar modal
+        const modalElement = document.getElementById('direccionModal');
+        if (modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) modal.hide();
+        }
+    }
+}
 
 async function procesarPagoConDireccion(direccionData) {
     console.log('💳 procesarPagoConDireccion llamado');

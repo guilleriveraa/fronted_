@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recogida en Tienda - SalamancaVivela</title>
+    <link rel="stylesheet" href="css/Style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container py-5">
+        <div class="text-center mb-4">
+            <i class="fas fa-store text-success" style="font-size: 4rem;"></i>
+            <h1 class="mt-3">¡Pedido listo para recoger!</h1>
+            <p class="lead">Tu pedido ha sido registrado correctamente</p>
+        </div>
+        
+        <div class="card shadow-sm">
+            <div class="card-body text-center">
+                <i class="fas fa-check-circle text-success mb-3" style="font-size: 3rem;"></i>
+                <h3>Nº de pedido: <span id="pedidoId">XXXX</span></h3>
+                <p class="mt-3">Pasa por nuestra tienda a recogerlo y realiza el pago allí.</p>
+                <p><strong>Dirección:</strong> Calle Azafranal 26, Salamanca</p>
+                <p><strong>Horario:</strong> Lunes a Viernes 10:00-14:00 y 17:00-20:00</p>
+                <hr>
+                <p>Presenta este número en tienda para recoger tu pedido.</p>
+                <a href="index.html" class="btn btn-primary">Volver a la tienda</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const pedidoId = urlParams.get('pedido');
+        if (pedidoId) {
+            document.getElementById('pedidoId').textContent = pedidoId;
+        }
+    </script>
+</body>
+</html>

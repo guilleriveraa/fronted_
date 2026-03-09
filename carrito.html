@@ -142,6 +142,35 @@
                 <h5 class="modal-title"><i class="fas fa-truck"></i> Dirección de envío</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
+            <!-- ===== NUEVO: Opciones de entrega ===== -->
+<div class="mb-4 p-3 bg-light rounded">
+    <label class="form-label fw-bold mb-3">📦 Método de entrega</label>
+    
+    <div class="form-check mb-3 p-2 border rounded">
+        <input class="form-check-input" type="radio" name="metodoEntrega" 
+               id="envioDomicilio" value="domicilio" checked>
+        <label class="form-check-label w-100" for="envioDomicilio">
+            <div class="d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-truck me-2 text-primary"></i>Envío a domicilio</span>
+                <span class="badge bg-primary">4,99€</span>
+            </div>
+            <small class="text-muted d-block mt-1">Recibe tu pedido en casa</small>
+        </label>
+    </div>
+    
+    <div class="form-check p-2 border rounded">
+        <input class="form-check-input" type="radio" name="metodoEntrega" 
+               id="recogerTienda" value="tienda">
+        <label class="form-check-label w-100" for="recogerTienda">
+            <div class="d-flex justify-content-between align-items-center">
+                <span><i class="fas fa-store me-2 text-success"></i>Recoger en tienda</span>
+                <span class="badge bg-success">GRATIS</span>
+            </div>
+            <small class="text-muted d-block mt-1">Pasa por nuestra tienda a recogerlo y paga allí</small>
+        </label>
+    </div>
+</div>
+
             <div class="modal-body">
                 <form id="direccionForm">
                     <div class="mb-3">
@@ -225,6 +254,36 @@
         </div>
     </div>
 </footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const radios = document.querySelectorAll('input[name="metodoEntrega"]');
+        const formularioDir = document.getElementById('formularioDireccion');
+        const camposRequeridos = document.querySelectorAll('#direccionForm [required]');
+        
+        // Guardar estado inicial
+        if (radios.length > 0 && formularioDir) {
+            radios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'tienda') {
+                        // Ocultar formulario y quitar required
+                        formularioDir.style.display = 'none';
+                        camposRequeridos.forEach(campo => {
+                            campo.required = false;
+                        });
+                        console.log('🏪 Modo recogida en tienda activado');
+                    } else {
+                        // Mostrar formulario y poner required
+                        formularioDir.style.display = 'block';
+                        camposRequeridos.forEach(campo => {
+                            campo.required = true;
+                        });
+                        console.log('📦 Modo envío a domicilio activado');
+                    }
+                });
+            });
+        }
+    });
+</script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="js/core/constant.js"></script>
 <script src="js/core/init-manager.js"></script>
