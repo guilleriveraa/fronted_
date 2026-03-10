@@ -232,21 +232,51 @@
   <div class="auth-modal-content">
     <span class="auth-close">&times;</span>
     <div class="auth-forms">
-      <!-- LOGIN (SIN FORM) -->
-      <div id="loginContainer" class="auth-form">
-        <h3>Iniciar Sesión</h3>
-        <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
-        <input type="password" id="loginPassword" placeholder="Contraseña" required>
-        <button type="button" class="btn-auth-submit" id="loginButton">Entrar</button>
-      </div>
-      
-      <!-- REGISTER (SIN FORM) -->
+      <!-- LOGIN -->
+<div id="loginContainer" class="auth-form">
+    <h3>Iniciar Sesión</h3>
+    <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+    <input type="password" id="loginPassword" placeholder="Contraseña" required>
+    
+    <!-- Enlace de recuperación por EMAIL (el que ya tienes) -->
+    <div class="forgot-password-link">
+        <a href="forgot-password.html">📧 Recuperar por email</a>
+    </div>
+    
+    <!-- 🔥 NUEVO: Enlace de recuperación por PREGUNTAS DE SEGURIDAD -->
+    <div class="forgot-password-link" style="margin-top: 5px;">
+        <a href="recuperar-password.html">❓ Recuperar con pregunta de seguridad</a>
+    </div>
+    
+    <button type="button" class="btn-auth-submit" id="loginButton">Entrar</button>
+</div>
+
+      <!-- REGISTER CON PREGUNTAS DE SEGURIDAD -->
       <div id="registerContainer" class="auth-form" style="display:none;">
         <h3>Registrarse</h3>
         <input type="text" id="registerName" placeholder="Nombre" required>
         <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
         <input type="password" id="registerPassword" placeholder="Contraseña" required>
-        <button type="button" class="btn-auth-submit" id="registerButton">Registrar</button>
+        
+        <!-- 🔥 NUEVO: Preguntas de seguridad -->
+        <div class="security-question-section" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+          <h4 style="font-size: 14px; margin-bottom: 10px; color: #333;">🔐 Recuperación de cuenta</h4>
+          
+          <select id="registerPregunta" class="form-control" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;" required>
+            <option value="">Selecciona una pregunta de seguridad</option>
+            <option value="nombre_mascota">¿Cuál era el nombre de tu primera mascota?</option>
+            <option value="ciudad_nacimiento">¿En qué ciudad naciste?</option>
+            <option value="comida_favorita">¿Cuál es tu comida favorita?</option>
+            <option value="colegio">¿Nombre de tu colegio primario?</option>
+          </select>
+          
+          <input type="text" id="registerRespuesta" placeholder="Tu respuesta" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
+          <small style="color: #666; display: block; margin-top: 5px; font-size: 12px;">
+            Esta respuesta te ayudará a recuperar tu cuenta si olvidas la contraseña
+          </small>
+        </div>
+        
+        <button type="button" class="btn-auth-submit" id="registerButton" style="margin-top: 15px;">Registrar</button>
       </div>
     </div>
   </div>
