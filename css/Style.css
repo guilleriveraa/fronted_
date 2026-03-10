@@ -2445,3 +2445,46 @@ body {
         display: none; /* Se oculta en móvil, usa menú hamburguesa */
     }
 }
+/* Estilos para preguntas de seguridad */
+.security-question-section {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.security-question-section select,
+.security-question-section input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.security-question-section select:focus,
+.security-question-section input:focus {
+    border-color: #c62828;
+    outline: none;
+}
+.forgot-password-links {
+    display: flex;
+    justify-content: space-between;
+    margin: 15px 0;
+    padding: 0 5px;
+}
+
+.forgot-password-links a {
+    color: #c62828;
+    text-decoration: none;
+    font-size: 0.85rem;
+    transition: color 0.3s;
+}
+
+.forgot-password-links a:hover {
+    color: #8e0000;
+    text-decoration: underline;
+}
+
+.forgot-password-links i {
+    margin-right: 4px;
+    font-size: 0.8rem;
+}

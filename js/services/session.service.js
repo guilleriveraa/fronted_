@@ -72,10 +72,16 @@ async function login(email, password) {
     return { success: true, user };
 }
 
-async function register(nombre, email, password) {
+async function register(nombre, email, password, preguntaSeguridad, respuestaSeguridad) {
     const data = await request('/register', {
         method: 'POST',
-        body: JSON.stringify({ nombre, email, password })
+        body: JSON.stringify({ 
+            nombre, 
+            email, 
+            password,
+            preguntaSeguridad,
+            respuestaSeguridad 
+        })
     });
 
     const user = {
@@ -85,7 +91,7 @@ async function register(nombre, email, password) {
     };
 
     saveSession(data.token, user);
-    notifyListeners(); // AÑADIR
+    notifyListeners();
     return { success: true, user };
 }
 
@@ -96,7 +102,8 @@ const sessionService = {
     getUser: () => getUser(),
     logout: () => logout(),
     login: (email, password) => login(email, password),
-    register: (nombre, email, password) => register(nombre, email, password),
+    register: (nombre, email, password, preguntaSeguridad, respuestaSeguridad) => 
+        register(nombre, email, password, preguntaSeguridad, respuestaSeguridad),
     onChange: (callback) => onChange(callback)
 };
 

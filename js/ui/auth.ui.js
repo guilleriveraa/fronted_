@@ -19,7 +19,8 @@ window.InitManager.register('AuthUI', function() {
   const registerName = document.getElementById("registerName");
   const registerEmail = document.getElementById("registerEmail");
   const registerPassword = document.getElementById("registerPassword");
-  
+  const preguntaSeguridad = document.getElementById("registerPregunta");
+  const respuestaSeguridad = document.getElementById("registerRespuesta");
   // Botones
   const loginButton = document.getElementById("loginButton");
   const registerButton = document.getElementById("registerButton");
@@ -142,46 +143,61 @@ async function handleLogin(e) {
     console.log('📝 handleRegister ejecutado');
     
     try {
-      if (!window.sessionService) {
-        alert("Error: Servicio de autenticación no disponible");
-        return;
-      }
-
-      const nombre = registerName.value;
-      const email = registerEmail.value;
-      const password = registerPassword.value;
-      
-      if (!nombre || !email || !password) {
-        alert("Todos los campos son obligatorios");
-        return;
-      }
-
-      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (!emailRegex.test(email)) {
-        alert("Email con formato inválido");
-        return;
-      }
-
-      console.log('📝 Intentando registro con:', { nombre, email });
-      const result = await window.sessionService.register(nombre, email, password);
-      console.log('📝 Resultado:', result);
-      
-      if (result.success) {
-        closeModal();
-        registerName.value = '';
-        registerEmail.value = '';
-        registerPassword.value = '';
-        if (window.updateSessionUI) {
-          window.updateSessionUI();
+        if (!window.sessionService) {
+            alert("Error: Servicio de autenticación no disponible");
+            return;
         }
-      } else {
-        alert(result.error || "Error al registrarse");
-      }
+
+        const nombre = registerName.value;
+        const email = registerEmail.value;
+        const password = registerPassword.value;
+        
+        // 🔥 NUEVOS: Obtener valores de seguridad
+        const pregunta = preguntaSeguridad.value;
+        const respuesta = respuestaSeguridad.value;
+        
+        if (!nombre || !email || !password) {
+            alert("Todos los campos son obligatorios");
+            return;
+        }
+        
+        // 🔥 Validar preguntas de seguridad
+        if (!pregunta || !respuesta) {
+            alert("Debes seleccionar una pregunta de seguridad y responderla");
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            alert("Email con formato inválido");
+            return;
+        }
+
+        console.log('📝 Intentando registro con:', { nombre, email, pregunta });
+        const result = await window.sessionService.register(nombre, email, password, pregunta, respuesta);
+        console.log('📝 Resultado:', result);
+        
+        if (result.success) {
+            closeModal();
+            registerName.value = '';
+            registerEmail.value = '';
+            registerPassword.value = '';
+            // 🔥 Limpiar campos nuevos
+            preguntaSeguridad.value = '';
+            respuestaSeguridad.value = '';
+            
+            if (window.updateSessionUI) {
+                window.updateSessionUI();
+            }
+            alert("Registro exitoso. ¡Ya puedes iniciar sesión!");
+        } else {
+            alert(result.error || "Error al registrarse");
+        }
     } catch (error) {
-      console.error("Error en registro:", error);
-      alert("Error al conectar con el servidor");
+        console.error("Error en registro:", error);
+        alert("Error al conectar con el servidor");
     }
-  }
+}
   
   window.InitManager.log('✅ AuthUI listo');
 });
