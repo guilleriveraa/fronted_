@@ -3,9 +3,9 @@
 /* ========== VARIABLES Y RESET ========== */
 :root {
     /* PALETA SALAMANCA VIVELA - Colores fucsia */
-    --primary: #d81b60; /* Fucsia principal */
-    --primary-dark: #c2185b; /* Fucsia más oscuro */
-    --primary-light: #ff80ab; /* Fucsia claro */
+    --primary: #e83083; /* Fucsia principal */
+    --primary-dark: #b01c5f; /* Fucsia más oscuro */
+    --primary-light: #f8a5c2; /* Fucsia claro */
     --secondary: #ff9800; /* Naranja/Amarillo */
     --accent: #ffc107;
     --danger: #d32f2f;
@@ -27,7 +27,7 @@
     --text-on-primary: #ffffff;
     
     /* Bordes y efectos */
-    --border-color: #e0e0e0;
+    --border-color: #d81b60;
     --border-radius: 8px;
     --shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     --shadow-lg: 0 6px 20px rgba(0, 0, 0, 0.15);
