@@ -2462,7 +2462,7 @@ body {
 
 .security-question-section select:focus,
 .security-question-section input:focus {
-    border-color: #c62828;
+    border-color: #e83083;
     outline: none;
 }
 .forgot-password-links {
@@ -2473,7 +2473,7 @@ body {
 }
 
 .forgot-password-links a {
-    color: #c62828;
+    color: #e83083;
     text-decoration: none;
     font-size: 0.85rem;
     transition: color 0.3s;

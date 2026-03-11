@@ -381,7 +381,7 @@
 /* Estilos para el banner de recogida en tienda */
 .recogida-banner {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: 2px solid #c62828;
+    border: 2px solid #e83083;
     border-radius: 12px;
     padding: 20px;
     margin-bottom: 30px;
@@ -396,12 +396,12 @@
 
 .banner-content i {
     font-size: 48px;
-    color: #c62828;
+    color: #e83083;
 }
 
 .banner-content h3 {
     margin: 0 0 10px 0;
-    color: #c62828;
+    color: #e83083;
 }
 
 .banner-content p {
@@ -413,11 +413,11 @@
     font-family: monospace;
     font-size: 24px;
     font-weight: bold;
-    color: #c62828;
+    color: #e83083;
     background: white;
     padding: 10px 15px;
     border-radius: 8px;
-    border: 2px dashed #c62828;
+    border: 2px dashed #e83083;
     display: inline-block;
     margin: 10px 0;
 }

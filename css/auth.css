@@ -490,7 +490,7 @@
 
 .auth-error {
     background: #ffebee;
-    color: #c62828;
+    color: #e83083;
     padding: 12px 15px;
     border-radius: 8px;
     margin-bottom: 15px;
@@ -623,7 +623,7 @@
 .notification.error {
     border-left-color: #f44336;
     background: #ffebee;
-    color: #c62828;
+    color: #e83083;
 }
 
 .notification.info {
