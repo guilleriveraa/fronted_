@@ -142,15 +142,20 @@ async function procesarRecogidaTienda() {
         // 🎁 Obtener datos de regalo
         const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
         
-        // 🔥 NUEVO: Mapear items para incluir la talla explícitamente
+        // 🔥 Mapear items para incluir la talla
         const itemsParaEnviar = cart.items.map(item => ({
             id: item.id,
             quantity: item.quantity,
             price: item.price,
-            talla: item.talla || null  // ← INCLUIR TALLA
+            talla: item.talla || null
         }));
         
-        console.log('📦 Items a enviar (con talla):', itemsParaEnviar);
+        // ===== LOGS DE VERIFICACIÓN =====
+        console.log('📦 Items a enviar (VERIFICACIÓN):', itemsParaEnviar);
+        itemsParaEnviar.forEach((item, i) => {
+            console.log(`   Item ${i}: ID=${item.id}, Talla=${item.talla}`);
+        });
+        // ================================
         
         // 2. Crear pedido en backend
         const response = await fetch(`${window.API_URL}/pedidos/recogida-tienda`, {
@@ -160,7 +165,7 @@ async function procesarRecogidaTienda() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                items: itemsParaEnviar,  // ← AHORA SÍ ENVÍA LA TALLA
+                items: itemsParaEnviar,
                 subtotal: cart.subtotal,
                 gift: {
                     active: giftData.active,
@@ -169,6 +174,8 @@ async function procesarRecogidaTienda() {
                 }
             })
         });
+        
+        // ... resto del código ...
         
         const data = await response.json();
         
