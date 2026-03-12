@@ -53,7 +53,7 @@ function renderProducts(productos) {
     
     container.innerHTML = productos.map(p => {
         // Determinar si es textil (categoria_id = 2 - AJUSTA SEGÚN TU BD)
-        const esTextil = p.categoria_id === 2; // ⚠️ Verifica este ID
+        const esTextil = p.categoria_id === 2;
         
         // HTML para selector de tallas (solo si es textil)
         let tallasHTML = '';
@@ -119,7 +119,8 @@ function setupCategoryFilters() {
   });
 }
 
-addToCart = async function(productId) {
+// 🔥🔥🔥 CAMBIO 1: Definir la función como const para asegurar que existe
+const addToCart = async function(productId) {
     console.log('🎯 addToCart llamado con productId:', productId);
     
     if (!window.sessionService?.isLoggedIn()) {
@@ -215,11 +216,11 @@ addToCart = async function(productId) {
                 itemExistente.quantity += 1;
                 console.log('➕ Incrementando cantidad a:', itemExistente.quantity);
             } else {
-                // Crear nuevo item
+                // 🔥🔥🔥 CAMBIO 2: Convertir precio a número
                 const nuevoItem = {
                     id: productId,
                     name: producto.nombre,
-                    price: producto.precio,
+                    price: parseFloat(producto.precio),  // ← ¡CONVERTIR A NÚMERO!
                     quantity: 1,
                     image: producto.imagen || '',
                     talla: talla
@@ -252,6 +253,8 @@ addToCart = async function(productId) {
         alert('Error de conexión');
     }
 };
+
+// 🔥🔥🔥 CAMBIO 3: Exponer la función globalmente (DESPUÉS de definirla)
 window.addToCart = addToCart;
 
 window.quickView = async function(productId) {
