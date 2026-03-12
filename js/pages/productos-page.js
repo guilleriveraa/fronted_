@@ -51,30 +51,60 @@ function renderProducts(productos) {
         return;
     }
     
-    container.innerHTML = productos.map(p => `
-        <div class="product-card" data-categoria="${p.categoria_nombre?.toLowerCase() || ''}">
-            <a href="producto-detalle.html?id=${p.id}" class="product-link">
-                <div class="product-image">
-                    <img src="${p.imagen}" 
-                         alt="${p.nombre}"
-                         onerror="this.src='https://via.placeholder.com/300x300?text=Sin+imagen'">
-                    <div class="product-overlay">
-                        <span class="btn-quick-view">Ver detalles</span>
-                    </div>
+    container.innerHTML = productos.map(p => {
+        // Determinar si es textil (categoria_id = 2 - AJUSTA SEGÚN TU BD)
+        const esTextil = p.categoria_id === 2; // ⚠️ Verifica este ID
+        
+        // HTML para selector de tallas (solo si es textil)
+        let tallasHTML = '';
+        if (esTextil) {
+            tallasHTML = `
+                <div class="talla-selector" style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                    <label for="talla-${p.id}" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 0.9rem;">
+                        <i class="fas fa-tshirt" style="color: #e83083;"></i> Talla:
+                    </label>
+                    <select id="talla-${p.id}" class="talla-select" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
+                        <option value="">Selecciona talla</option>
+                        <option value="XS">XS</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                    </select>
                 </div>
-                <div class="product-info">
-                    <h3>${p.nombre}</h3>
-                    <p class="product-description">${p.descripcion || 'Producto artesanal de Salamanca'}</p>
-                    <div class="product-price">
-                        <span class="current-price">${parseFloat(p.precio).toFixed(2)}€</span>
+            `;
+        }
+        
+        return `
+            <div class="product-card" data-categoria="${p.categoria_nombre?.toLowerCase() || ''}" data-categoria-id="${p.categoria_id}">
+                <a href="producto-detalle.html?id=${p.id}" class="product-link">
+                    <div class="product-image">
+                        <img src="${p.imagen}" 
+                             alt="${p.nombre}"
+                             onerror="this.src='https://via.placeholder.com/300x300?text=Sin+imagen'">
+                        <div class="product-overlay">
+                            <span class="btn-quick-view">Ver detalles</span>
+                        </div>
                     </div>
-                </div>
-            </a>
-            <button class="btn-add-cart" onclick="addToCart(${p.id})">
-                <i class="fas fa-shopping-cart"></i> Añadir al carrito
-            </button>
-        </div>
-    `).join('');
+                    <div class="product-info">
+                        <h3>${p.nombre}</h3>
+                        <p class="product-description">${p.descripcion || 'Producto artesanal de Salamanca'}</p>
+                        <div class="product-price">
+                            <span class="current-price">${parseFloat(p.precio).toFixed(2)}€</span>
+                        </div>
+                    </div>
+                </a>
+                
+                <!-- Selector de tallas (solo textil) -->
+                ${tallasHTML}
+                
+                <button class="btn-add-cart" onclick="addToCart(${p.id})">
+                    <i class="fas fa-shopping-cart"></i> Añadir al carrito
+                </button>
+            </div>
+        `;
+    }).join('');
 }
 
 function setupCategoryFilters() {
@@ -90,33 +120,71 @@ function setupCategoryFilters() {
 }
 
 window.addToCart = async function(productId) {
-  if (!window.sessionService?.isLoggedIn()) {
-    if (window.showAuthModal) window.showAuthModal('login');
-    return;
-  }
-  
-  try {
-    const response = await fetch(`${window.API_URL}/cart/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + window.sessionService.getToken()
-      },
-      body: JSON.stringify({ productId, quantity: 1 })
-    });
-    
-    const data = await response.json();
-    
-    if (response.ok) {
-      alert('✅ Producto añadido al carrito');
-      if (window.CartCore) window.CartCore.updateCartCounters();
-    } else {
-      alert(data.message || 'Error al añadir producto');
+    if (!window.sessionService?.isLoggedIn()) {
+        if (window.showAuthModal) window.showAuthModal('login');
+        return;
     }
-  } catch (error) {
-    console.error('Error:', error);
-    alert('Error de conexión');
-  }
+    
+    // Obtener el producto para saber si es textil
+    let esTextil = false;
+    try {
+        const response = await fetch(`${window.API_URL}/productos/${productId}`);
+        if (response.ok) {
+            const producto = await response.json();
+            esTextil = producto.categoria_id === 2; // ⚠️ Mismo ID que arriba
+        }
+    } catch (error) {
+        console.error('Error obteniendo producto:', error);
+    }
+    
+    let talla = null;
+    
+    // Si es textil, obtener la talla seleccionada
+    if (esTextil) {
+        const select = document.getElementById(`talla-${productId}`);
+        if (!select) {
+            alert('Error: No se encontró el selector de tallas');
+            return;
+        }
+        
+        talla = select.value;
+        
+        if (!talla) {
+            alert('Por favor, selecciona una talla');
+            return;
+        }
+    }
+    
+    try {
+        const response = await fetch(`${window.API_URL}/cart/add`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + window.sessionService.getToken()
+            },
+            body: JSON.stringify({ 
+                productId, 
+                quantity: 1,
+                talla: talla // Incluir talla si existe
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            alert('✅ Producto añadido al carrito');
+            if (window.CartCore) {
+                // Usar el nuevo método addToCart de CartCore
+                await window.CartCore.addToCart(productId, 1, talla);
+                window.CartCore.updateCartCounters();
+            }
+        } else {
+            alert(data.message || 'Error al añadir producto');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error de conexión');
+    }
 };
 
 window.quickView = async function(productId) {

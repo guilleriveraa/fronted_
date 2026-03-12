@@ -68,9 +68,12 @@ async function renderCartPage() {
                              class="cart-product-img"
                              onerror="this.src='https://via.placeholder.com/80'">
                         <div class="cart-product-info">
-                            <h3>${item.name}</h3>
-                            <p class="product-description">${item.description || ''}</p>
-                        </div>
+    <h3>${item.name}</h3>
+    <p class="product-description">${item.description || ''}</p>
+    ${item.talla ? `<p class="product-talla" style="font-size: 0.9rem; color: #e83083; margin-top: 5px;">
+        <i class="fas fa-tshirt"></i> Talla: <strong>${item.talla}</strong>
+    </p>` : ''}
+</div>
                     </div>
                     <div class="cart-price">${item.price.toFixed(2)}€</div>
                     <div class="cart-quantity">

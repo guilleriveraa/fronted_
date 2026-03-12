@@ -107,7 +107,7 @@ getEmptyCart() {
         tax: 0,
         shipping: 0,
         total: 0,
-        gift: {  // 🎁 NUEVO
+        gift: {
             active: false,
             message: '',
             cost: 2.00
@@ -138,6 +138,48 @@ setGiftOption(active, message = '') {
         resolve(cart.gift);
     });
 }
+// 🆕 NUEVO: Añadir producto al carrito con talla
+async addToCart(productId, quantity = 1, talla = null) {
+    const token = localStorage.getItem(window.TOKEN_KEY);
+    
+    try {
+        // Si no hay token, modo offline no permitido
+        if (!token) {
+            window.errorHandler?.warning('Debes iniciar sesión para añadir productos');
+            return false;
+        }
+
+        const response = await fetch(`${window.API_URL}/cart/add`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + token
+            },
+            body: JSON.stringify({ 
+                productId, 
+                quantity,
+                talla // 🆕 Incluir talla
+            })
+        });
+
+        if (!response.ok) {
+            throw new Error('Error al añadir producto');
+        }
+
+        // Invalidar caché y recargar carrito
+        this.cart = null;
+        await this.getCart();
+        this.notifyListeners();
+        
+        window.errorHandler?.success('Producto añadido al carrito');
+        return true;
+
+    } catch (error) {
+        console.error('Error adding to cart:', error);
+        window.errorHandler?.error('Error al añadir producto');
+        return false;
+    }
+}
     // Guardar carrito en localStorage (offline)
     saveCartToStorage(cart) {
         // ===== MEJORADO: Añadir timestamp =====
@@ -149,6 +191,7 @@ setGiftOption(active, message = '') {
     }
 
     // Recuperar carrito de localStorage
+// Recuperar carrito de localStorage
 getCartFromStorage() {
     const saved = localStorage.getItem('svl_cart');
     if (!saved) return null;
@@ -159,6 +202,14 @@ getCartFromStorage() {
         // 🎁 NUEVO: Añadir propiedad gift si no existe (para compatibilidad)
         if (!cart.gift) {
             cart.gift = { active: false, message: '', cost: 2.00 };
+        }
+        
+        // 🆕 NUEVO: Asegurar que cada item tiene campo talla (para compatibilidad)
+        if (cart.items) {
+            cart.items = cart.items.map(item => ({
+                ...item,
+                talla: item.talla || null // Si no existe, poner null
+            }));
         }
         
         // ===== NUEVO: Validar que no sea demasiado antiguo (24h) =====

@@ -277,3 +277,23 @@
     border-color: var(--primary, #e83083);
     box-shadow: 0 0 0 2px rgba(232, 48, 131, 0.1);
 }
+/* Estilo para la talla en el carrito */
+.product-talla {
+    font-size: 0.9rem;
+    color: #e83083;
+    margin-top: 5px;
+    padding: 2px 0;
+}
+
+.product-talla i {
+    margin-right: 5px;
+    font-size: 0.85rem;
+}
+
+.product-talla strong {
+    font-weight: 600;
+    background: #f8f8f8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    color: #333;
+}
