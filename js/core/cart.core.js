@@ -1,17 +1,23 @@
 // js/core/cart.core.js - Lógica central del carrito MEJORADA
-
 class CartCore {
-    constructor() {
-        this.cart = null;
-        this.listeners = [];
-        this.notifyTimeout = null;
-        
-        // ===== NUEVO: Sincronización entre pestañas =====
-        this.setupCrossTabSync();
-        
-        // ===== NUEVO: Cargar carrito inicial =====
-        this.init();
-    }
+constructor() {
+    this.cart = null;
+    this.listeners = [];
+    this.notifyTimeout = null;
+    
+    // 🎁 NUEVO: Inicializar opción de regalo
+    this.gift = {
+        active: false,
+        message: '',
+        cost: 2.00
+    };
+    
+    // ===== NUEVO: Sincronización entre pestañas =====
+    this.setupCrossTabSync();
+    
+    // ===== NUEVO: Cargar carrito inicial =====
+    this.init();
+}
 
     // ===== NUEVO: Inicialización =====
     async init() {
@@ -94,17 +100,44 @@ class CartCore {
     }
 
     // Carrito vacío por defecto
-    getEmptyCart() {
-        return {
-            items: [],
-            subtotal: 0,
-            tax: 0,
-            shipping: 0,
-            total: 0,
-            lastUpdated: new Date().toISOString() // ===== NUEVO: timestamp =====
-        };
-    }
-
+getEmptyCart() {
+    return {
+        items: [],
+        subtotal: 0,
+        tax: 0,
+        shipping: 0,
+        total: 0,
+        gift: {  // 🎁 NUEVO
+            active: false,
+            message: '',
+            cost: 2.00
+        },
+        lastUpdated: new Date().toISOString()
+    };
+}
+// 🎁 NUEVO: Establecer opción de regalo
+setGiftOption(active, message = '') {
+    return new Promise(async (resolve) => {
+        const cart = await this.getCart();
+        
+        // Asegurar que existe el objeto gift
+        if (!cart.gift) {
+            cart.gift = { active: false, message: '', cost: 2.00 };
+        }
+        
+        cart.gift.active = active;
+        cart.gift.message = message.substring(0, 200); // Limitar a 200 caracteres
+        
+        // Actualizar carrito
+        this.cart = cart;
+        this.updateCartTotals(cart);
+        this.saveCartToStorage(cart);
+        this.notifyListeners();
+        
+        console.log('🎁 Opción de regalo actualizada:', cart.gift);
+        resolve(cart.gift);
+    });
+}
     // Guardar carrito en localStorage (offline)
     saveCartToStorage(cart) {
         // ===== MEJORADO: Añadir timestamp =====
@@ -116,33 +149,38 @@ class CartCore {
     }
 
     // Recuperar carrito de localStorage
-    getCartFromStorage() {
-        const saved = localStorage.getItem('svl_cart');
-        if (!saved) return null;
+getCartFromStorage() {
+    const saved = localStorage.getItem('svl_cart');
+    if (!saved) return null;
+    
+    try {
+        let cart = JSON.parse(saved);
         
-        try {
-            const cart = JSON.parse(saved);
-            
-            // ===== NUEVO: Validar que no sea demasiado antiguo (24h) =====
-            if (cart.lastUpdated) {
-                const lastUpdate = new Date(cart.lastUpdated);
-                const now = new Date();
-                const hoursDiff = (now - lastUpdate) / (1000 * 60 * 60);
-                
-                if (hoursDiff > 24) {
-                    console.log('🗑️ Carrito offline demasiado antiguo, limpiando...');
-                    localStorage.removeItem('svl_cart');
-                    return null;
-                }
-            }
-            
-            return cart;
-        } catch (e) {
-            console.error('Error parsing cart from storage:', e);
-            localStorage.removeItem('svl_cart');
-            return null;
+        // 🎁 NUEVO: Añadir propiedad gift si no existe (para compatibilidad)
+        if (!cart.gift) {
+            cart.gift = { active: false, message: '', cost: 2.00 };
         }
+        
+        // ===== NUEVO: Validar que no sea demasiado antiguo (24h) =====
+        if (cart.lastUpdated) {
+            const lastUpdate = new Date(cart.lastUpdated);
+            const now = new Date();
+            const hoursDiff = (now - lastUpdate) / (1000 * 60 * 60);
+            
+            if (hoursDiff > 24) {
+                console.log('🗑️ Carrito offline demasiado antiguo, limpiando...');
+                localStorage.removeItem('svl_cart');
+                return null;
+            }
+        }
+        
+        return cart;
+    } catch (e) {
+        console.error('Error parsing cart from storage:', e);
+        localStorage.removeItem('svl_cart');
+        return null;
     }
+}
 
     // Cambiar cantidad de un producto
     async changeQty(productId, delta) {
@@ -275,15 +313,24 @@ class CartCore {
         }
     }
 
-    // Calcular totales del carrito
-    updateCartTotals(cart) {
-        cart.subtotal = cart.items.reduce((sum, item) => 
-            sum + (item.price * item.quantity), 0
-        );
-        cart.tax = 0;
-        cart.shipping = cart.subtotal > 50 ? 0 : 4.99;
-        cart.total = cart.subtotal + cart.shipping;
-    }
+    // Calcular totales del carrito (con opción de regalo)
+updateCartTotals(cart) {
+    // Calcular subtotal de productos
+    const itemsTotal = cart.items.reduce((sum, item) => 
+        sum + (item.price * item.quantity), 0
+    );
+    
+    // 🎁 Añadir coste de regalo si está activo
+    const giftCost = (cart.gift && cart.gift.active) ? (cart.gift.cost || 2.00) : 0;
+    
+    cart.subtotal = itemsTotal + giftCost;
+    cart.tax = 0;
+    
+    // El envío se calcula sobre el total de productos (sin regalo)
+    // para no regalar envío gratis con el extra
+    cart.shipping = itemsTotal > 50 ? 0 : 4.99;
+    cart.total = cart.subtotal + cart.shipping;
+}
 
     // Sistema de eventos MEJORADO
     onChange(callback) {

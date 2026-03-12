@@ -241,3 +241,39 @@
     background: #e0e0e0;
     transform: none;
 }
+/* Opción de regalo */
+.gift-option {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary, #e83083);
+}
+
+.gift-option .form-check-input:checked {
+    background-color: var(--primary, #e83083);
+    border-color: var(--primary, #e83083);
+}
+
+.gift-option textarea:focus {
+    border-color: var(--primary, #e83083);
+    box-shadow: 0 0 0 2px rgba(232, 48, 131, 0.1);
+}
+/* Opción de regalo en resumen */
+.gift-option-summary {
+    margin: 15px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    border-left: 4px solid var(--primary, #e83083);
+}
+
+.gift-option-summary .form-check-input:checked {
+    background-color: var(--primary, #e83083);
+    border-color: var(--primary, #e83083);
+}
+
+.gift-option-summary textarea:focus {
+    border-color: var(--primary, #e83083);
+    box-shadow: 0 0 0 2px rgba(232, 48, 131, 0.1);
+}

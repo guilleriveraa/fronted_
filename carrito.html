@@ -64,6 +64,23 @@
     <div id="cartContainer" class="cart-container"></div>
     <div id="cartSummary" class="cart-summary"></div>
   </div>
+   <!-- 🎁 Opción de regalo -->
+    <div class="gift-option" style="margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 8px;">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" id="giftCheckbox">
+            <label class="form-check-label fw-bold" for="giftCheckbox">
+                🎁 ¿Es un regalo? (+2€)
+            </label>
+        </div>
+        
+        <div id="giftMessageContainer" style="display: none; margin-top: 15px;">
+            <label for="giftMessage" class="form-label">Mensaje para la tarjeta:</label>
+            <textarea class="form-control" id="giftMessage" rows="3" maxlength="200" placeholder="Escribe aquí tu dedicatoria..."></textarea>
+            <small class="text-muted">El mensaje se incluirá en una tarjeta dentro del paquete.</small>
+        </div>
+    </div>
+    
+  </div>
 </main>
 <!-- Auth Modal -->
 <div id="authModal" class="auth-modal">

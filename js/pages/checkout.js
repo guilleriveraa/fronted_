@@ -122,7 +122,6 @@ window.guardarDireccionYProceder = async function() {
     await procesarPagoConDireccion(direccionData);
 };
 
-// ===== NUEVA FUNCIÓN PARA RECOGIDA EN TIENDA =====
 async function procesarRecogidaTienda() {
     console.log('🏪 Procesando recogida en tienda');
     
@@ -140,6 +139,9 @@ async function procesarRecogidaTienda() {
             throw new Error('El carrito está vacío');
         }
         
+        // 🎁 Obtener datos de regalo
+        const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
+        
         // 2. Crear pedido en backend
         const response = await fetch(`${window.API_URL}/pedidos/recogida-tienda`, {
             method: 'POST',
@@ -149,7 +151,12 @@ async function procesarRecogidaTienda() {
             },
             body: JSON.stringify({
                 items: cart.items,
-                subtotal: cart.subtotal
+                subtotal: cart.subtotal,
+                gift: {
+                    active: giftData.active,
+                    message: giftData.message || '',
+                    cost: giftData.active ? 2.00 : 0
+                }
             })
         });
         
@@ -167,7 +174,7 @@ async function procesarRecogidaTienda() {
         // 4. Mostrar confirmación
         alert(`✅ ¡Pedido #${data.pedidoId} creado!\n\nPasa por nuestra tienda a recogerlo. Te esperamos.`);
         
-        // 5. Redirigir a página de confirmación (opcional)
+        // 5. Redirigir a página de confirmación
         window.location.href = `recogida-confirmada.html?pedido=${data.pedidoId}`;
         
     } catch (error) {
@@ -176,7 +183,6 @@ async function procesarRecogidaTienda() {
         checkoutBtn.disabled = false;
         checkoutBtn.innerHTML = originalText;
     } finally {
-        // Cerrar modal
         const modalElement = document.getElementById('direccionModal');
         if (modalElement) {
             const modal = bootstrap.Modal.getInstance(modalElement);
@@ -245,18 +251,31 @@ if (cuponGuardado) {
     }
 }
 
-        // Crear sesión de pago
-        const response = await fetch(`${window.API_URL}/create-checkout-session`, {
-            method: 'POST',
-            headers: {
-                'Authorization': 'Bearer ' + window.sessionService.getToken(),
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                cuponId: cuponId,
-                direccion: direccionData
-            })
-        });
+// 🎁 NUEVO: Obtener datos de regalo del carrito
+const cart = await window.CartCore.getCart();
+const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
+
+console.log('🎁 Datos de regalo:', giftData);
+
+// Crear sesión de pago
+const response = await fetch(`${window.API_URL}/create-checkout-session`, {
+    method: 'POST',
+    headers: {
+        'Authorization': 'Bearer ' + window.sessionService.getToken(),
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+        cuponId: cuponId,
+        direccion: direccionData,
+        // 🎁 NUEVO: Añadir datos de regalo
+        gift: {
+            active: giftData.active,
+            message: giftData.message || '',
+            cost: giftData.active ? 2.00 : 0
+        }
+    })
+});
+
 
         const data = await response.json();
 

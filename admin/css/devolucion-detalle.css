@@ -34,11 +34,11 @@
 }
 
 .page-title i {
-    color: #c62828;
+    color: #e83083;
 }
 
 .return-id {
-    color: #c62828;
+    color: #e83083;
     font-weight: 700;
 }
 
@@ -54,11 +54,11 @@
     border-radius: 8px;
     padding: 20px;
     margin-bottom: 20px;
-    border-left: 4px solid #c62828;
+    border-left: 4px solid #e83083;
 }
 
 .info-section h4 {
-    color: #c62828;
+    color: #e83083;
     margin-bottom: 15px;
     font-size: 1.1rem;
     font-weight: 600;
@@ -96,7 +96,7 @@
 }
 
 .info-value.total {
-    color: #c62828;
+    color: #e83083;
     font-size: 1.2rem;
 }
 
@@ -124,7 +124,7 @@
 
 .status-rechazada {
     background: #ffebee;
-    color: #c62828;
+    color: #e83083;
     border: 1px solid #ef9a9a;
 }
 
@@ -166,7 +166,7 @@
 }
 
 .products-section h4 {
-    color: #c62828;
+    color: #e83083;
     margin-bottom: 15px;
     display: flex;
     align-items: center;
@@ -178,7 +178,7 @@
 }
 
 .table thead {
-    background: #c62828;
+    background: #e83083;
     color: white;
 }
 
@@ -208,7 +208,7 @@
 }
 
 .actions-section h4 {
-    color: #c62828;
+    color: #e83083;
     margin-bottom: 15px;
     display: flex;
     align-items: center;
@@ -260,12 +260,12 @@
 
 .btn-rechazar {
     background: #ffebee;
-    color: #c62828;
+    color: #e83083;
     border: 1px solid #ef9a9a;
 }
 
 .btn-rechazar:hover:not(:disabled) {
-    background: #c62828;
+    background: #e83083;
     color: white;
 }
 
@@ -294,7 +294,7 @@
 }
 
 .loading-state .spinner-border {
-    color: #c62828 !important;
+    color: #e83083 !important;
     width: 3rem;
     height: 3rem;
 }
@@ -310,12 +310,12 @@
 
 .error-state i {
     font-size: 3rem;
-    color: #c62828;
+    color: #e83083;
     margin-bottom: 15px;
 }
 
 .error-state h3 {
-    color: #c62828;
+    color: #e83083;
     margin-bottom: 10px;
 }
 
@@ -326,7 +326,7 @@
 
 .btn-retry {
     padding: 10px 25px;
-    background: #c62828;
+    background: #e83083;
     color: white;
     border: none;
     border-radius: 5px;
@@ -342,7 +342,7 @@
 
 /* ===== MENÚ TOGGLE MÓVIL ===== */
 .menu-toggle-btn {
-    background: #c62828 !important;
+    background: #e83083 !important;
     border: none !important;
     border-radius: 50% !important;
     width: 50px;

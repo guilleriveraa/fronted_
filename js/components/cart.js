@@ -111,6 +111,10 @@ function renderCartSummary(cart) {
     const subtotal = cart.subtotal.toFixed(2);
     const shipping = cart.shipping.toFixed(2);
     
+    // 🎁 Obtener estado del regalo
+    const giftActive = cart.gift?.active || false;
+    const giftMessage = cart.gift?.message || '';
+    
     const cuponGuardado = localStorage.getItem('cupon_aplicado');
     let descuento = 0;
     let codigoAplicado = '';
@@ -146,6 +150,23 @@ function renderCartSummary(cart) {
                     <span>Envío</span>
                     <span class="summary-value">${shipping}€</span>
                 </div>
+                
+                <!-- 🎁 NUEVO: Opción de regalo -->
+                <div class="gift-option-summary" style="margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px;">
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="giftCheckbox" ${giftActive ? 'checked' : ''}>
+                        <label class="form-check-label fw-bold" for="giftCheckbox">
+                            🎁 ¿Es un regalo? (+2€)
+                        </label>
+                    </div>
+                    
+                    <div id="giftMessageContainer" style="display: ${giftActive ? 'block' : 'none'}; margin-top: 15px;">
+                        <label for="giftMessage" class="form-label">Mensaje para la tarjeta:</label>
+                        <textarea class="form-control" id="giftMessage" rows="3" maxlength="200" placeholder="Escribe aquí tu dedicatoria...">${giftMessage}</textarea>
+                        <small class="text-muted">El mensaje se incluirá en una tarjeta dentro del paquete.</small>
+                    </div>
+                </div>
+                
                 <div class="summary-divider"></div>
                 <div class="summary-row total">
                     <span>TOTAL</span>
@@ -168,6 +189,43 @@ function renderCartSummary(cart) {
             </button>
         </div>
     `;
+
+    // 🎁 Añadir eventos para la opción de regalo
+    setupGiftEvents();
+}
+
+// 🎁 NUEVO: Configurar eventos para la opción de regalo
+function setupGiftEvents() {
+    const giftCheckbox = document.getElementById('giftCheckbox');
+    const giftMessageContainer = document.getElementById('giftMessageContainer');
+    const giftMessage = document.getElementById('giftMessage');
+    
+    if (!giftCheckbox) return;
+    
+    // Evento cambio en checkbox
+    giftCheckbox.addEventListener('change', async function() {
+        const active = this.checked;
+        if (giftMessageContainer) {
+            giftMessageContainer.style.display = active ? 'block' : 'none';
+        }
+        
+        // Actualizar en CartCore
+        const message = active && giftMessage ? giftMessage.value : '';
+        await window.CartCore.setGiftOption(active, message);
+    });
+    
+    // Evento cambio en mensaje (con debounce)
+    if (giftMessage) {
+        let timeout;
+        giftMessage.addEventListener('input', function() {
+            clearTimeout(timeout);
+            timeout = setTimeout(async () => {
+                if (giftCheckbox.checked) {
+                    await window.CartCore.setGiftOption(true, this.value);
+                }
+            }, 500);
+        });
+    }
 }
 
 window.removeDiscount = function() {
