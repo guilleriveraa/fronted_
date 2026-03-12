@@ -120,6 +120,8 @@ function setupCategoryFilters() {
 }
 
 window.addToCart = async function(productId) {
+    console.log('🎯 addToCart llamado con productId:', productId);
+    
     if (!window.sessionService?.isLoggedIn()) {
         if (window.showAuthModal) window.showAuthModal('login');
         return;
@@ -131,42 +133,56 @@ window.addToCart = async function(productId) {
     let talla = null;
     
     try {
+        console.log('📡 Fetching producto:', productId);
         const response = await fetch(`${window.API_URL}/productos/${productId}`);
+        console.log('📡 Respuesta status:', response.status);
+        
         if (response.ok) {
             producto = await response.json();
+            console.log('📦 Producto recibido:', producto);
+            
             esTextil = producto.categoria_id === 2;
+            console.log('👕 ¿Es textil?', esTextil, 'Categoría ID:', producto.categoria_id);
 
             // Si es textil, obtener la talla seleccionada del DOM
             if (esTextil) {
                 const select = document.getElementById(`talla-${productId}`);
+                console.log('🔍 Selector de talla encontrado?', !!select);
+                
                 if (!select) {
                     alert('Error: No se encontró el selector de tallas');
                     return;
                 }
                 talla = select.value;
+                console.log('📏 Talla seleccionada:', talla);
+                
                 if (!talla) {
                     alert('Por favor, selecciona una talla');
                     return;
                 }
             }
         } else {
+            console.error('❌ Error response:', response.status);
             alert('Error al obtener información del producto');
             return;
         }
     } catch (error) {
-        console.error('Error obteniendo producto:', error);
+        console.error('❌ Error obteniendo producto:', error);
         alert('Error de conexión');
         return;
     }
 
-    // 🔥 NUEVO: Verificar que producto no es null antes de continuar
+    // 🔥 Verificación crítica
     if (!producto) {
+        console.error('❌ producto es null después de la petición');
         alert('Error: No se pudo obtener la información del producto');
         return;
     }
 
     try {
         // 1. Enviar al backend
+        console.log('📤 Enviando al backend:', { productId, talla });
+        
         const response = await fetch(`${window.API_URL}/cart/add`, {
             method: 'POST',
             headers: {
@@ -180,34 +196,43 @@ window.addToCart = async function(productId) {
             })
         });
 
+        console.log('📥 Respuesta backend status:', response.status);
         const data = await response.json();
+        console.log('📥 Respuesta backend data:', data);
 
         if (response.ok) {
-            // Obtener el carrito actual
+            // 2. Actualizar el carrito local
             const cart = await window.CartCore.getCart();
+            console.log('🛒 Carrito actual antes:', cart);
 
-            // Buscar si el producto YA ESTÁ en el carrito con la MISMA TALLA
+            // Buscar si el producto ya está en el carrito con la misma talla
             const itemExistente = cart.items.find(item => 
                 item.id === productId && item.talla === talla
             );
+            console.log('🔍 Item existente?', itemExistente);
 
             if (itemExistente) {
                 itemExistente.quantity += 1;
+                console.log('➕ Incrementando cantidad a:', itemExistente.quantity);
             } else {
-                // Crear nuevo item CON LA TALLA
+                // Crear nuevo item
                 const nuevoItem = {
                     id: productId,
                     name: producto.nombre,
                     price: producto.precio,
                     quantity: 1,
                     image: producto.imagen || '',
-                    talla: talla  // <--- ¡¡¡ESTA LÍNEA ES LA CLAVE!!!
+                    talla: talla
                 };
+                console.log('🆕 Nuevo item creado:', nuevoItem);
                 cart.items.push(nuevoItem);
             }
 
-            // Recalcular totales y guardar
+            // Recalcular totales
             window.CartCore.updateCartTotals(cart);
+            console.log('💾 Guardando carrito:', cart);
+
+            // Guardar
             window.CartCore.saveCartToStorage(cart);
             window.CartCore.cart = cart;
             window.CartCore.notifyListeners();
@@ -215,11 +240,15 @@ window.addToCart = async function(productId) {
             alert('✅ Producto añadido al carrito');
             window.CartCore.updateCartCounters();
 
+            // Verificación final
+            const cartFinal = await window.CartCore.getCart();
+            console.log('✅ Carrito final:', cartFinal.items[0]);
+
         } else {
             alert(data.message || 'Error al añadir producto');
         }
     } catch (error) {
-        console.error('Error en addToCart:', error);
+        console.error('❌ Error en addToCart:', error);
         alert('Error de conexión');
     }
 };
