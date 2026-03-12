@@ -134,7 +134,7 @@ window.addToCart = async function(productId) {
         const response = await fetch(`${window.API_URL}/productos/${productId}`);
         if (response.ok) {
             producto = await response.json();
-            esTextil = producto.categoria_id === 2; // ⚠️ AJUSTA ESTE ID SEGÚN TU BD
+            esTextil = producto.categoria_id === 2;
 
             // Si es textil, obtener la talla seleccionada del DOM
             if (esTextil) {
@@ -158,7 +158,12 @@ window.addToCart = async function(productId) {
         alert('Error de conexión');
         return;
     }
-    // --- Fin de la obtención de datos ---
+
+    // 🔥 NUEVO: Verificar que producto no es null antes de continuar
+    if (!producto) {
+        alert('Error: No se pudo obtener la información del producto');
+        return;
+    }
 
     try {
         // 1. Enviar al backend
@@ -178,10 +183,7 @@ window.addToCart = async function(productId) {
         const data = await response.json();
 
         if (response.ok) {
-            // =====================================================
-            // 2. Actualizar el CARRITO LOCAL (el objeto en memoria)
-            // =====================================================
-            // Obtener el carrito actual (puede venir del backend o de localStorage)
+            // Obtener el carrito actual
             const cart = await window.CartCore.getCart();
 
             // Buscar si el producto YA ESTÁ en el carrito con la MISMA TALLA
@@ -190,13 +192,12 @@ window.addToCart = async function(productId) {
             );
 
             if (itemExistente) {
-                // Si ya existe, solo aumentamos la cantidad
                 itemExistente.quantity += 1;
             } else {
-                // Si no existe, creamos el nuevo objeto ¡INCLUYENDO LA TALLA!
+                // Crear nuevo item CON LA TALLA
                 const nuevoItem = {
                     id: productId,
-                    name: producto.nombre, // Usamos el nombre que ya tenemos
+                    name: producto.nombre,
                     price: producto.precio,
                     quantity: 1,
                     image: producto.imagen || '',
@@ -205,22 +206,13 @@ window.addToCart = async function(productId) {
                 cart.items.push(nuevoItem);
             }
 
-            // Recalcular totales (subtotal, envío, total)
+            // Recalcular totales y guardar
             window.CartCore.updateCartTotals(cart);
-
-            // Guardar el carrito actualizado en localStorage
             window.CartCore.saveCartToStorage(cart);
-            
-            // Actualizar la copia en memoria de CartCore
             window.CartCore.cart = cart;
-            
-            // Notificar a todos los componentes que el carrito cambió
             window.CartCore.notifyListeners();
 
-            // Feedback al usuario
             alert('✅ Producto añadido al carrito');
-            
-            // Actualizar contadores en la interfaz
             window.CartCore.updateCartCounters();
 
         } else {
@@ -243,5 +235,6 @@ window.quickView = async function(productId) {
     console.error('Error:', error);
   }
 };
+window.addToCart = addToCart;
 
 console.log('✅ productos-page.js cargado con API');
