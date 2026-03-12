@@ -119,7 +119,7 @@ function setupCategoryFilters() {
   });
 }
 
-window.addToCart = async function(productId) {
+addToCart = async function(productId) {
     console.log('🎯 addToCart llamado con productId:', productId);
     
     if (!window.sessionService?.isLoggedIn()) {
@@ -252,6 +252,7 @@ window.addToCart = async function(productId) {
         alert('Error de conexión');
     }
 };
+window.addToCart = addToCart;
 
 window.quickView = async function(productId) {
   try {
@@ -264,6 +265,5 @@ window.quickView = async function(productId) {
     console.error('Error:', error);
   }
 };
-window.addToCart = addToCart;
 
 console.log('✅ productos-page.js cargado con API');
