@@ -142,6 +142,16 @@ async function procesarRecogidaTienda() {
         // 🎁 Obtener datos de regalo
         const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
         
+        // 🔥 NUEVO: Mapear items para incluir la talla explícitamente
+        const itemsParaEnviar = cart.items.map(item => ({
+            id: item.id,
+            quantity: item.quantity,
+            price: item.price,
+            talla: item.talla || null  // ← INCLUIR TALLA
+        }));
+        
+        console.log('📦 Items a enviar (con talla):', itemsParaEnviar);
+        
         // 2. Crear pedido en backend
         const response = await fetch(`${window.API_URL}/pedidos/recogida-tienda`, {
             method: 'POST',
@@ -150,7 +160,7 @@ async function procesarRecogidaTienda() {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                items: cart.items,
+                items: itemsParaEnviar,  // ← AHORA SÍ ENVÍA LA TALLA
                 subtotal: cart.subtotal,
                 gift: {
                     active: giftData.active,
