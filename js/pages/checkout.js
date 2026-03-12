@@ -143,19 +143,17 @@ async function procesarRecogidaTienda() {
         const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
         
         // 🔥 Mapear items para incluir la talla
-        const itemsParaEnviar = cart.items.map(item => ({
-            id: item.id,
-            quantity: item.quantity,
-            price: item.price,
-            talla: item.talla || null
-        }));
-        
-        // ===== LOGS DE VERIFICACIÓN =====
-        console.log('📦 Items a enviar (VERIFICACIÓN):', itemsParaEnviar);
-        itemsParaEnviar.forEach((item, i) => {
-            console.log(`   Item ${i}: ID=${item.id}, Talla=${item.talla}`);
+        const itemsParaEnviar = cart.items.map(item => {
+            console.log('📦 Procesando item del carrito:', item); // Log para depurar
+            return {
+                id: item.id,
+                quantity: item.quantity,
+                price: item.price,
+                talla: item.talla || null  // ← ¡ASEGURAR QUE LA TALLA SE INCLUYE!
+            };
         });
-        // ================================
+        
+        console.log('📦 Items a enviar (VERIFICACIÓN):', itemsParaEnviar);
         
         // 2. Crear pedido en backend
         const response = await fetch(`${window.API_URL}/pedidos/recogida-tienda`, {
@@ -174,8 +172,6 @@ async function procesarRecogidaTienda() {
                 }
             })
         });
-        
-        // ... resto del código ...
         
         const data = await response.json();
         
@@ -232,153 +228,100 @@ async function procesarPagoConDireccion(direccionData) {
         console.log('📤 Enviando petición a Stripe...');
         console.log('Token:', window.sessionService.getToken()?.substring(0, 20) + '...');
 
-        // En checkout.js, dentro de procesarPagoConDireccion
-// Obtener cupón guardado - VERSIÓN CORREGIDA (campo 'descuento')
-const cuponGuardado = localStorage.getItem('cupon_aplicado');
-let cuponId = null;
+        // Obtener cupón guardado
+        const cuponGuardado = localStorage.getItem('cupon_aplicado');
+        let cuponId = null;
 
-if (cuponGuardado) {
-    try {
-        const cupon = JSON.parse(cuponGuardado);
-        
-        console.log('🎫 Cupón completo desde localStorage:', cupon);
-        
-        // Obtener el ID
-        cuponId = cupon.id;
-        
-        // Obtener el valor del campo 'descuento' (que es el que tiene)
-        const valorDescuento = cupon.descuento;
-        
-        console.log('🎫 Cupón aplicado ID:', cuponId);
-        console.log('🎫 Código:', cupon.codigo);
-        console.log('🎫 Tipo:', cupon.tipo);
-        console.log('🎫 Valor (descuento):', valorDescuento);
-        
-        // AHORA SÍ tenemos el valor correctamente
-        
-        // Opcional: guardar el valor en el objeto para usarlo después si es necesario
-        cupon.valor = valorDescuento; // Añadimos el campo 'valor' para compatibilidad
-        
-        // Verificar que el valor existe
-        if (valorDescuento === undefined || valorDescuento === null) {
-            console.warn('⚠️ El cupón no tiene campo "descuento" válido');
+        if (cuponGuardado) {
+            try {
+                const cupon = JSON.parse(cuponGuardado);
+                console.log('🎫 Cupón completo desde localStorage:', cupon);
+                cuponId = cupon.id;
+                console.log('🎫 Cupón aplicado ID:', cuponId);
+            } catch (e) {
+                console.warn('Error parsing cupón:', e);
+            }
         }
-    } catch (e) {
-        console.warn('Error parsing cupón:', e);
-    }
-}
 
-// 🎁 NUEVO: Obtener datos de regalo del carrito
-const cart = await window.CartCore.getCart();
-const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
+        // Obtener datos de regalo del carrito
+        const cart = await window.CartCore.getCart();
+        const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
 
-console.log('🎁 Datos de regalo:', giftData);
+        console.log('🎁 Datos de regalo:', giftData);
 
-// Crear sesión de pago
-const response = await fetch(`${window.API_URL}/create-checkout-session`, {
-    method: 'POST',
-    headers: {
-        'Authorization': 'Bearer ' + window.sessionService.getToken(),
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        cuponId: cuponId,
-        direccion: direccionData,
-        // 🎁 NUEVO: Añadir datos de regalo
-        gift: {
-            active: giftData.active,
-            message: giftData.message || '',
-            cost: giftData.active ? 2.00 : 0
-        }
-    })
-});
-
+        // Crear sesión de pago
+        const response = await fetch(`${window.API_URL}/create-checkout-session`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + window.sessionService.getToken(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                cuponId: cuponId,
+                direccion: direccionData,
+                gift: {
+                    active: giftData.active,
+                    message: giftData.message || '',
+                    cost: giftData.active ? 2.00 : 0
+                }
+            })
+        });
 
         const data = await response.json();
 
         if (!response.ok) {
             console.error('❌ Error del servidor:', data);
-            
-            // Mostrar error específico si existe
             let errorMsg = 'Error al procesar el pago';
             if (data.errors && data.errors.length > 0) {
                 errorMsg = data.errors[0].msg || errorMsg;
             } else if (data.message) {
                 errorMsg = data.message;
             }
-            
             throw new Error(errorMsg);
         }
 
         console.log('✅ Sesión creada, redirigiendo a Stripe:', data.url);
 
-// ====================================================
-// 🚀 VACIAR CARRITO AHORA MISMO - SIN ESPERAR NADA
-// ====================================================
-console.log('🧹 VACIANDO CARRITO INMEDIATAMENTE...');
+        // Vaciar carrito
+        console.log('🧹 VACIANDO CARRITO INMEDIATAMENTE...');
+        
+        try {
+            // Vaciar en backend
+            const token = window.sessionService.getToken();
+            if (token) {
+                fetch(`${window.API_URL}/emergency-clear-cart`, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                }).catch(err => console.error('🧹 Error:', err));
+            }
+            
+            // Vaciar en frontend
+            if (window.CartCore) {
+                window.CartCore.cart = { items: [], subtotal: 0, shipping: 0, total: 0 };
+                window.CartCore.saveCartToStorage(window.CartCore.cart);
+                window.CartCore.notifyListeners();
+                document.querySelectorAll('.cart-count').forEach(el => el.textContent = '0');
+                console.log('✅ CARRITO VACIADO EN FRONTEND');
+            }
+            
+            window.dispatchEvent(new CustomEvent('cart-updated'));
+            
+        } catch (e) {
+            console.error('Error vaciando carrito:', e);
+        }
 
-try {
-    // 1. Vaciar en backend (opcional, por si acaso)
-    const token = window.sessionService.getToken();
-    if (token) {
-        fetch(`${window.API_URL}/emergency-clear-cart`, {
-            method: 'POST',
-            headers: { 'Authorization': 'Bearer ' + token }
-        }).then(res => res.json())
-          .then(data => console.log('🧹 Backend:', data))
-          .catch(err => console.error('🧹 Error:', err));
-    }
-    
-    // 2. VACIAR EN FRONTEND (inmediato)
-    if (window.CartCore) {
-        // Vaciar estructura
-        window.CartCore.cart = { 
-            items: [], 
-            subtotal: 0, 
-            shipping: 0, 
-            total: 0 
-        };
+        // Redirigir a Stripe
+        window.location.href = data.url;
         
-        // Guardar en localStorage
-        window.CartCore.saveCartToStorage(window.CartCore.cart);
-        
-        // Notificar cambios
-        window.CartCore.notifyListeners();
-        
-        // Actualizar contadores manualmente
-        document.querySelectorAll('.cart-count').forEach(el => {
-            el.textContent = '0';
-        });
-        
-        console.log('✅ CARRITO VACIADO EN FRONTEND');
-    } else {
-        // Vaciar localStorage directamente
-        localStorage.removeItem('cart');
-        localStorage.removeItem('carrito');
-        localStorage.setItem('cart', JSON.stringify({ items: [] }));
-        console.log('✅ localStorage vaciado');
-    }
-    
-    // 3. Evento personalizado
-    window.dispatchEvent(new CustomEvent('cart-updated'));
-    
-} catch (e) {
-    console.error('Error vaciando carrito:', e);
-}
-
-// Redirigir a Stripe
-window.location.href = data.url;
     } catch (error) {
         console.error('❌ Error completo:', error);
         
-        // Mostrar error al usuario
         if (window.errorHandler) {
             window.errorHandler.error(error.message);
         } else {
             alert('Error: ' + error.message);
         }
         
-        // Reactivar botón
         if (checkoutBtn) {
             checkoutBtn.disabled = false;
             checkoutBtn.innerHTML = originalText;
@@ -395,3 +338,5 @@ window.limpiarDespuesDePago = function() {
         window.CartCore.notifyListeners();
     }
 };
+
+console.log('✅ checkout.js cargado');
