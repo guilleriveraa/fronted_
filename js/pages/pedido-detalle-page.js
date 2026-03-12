@@ -278,6 +278,30 @@ function renderOrderDetails(order, items, isAdmin) {
         direccionTexto = `<div style="background: #f8f9fa; padding: 10px; border-radius: 8px;">${order.direccion_envio || 'No especificada'}</div>`;
     }
 
+    // 🎁 SECCIÓN DE REGALO - NUEVO
+    let giftHTML = '';
+    if (order.gift_active) {
+        giftHTML = `
+            <div class="order-info-section" style="background: #fff9f9; border-left: 4px solid #e83083; padding: 20px; margin-bottom: 25px; border-radius: 8px;">
+                <h3 style="margin-bottom: 15px; color: #e83083;"><i class="fas fa-gift"></i> 🎁 Detalles del regalo</h3>
+                <div style="display: flex; align-items: flex-start; gap: 15px;">
+                    <div style="font-size: 2.5rem; color: #e83083;">🎁</div>
+                    <div style="flex: 1;">
+                        <p><strong>Este pedido es un regalo</strong></p>
+                        <p><strong>Mensaje para la tarjeta:</strong></p>
+                        <div style="background: white; padding: 20px; border-radius: 8px; border: 2px dashed #e83083; font-style: italic; margin: 10px 0;">
+                            "${order.gift_message || 'Sin mensaje personalizado'}"
+                        </div>
+                        <p style="color: #666; font-size: 0.95rem; margin-top: 10px;">
+                            <i class="fas fa-info-circle" style="color: #e83083;"></i> 
+                            Coste adicional: <strong>${parseFloat(order.gift_cost || 0).toFixed(2)}€</strong>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+
     const html = `
         <div class="order-detail-card">
             <!-- Información del cliente (solo para admin) -->
@@ -294,6 +318,9 @@ function renderOrderDetails(order, items, isAdmin) {
                 <h3 style="margin-bottom: 15px; color: #28a745;"><i class="fas fa-map-marker-alt"></i> Dirección de envío</h3>
                 <div style="line-height: 1.6;">${direccionTexto}</div>
             </div>
+
+            <!-- 🎁 SECCIÓN DE REGALO -->
+            ${giftHTML}
 
             <div class="order-info-section">
                 <div class="info-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;">
