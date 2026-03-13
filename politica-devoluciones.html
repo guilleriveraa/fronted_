@@ -17,26 +17,54 @@
 </head>
 <body data-theme="light">
 
-    <!-- Header (incluye el mismo header de tu tienda) -->
-    <header class="main-header">
-        <div class="container header-container">
-            <div class="logo">
-                <a href="index.html">
-                    <img src="img/images.png" alt="Salamanca Vívela" class="logo-img">
-                </a>
-            </div>
-            <nav class="nav-desktop">
-                <a href="productos.html">Productos</a>
-                <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
-                <a href="contacto.html">Contacto</a>
-            </nav>
-            <div class="header-actions">
-                <a href="carrito.html" class="header-btn cart-btn">
-                    <i class="fas fa-shopping-cart"></i><span class="cart-count">0</span>
-                </a>
-            </div>
+    <<header class="main-header">
+  <div class="container header-container">
+    <div class="logo">
+      <a href="index.html">
+      <img src="img/images.png" 
+         alt="Salamanca Vívela" 
+         class="logo-img">
+      </a>
+    </div>
+    <nav class="nav-desktop">
+      <a href="productos.html">Productos</a>
+      <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
+      <a href="contacto.html">Contacto</a>
+    </nav>
+
+    <div id="authButtons" class="auth-buttons">
+      <a href="#" id="loginBtn" class="btn-login">
+        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+      </a>
+      <a href="#" id="registerBtn" class="btn-register">
+        <i class="fas fa-user-plus"></i> Registrarse
+      </a>
+    </div>
+
+    <!-- Menú de usuario -->
+    <div id="userMenu" class="user-menu" style="display:none;">
+      <div class="user-avatar"><span id="userAvatar">U</span>
+        <div class="user-dropdown">
+          <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+          <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
+          <div class="dropdown-divider"></div>
+          <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
         </div>
-    </header>
+      </div>
+      <span id="userNameDisplay" class="user-name">Usuario</span>
+    </div>
+
+    <!-- Acciones header -->
+    <div class="header-actions">
+      <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i class="fas fa-minus"></i></button>
+      <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
+      <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i class="fas fa-plus"></i></button>
+      <span class="header-separator"></span>
+      <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></a>
+      <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun" style="display:none"></i></button>
+    </div>
+  </div>
+</header>
 
     <main class="info-page">
         <!-- Cabecera -->
