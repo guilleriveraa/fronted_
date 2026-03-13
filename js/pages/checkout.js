@@ -208,7 +208,6 @@ async function procesarPagoConDireccion(direccionData) {
     console.log('💳 procesarPagoConDireccion llamado');
     console.log('📍 Dirección a enviar:', direccionData);
     
-    // 🔥 VERIFICACIÓN DE SEGURIDAD
     if (!window.sessionService?.isLoggedIn()) {
         alert('Tu sesión ha expirado. Por favor, inicia sesión de nuevo.');
         if (window.showAuthModal) window.showAuthModal('login');
@@ -219,37 +218,27 @@ async function procesarPagoConDireccion(direccionData) {
     const originalText = checkoutBtn ? checkoutBtn.innerHTML : '';
     
     try {
-        // Deshabilitar botón mientras se procesa
         if (checkoutBtn) {
             checkoutBtn.disabled = true;
             checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
         }
         
         console.log('📤 Enviando petición a Stripe...');
-        console.log('Token:', window.sessionService.getToken()?.substring(0, 20) + '...');
-
-        // Obtener cupón guardado
+        
         const cuponGuardado = localStorage.getItem('cupon_aplicado');
         let cuponId = null;
-
         if (cuponGuardado) {
             try {
                 const cupon = JSON.parse(cuponGuardado);
-                console.log('🎫 Cupón completo desde localStorage:', cupon);
                 cuponId = cupon.id;
-                console.log('🎫 Cupón aplicado ID:', cuponId);
             } catch (e) {
                 console.warn('Error parsing cupón:', e);
             }
         }
 
-        // Obtener datos de regalo del carrito
         const cart = await window.CartCore.getCart();
         const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
 
-        console.log('🎁 Datos de regalo:', giftData);
-
-        // Crear sesión de pago
         const response = await fetch(`${window.API_URL}/create-checkout-session`, {
             method: 'POST',
             headers: {
@@ -270,28 +259,25 @@ async function procesarPagoConDireccion(direccionData) {
         const data = await response.json();
 
         if (!response.ok) {
-            console.error('❌ Error del servidor:', data);
-            let errorMsg = 'Error al procesar el pago';
-            if (data.errors && data.errors.length > 0) {
-                errorMsg = data.errors[0].msg || errorMsg;
-            } else if (data.message) {
-                errorMsg = data.message;
-            }
-            throw new Error(errorMsg);
+            throw new Error(data.message || 'Error al procesar el pago');
         }
 
         console.log('✅ Sesión creada, redirigiendo a Stripe:', data.url);
-
+        
+        // 🔥 SOLUCIÓN: Asegurar la redirección
+        if (data.url) {
+            window.location.assign(data.url); // o window.location.href = data.url;
+        } else {
+            throw new Error('No se recibió URL de Stripe');
+        }
         
     } catch (error) {
         console.error('❌ Error completo:', error);
-        
         if (window.errorHandler) {
             window.errorHandler.error(error.message);
         } else {
             alert('Error: ' + error.message);
         }
-        
         if (checkoutBtn) {
             checkoutBtn.disabled = false;
             checkoutBtn.innerHTML = originalText;
