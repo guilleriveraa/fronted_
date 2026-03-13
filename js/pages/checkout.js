@@ -188,7 +188,7 @@ async function procesarRecogidaTienda() {
         alert(`✅ ¡Pedido #${data.pedidoId} creado!\n\nPasa por nuestra tienda a recogerlo. Te esperamos.`);
         
         // 5. Redirigir a página de confirmación
-        window.location.href = data.url;
+        window.location.href = `recogida-confirmada.html?pedido=${data.pedidoId}`;
         
     } catch (error) {
         console.error('❌ Error:', error);
