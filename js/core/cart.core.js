@@ -81,7 +81,16 @@ constructor() {
                 throw new Error('Error al obtener carrito');
             }
 
-            const cartData = await response.json();
+            let cartData = await response.json();
+            
+            // 🔥🔥🔥 CAMBIO 1: Procesar items para asegurar que tienen talla
+            if (cartData.items) {
+                cartData.items = cartData.items.map(item => ({
+                    ...item,
+                    talla: item.talla || null
+                }));
+            }
+            
             this.cart = cartData;
             
             // ===== NUEVO: Sincronizar con localStorage =====
@@ -182,11 +191,22 @@ async addToCart(productId, quantity = 1, talla = null) {
 }
     // Guardar carrito en localStorage (offline)
     saveCartToStorage(cart) {
+        // 🔥🔥🔥 CAMBIO 2: Procesar items antes de guardar
+        let cartToSave = { ...cart };
+        
+        if (cartToSave.items) {
+            cartToSave.items = cartToSave.items.map(item => ({
+                ...item,
+                talla: item.talla || null
+            }));
+        }
+        
         // ===== MEJORADO: Añadir timestamp =====
-        const cartToSave = {
-            ...cart,
+        cartToSave = {
+            ...cartToSave,
             lastUpdated: new Date().toISOString()
         };
+        
         localStorage.setItem('svl_cart', JSON.stringify(cartToSave));
     }
 
