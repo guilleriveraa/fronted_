@@ -355,12 +355,12 @@ function renderOrderDetails(order, items, isAdmin) {
         return `
             <div class="item-row" style="display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; padding: 15px; border-bottom: 1px solid #dee2e6; align-items: center;">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <img src="${item.imagen || '/fronted/img/default.jpg'}" 
-                         alt="${item.nombre}" 
+                    <img src="${item.imagen || item.imagen_producto || '/fronted/img/default.jpg'}" 
+                         alt="${item.nombre || item.nombre_producto}" 
                          style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"
                          onerror="this.src='https://via.placeholder.com/60'">
                     <div>
-                        <span style="font-weight: 500;">${item.nombre}</span>
+                        <span style="font-weight: 500;">${item.nombre || item.nombre_producto}</span>
                         ${item.talla ? `<br><small style="color: #e83083; font-size: 0.85rem;"><i class="fas fa-tshirt"></i> Talla: <strong>${item.talla}</strong></small>` : ''}
                     </div>
                 </div>
