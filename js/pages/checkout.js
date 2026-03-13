@@ -282,36 +282,6 @@ async function procesarPagoConDireccion(direccionData) {
 
         console.log('✅ Sesión creada, redirigiendo a Stripe:', data.url);
 
-        // Vaciar carrito
-        console.log('🧹 VACIANDO CARRITO INMEDIATAMENTE...');
-        
-        try {
-            // Vaciar en backend
-            const token = window.sessionService.getToken();
-            if (token) {
-                fetch(`${window.API_URL}/emergency-clear-cart`, {
-                    method: 'POST',
-                    headers: { 'Authorization': 'Bearer ' + token }
-                }).catch(err => console.error('🧹 Error:', err));
-            }
-            
-            // Vaciar en frontend
-            if (window.CartCore) {
-                window.CartCore.cart = { items: [], subtotal: 0, shipping: 0, total: 0 };
-                window.CartCore.saveCartToStorage(window.CartCore.cart);
-                window.CartCore.notifyListeners();
-                document.querySelectorAll('.cart-count').forEach(el => el.textContent = '0');
-                console.log('✅ CARRITO VACIADO EN FRONTEND');
-            }
-            
-            window.dispatchEvent(new CustomEvent('cart-updated'));
-            
-        } catch (e) {
-            console.error('Error vaciando carrito:', e);
-        }
-
-        // Redirigir a Stripe
-        window.location.href = data.url;
         
     } catch (error) {
         console.error('❌ Error completo:', error);
