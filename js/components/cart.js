@@ -1,8 +1,8 @@
 ﻿// js/components/cart.js - UI del carrito MEJORADA
 
-window.InitManager.register('CartFull', async function() {
+window.InitManager.register('CartFull', async function () {
     console.log('🚀 Inicializando funcionalidades del carrito');
-    
+
     if (!window.CartCore) {
         console.error('❌ CartCore no disponible');
         window.errorHandler?.error('Error al cargar el carrito');
@@ -12,19 +12,19 @@ window.InitManager.register('CartFull', async function() {
     try {
         await renderCartPage();
         setupDiscountCode();
-        
+
         // ===== NUEVO: Escuchar cambios del carrito =====
         if (window.CartCore) {
             window.CartCore.onChange(renderCartPage);
         }
-        
+
         if (window.sessionService?.onChange) {
             window.sessionService.onChange(() => {
                 window.CartCore.cart = null;
                 renderCartPage();
             });
         }
-        
+
         window.InitManager.log('✅ Funcionalidades del carrito inicializadas');
     } catch (error) {
         console.error('Error inicializando carrito:', error);
@@ -110,18 +110,18 @@ async function renderCartPage() {
 
 function renderCartSummary(cart) {
     if (!cartSummary) return;
-    
+
     const subtotal = cart.subtotal.toFixed(2);
     const shipping = cart.shipping.toFixed(2);
-    
+
     // 🎁 Obtener estado del regalo
     const giftActive = cart.gift?.active || false;
     const giftMessage = cart.gift?.message || '';
-    
+
     const cuponGuardado = localStorage.getItem('cupon_aplicado');
     let descuento = 0;
     let codigoAplicado = '';
-    
+
     if (cuponGuardado) {
         try {
             const cupon = JSON.parse(cuponGuardado);
@@ -132,7 +132,7 @@ function renderCartSummary(cart) {
             localStorage.removeItem('cupon_aplicado');
         }
     }
-    
+
     const total = (cart.subtotal - descuento + cart.shipping).toFixed(2);
 
     cartSummary.innerHTML = `
@@ -202,25 +202,25 @@ function setupGiftEvents() {
     const giftCheckbox = document.getElementById('giftCheckbox');
     const giftMessageContainer = document.getElementById('giftMessageContainer');
     const giftMessage = document.getElementById('giftMessage');
-    
+
     if (!giftCheckbox) return;
-    
+
     // Evento cambio en checkbox
-    giftCheckbox.addEventListener('change', async function() {
+    giftCheckbox.addEventListener('change', async function () {
         const active = this.checked;
         if (giftMessageContainer) {
             giftMessageContainer.style.display = active ? 'block' : 'none';
         }
-        
+
         // Actualizar en CartCore
         const message = active && giftMessage ? giftMessage.value : '';
         await window.CartCore.setGiftOption(active, message);
     });
-    
+
     // Evento cambio en mensaje (con debounce)
     if (giftMessage) {
         let timeout;
-        giftMessage.addEventListener('input', function() {
+        giftMessage.addEventListener('input', function () {
             clearTimeout(timeout);
             timeout = setTimeout(async () => {
                 if (giftCheckbox.checked) {
@@ -231,13 +231,13 @@ function setupGiftEvents() {
     }
 }
 
-window.removeDiscount = function() {
+window.removeDiscount = function () {
     localStorage.removeItem('cupon_aplicado');
     window.errorHandler?.success('Descuento eliminado');
     renderCartPage();
 };
 
-window.increaseQuantity = async function(productId) {
+window.increaseQuantity = async function (productId) {
     try {
         await window.CartCore.changeQty(productId, 1);
     } catch (error) {
@@ -245,7 +245,7 @@ window.increaseQuantity = async function(productId) {
     }
 };
 
-window.decreaseQuantity = async function(productId) {
+window.decreaseQuantity = async function (productId) {
     try {
         await window.CartCore.changeQty(productId, -1);
     } catch (error) {
@@ -253,7 +253,7 @@ window.decreaseQuantity = async function(productId) {
     }
 };
 
-window.updateQuantityInput = async function(productId, value) {
+window.updateQuantityInput = async function (productId, value) {
     const quantity = parseInt(value);
     if (!isNaN(quantity) && quantity >= 1 && quantity <= 99) {
         try {
@@ -270,7 +270,7 @@ window.updateQuantityInput = async function(productId, value) {
     }
 };
 
-window.removeFromCart = async function(productId) {
+window.removeFromCart = async function (productId) {
     if (confirm('¿Estás seguro de que quieres eliminar este producto?')) {
         try {
             await window.CartCore.removeFromCart(productId);
@@ -280,12 +280,12 @@ window.removeFromCart = async function(productId) {
     }
 };
 
-window.applyDiscount = async function() {
+window.applyDiscount = async function () {
     const codeInput = document.getElementById('discountCode');
     if (!codeInput) return;
-    
+
     const codigo = codeInput.value.trim().toUpperCase();
-    
+
     if (codigo === '') {
         window.errorHandler?.warning('Introduce un código de descuento');
         return;
@@ -300,7 +300,7 @@ window.applyDiscount = async function() {
                 'Content-Type': 'application/json',
                 'Authorization': window.sessionService?.isLoggedIn() ? 'Bearer ' + window.sessionService.getToken() : ''
             },
-            body: JSON.stringify({ 
+            body: JSON.stringify({
                 codigo: codigo,
                 subtotal: cart.subtotal,
                 usuarioId: window.sessionService?.getUser()?.id
@@ -311,35 +311,35 @@ window.applyDiscount = async function() {
 
         if (data.valido) {
             let descuentoCalculado = data.cupon?.descuento_calculado || 0;
-            
+
             localStorage.setItem('cupon_aplicado', JSON.stringify({
                 codigo: codigo,
                 descuento: descuentoCalculado,
                 tipo: data.cupon.tipo,
                 id: data.cupon.id
             }));
-            
+
             window.errorHandler?.success(`✅ Cupón aplicado: ${descuentoCalculado.toFixed(2)}€ de descuento`);
             await renderCartPage();
-            
+
         } else {
             window.errorHandler?.error(data.message || 'Código no válido');
         }
-        
+
     } catch (error) {
         console.error('Error applying discount:', error);
         window.errorHandler?.networkError('Error al verificar el código', async () => {
             await window.applyDiscount();
         });
     }
-    
+
     codeInput.value = '';
 };
 
 function setupDiscountCode() {
     const codeInput = document.getElementById('discountCode');
     if (codeInput) {
-        codeInput.addEventListener('keypress', function(e) {
+        codeInput.addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 applyDiscount();
@@ -354,13 +354,13 @@ function updateHeaderCartCount(count) {
         'headerCartCount2',
         'mobileCartCount'
     ];
-    
+
     counters.forEach(id => {
         const el = document.getElementById(id);
         if (el) {
             const oldCount = parseInt(el.textContent) || 0;
             el.textContent = count;
-            
+
             if (oldCount !== count) {
                 el.classList.add('cart-count-changed');
                 setTimeout(() => el.classList.remove('cart-count-changed'), 300);

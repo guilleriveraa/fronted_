@@ -61,7 +61,7 @@ class ErrorHandler {
         };
 
         const id = 'toast-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-        
+
         const toast = document.createElement('div');
         toast.id = id;
         toast.style.cssText = `
@@ -124,7 +124,7 @@ class ErrorHandler {
     close(toast) {
         toast.style.transform = 'translateX(100%)';
         toast.style.opacity = '0';
-        
+
         setTimeout(() => {
             if (toast.parentNode) {
                 toast.parentNode.removeChild(toast);
@@ -142,7 +142,7 @@ class ErrorHandler {
     networkError(message, retryCallback) {
         const colors = { error: '#f44336' };
         const id = 'toast-' + Date.now();
-        
+
         const toast = document.createElement('div');
         toast.id = id;
         toast.style.cssText = `
@@ -187,7 +187,7 @@ class ErrorHandler {
         retryBtn.addEventListener('click', async () => {
             retryBtn.disabled = true;
             retryBtn.textContent = 'Reintentando...';
-            
+
             try {
                 await retryCallback();
                 this.close(toast);

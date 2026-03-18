@@ -1,22 +1,26 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Dashboard - SalamancaVivela Admin</title>
-    
+
     <!-- CoreUI CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Fuentes Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
+
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="css/admin.css">
 </head>
+
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
@@ -25,7 +29,7 @@
                 <h3>Salamanca</h3>
                 <p>Panel Administrativo</p>
             </div>
-            
+
             <ul>
                 <li><a href="index.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                 <li><a href="productos.html"><i class="fas fa-box"></i> Productos</a></li>
@@ -44,7 +48,9 @@
                 <h2><i class="fas fa-tachometer-alt me-2" style="color: #c62828;"></i>Dashboard</h2>
                 <div>
                     <span id="adminName" class="fw-bold me-2">Cargando...</span>
-                <img src="https://ui-avatars.com/api/?name=A&background=c62828&color=fff&size=40" class="avatar-sm" id="adminAvatar">                </div>
+                    <img src="https://ui-avatars.com/api/?name=A&background=c62828&color=fff&size=40" class="avatar-sm"
+                        id="adminAvatar">
+                </div>
             </div>
 
             <!-- Tarjetas de estadísticas -->
@@ -97,7 +103,9 @@
                             </tr>
                         </thead>
                         <tbody id="ultimos-pedidos">
-                            <tr><td colspan="5" class="text-center">Cargando pedidos...</td></tr>
+                            <tr>
+                                <td colspan="5" class="text-center">Cargando pedidos...</td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -106,25 +114,26 @@
     </div>
 
     <!-- Botón menú móvil -->
-    <button class="btn btn-primary d-md-none position-fixed bottom-0 end-0 m-3" 
-            onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <button class="btn btn-primary d-md-none position-fixed bottom-0 end-0 m-3"
+        onclick="document.getElementById('sidebar').classList.toggle('active')">
         <i class="fas fa-bars"></i>
     </button>
 
     <!-- Configuración global -->
-<script>
-    window.API_URL = 'https://json-production-48ce.up.railway.app/api';
-    console.log('✅ API_URL forzada desde HTML:', window.API_URL);
-</script>
+    <script>
+        window.API_URL = 'https://json-production-48ce.up.railway.app/api';
+        console.log('✅ API_URL forzada desde HTML:', window.API_URL);
+    </script>
 
-<!-- Luego los scripts -->
-<script src="js/admin.js"></script>
+    <!-- Luego los scripts -->
+    <script src="js/admin.js"></script>
 
     <!-- CoreUI JavaScript (obligatorio para componentes) -->
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
-    
+
     <!-- SCRIPTS SEPARADOS -->
     <script src="js/admin.js"></script>
     <script src="js/dashboard.js"></script>
 </body>
+
 </html>

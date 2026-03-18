@@ -56,7 +56,7 @@ async function loadOrders() {
 
 function renderOrders(orders) {
     const container = document.getElementById('ordersContainer');
-    
+
     if (!orders.length) {
         container.innerHTML = `
             <div class="no-orders">
@@ -149,7 +149,7 @@ function updateStats(orders) {
 
 function setupFilters() {
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             // Actualizar botón activo
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
@@ -167,11 +167,11 @@ function setupFilters() {
     });
 }
 
-window.viewOrderDetails = function(orderId) {
+window.viewOrderDetails = function (orderId) {
     window.location.href = `pedido-detalle.html?id=${orderId}`;
 };
 
-window.requestReturn = function(orderId) {
+window.requestReturn = function (orderId) {
     window.location.href = `devoluciones.html?order=${orderId}`;
 };
 

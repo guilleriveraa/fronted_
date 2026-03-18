@@ -1,22 +1,24 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Admin Login - SalamancaVivela</title>
-    
+
     <!-- CoreUI CSS (CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Fuentes -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="css/admin.css">
-    
+
     <style>
         body {
             background: linear-gradient(135deg, #c62828 0%, #a71c1c 100%);
@@ -25,56 +27,61 @@
             align-items: center;
             justify-content: center;
         }
+
         .login-card {
             background: white;
             border-radius: 20px;
             padding: 40px;
             max-width: 400px;
             width: 100%;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
         }
+
         .login-card h2 {
             color: #c62828;
             margin-bottom: 10px;
             font-weight: 700;
         }
+
         .login-card .subtitle {
             color: #666;
             margin-bottom: 30px;
         }
+
         .alert {
             display: none;
             margin-bottom: 20px;
         }
     </style>
 </head>
+
 <body>
     <div class="login-card">
         <div style="text-align: center; margin-bottom: 30px;">
             <h2>SalamancaVivela</h2>
             <p class="subtitle">Panel de Administración</p>
         </div>
-        
+
         <div id="errorAlert" class="alert alert-danger" role="alert">
             Credenciales incorrectas
         </div>
-        
+
         <form id="loginForm">
             <div class="mb-3">
                 <label for="email" class="form-label">Correo electrónico</label>
                 <input type="email" class="form-control" id="email" placeholder="admin@email.com" required>
             </div>
-            
+
             <div class="mb-3">
                 <label for="password" class="form-label">Contraseña</label>
                 <input type="password" class="form-control" id="password" placeholder="••••••••" required>
             </div>
-            
+
             <button type="submit" class="btn btn-primary w-100" id="loginBtn">
                 <i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión
             </button>
         </form>
-        
+
         <div class="text-center mt-3">
             <a href="../index.html" class="text-muted">← Volver a la tienda</a>
         </div>
@@ -82,63 +89,64 @@
 
     <!-- CoreUI JavaScript (CDN) -->
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
-    
-    <script>
-    const API_URL = 'https://json-production-48ce.up.railway.app/api';
 
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const email = document.getElementById('email').value;
-        const password = document.getElementById('password').value;
-        const loginBtn = document.getElementById('loginBtn');
-        
-        loginBtn.disabled = true;
-        loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando...';
-        
-        try {
-            // 1. Login normal
-            const loginRes = await fetch(`${API_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            
-            const loginData = await loginRes.json();
-            
-            if (!loginRes.ok) {
-                throw new Error(loginData.message || 'Credenciales incorrectas');
-            }
-            
-            // 2. Verificar si es admin
-            const adminRes = await fetch(`${API_URL}/user/is-admin`, {
-                method: 'GET',
-                headers: { 'Authorization': 'Bearer ' + loginData.token }
-            });
-            
-            const adminData = await adminRes.json();
-            
-            if (adminData.isAdmin) {
-                localStorage.setItem('token', loginData.token);
-                localStorage.setItem('user', JSON.stringify({ 
-                    email: loginData.email,
-                    nombre: loginData.nombre 
-                }));
-                window.location.href = 'index.html';
-            } else {
+    <script>
+        const API_URL = 'https://json-production-48ce.up.railway.app/api';
+
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Verificando...';
+
+            try {
+                // 1. Login normal
+                const loginRes = await fetch(`${API_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const loginData = await loginRes.json();
+
+                if (!loginRes.ok) {
+                    throw new Error(loginData.message || 'Credenciales incorrectas');
+                }
+
+                // 2. Verificar si es admin
+                const adminRes = await fetch(`${API_URL}/user/is-admin`, {
+                    method: 'GET',
+                    headers: { 'Authorization': 'Bearer ' + loginData.token }
+                });
+
+                const adminData = await adminRes.json();
+
+                if (adminData.isAdmin) {
+                    localStorage.setItem('token', loginData.token);
+                    localStorage.setItem('user', JSON.stringify({
+                        email: loginData.email,
+                        nombre: loginData.nombre
+                    }));
+                    window.location.href = 'index.html';
+                } else {
+                    document.getElementById('errorAlert').style.display = 'block';
+                    document.getElementById('errorAlert').textContent = 'No tienes permisos de administrador';
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
                 document.getElementById('errorAlert').style.display = 'block';
-                document.getElementById('errorAlert').textContent = 'No tienes permisos de administrador';
+                document.getElementById('errorAlert').textContent = error.message || 'Error al conectar';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión';
             }
-            
-        } catch (error) {
-            console.error('Error:', error);
-            document.getElementById('errorAlert').style.display = 'block';
-            document.getElementById('errorAlert').textContent = error.message || 'Error al conectar';
-        } finally {
-            loginBtn.disabled = false;
-            loginBtn.innerHTML = '<i class="fas fa-sign-in-alt me-2"></i>Iniciar Sesión';
-        }
-    });
-</script>
+        });
+    </script>
 </body>
+
 </html>

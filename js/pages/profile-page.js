@@ -4,11 +4,11 @@ console.log('📦 profile-page.js cargando...');
 
 window.InitManager.register('ProfilePage', async function () {
     console.log('📋 Inicializando página de perfil');
-    
+
     // Usar window.TOKEN_KEY o 'token' por defecto
     const tokenKey = window.TOKEN_KEY || 'token';
     const token = localStorage.getItem(tokenKey);
-    
+
     console.log('Token:', token ? 'existe' : 'no existe');
 
     if (!token) {
@@ -16,11 +16,11 @@ window.InitManager.register('ProfilePage', async function () {
         window.location.href = 'index.html';
         return;
     }
-    
+
     try {
         const user = await fetchCurrentUser(token);
         console.log('Usuario recibido:', user);
-        
+
         renderProfile(user);
         setupProfileEvents();
 
@@ -49,12 +49,12 @@ async function fetchCurrentUser(token) {
 function renderProfile(user) {
     console.log('🎨 renderProfile ejecutado');
     const container = document.getElementById('profileContainer');
-    
+
     if (!container) {
         console.error('❌ No se encontró #profileContainer');
         return;
     }
-    
+
     const html = `
         <div class="profile-header">
             <div class="profile-avatar">
@@ -149,7 +149,7 @@ function renderProfile(user) {
 
 function setupProfileEvents() {
     console.log('🔧 setupProfileEvents ejecutado');
-    
+
     const profileForm = document.getElementById('profileForm');
     if (profileForm) {
         profileForm.addEventListener('submit', handleProfileUpdate);
@@ -165,12 +165,12 @@ function setupProfileEvents() {
             const tabName = tab.dataset.tab;
             document.querySelectorAll('.profile-tab').forEach(t => t.classList.remove('active'));
             tab.classList.add('active');
-            
+
             document.querySelectorAll('.profile-tab-content').forEach(content => {
                 content.classList.remove('active');
             });
             document.getElementById(`tab${tabName.charAt(0).toUpperCase() + tabName.slice(1)}`).classList.add('active');
-            
+
             if (tabName === 'orders') {
                 loadOrders();
             }
@@ -180,7 +180,7 @@ function setupProfileEvents() {
 
 async function handleProfileUpdate(e) {
     e.preventDefault();
-    
+
     const tokenKey = window.TOKEN_KEY || 'token';
     const token = localStorage.getItem(tokenKey);
     if (!token) return;
@@ -207,7 +207,7 @@ async function handleProfileUpdate(e) {
         }
 
         alert('Perfil actualizado correctamente');
-        
+
         if (window.updateSessionUI) {
             window.updateSessionUI();
         }
@@ -316,7 +316,7 @@ function formatDate(dateString) {
 function showError(message) {
     const container = document.getElementById('profileContainer');
     if (!container) return;
-    
+
     container.innerHTML = `
         <div class="error-message">
             <i class="fas fa-exclamation-circle"></i>
@@ -326,11 +326,11 @@ function showError(message) {
     `;
 }
 
-window.viewOrderDetails = function(orderId) {
+window.viewOrderDetails = function (orderId) {
     window.location.href = `pedido-detalle.html?id=${orderId}`;
 };
 
-window.uploadAvatar = function() {
+window.uploadAvatar = function () {
     alert('Función de avatar próximamente');
 };
 

@@ -1,65 +1,71 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Política de Compras - SalamancaVivela</title>
-    
+
     <link rel="stylesheet" href="css/Style.css">
     <link rel="stylesheet" href="css/info-pages.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap"
+        rel="stylesheet">
 </head>
+
 <body data-theme="light">
 
     <header class="main-header">
-  <div class="container header-container">
-    <div class="logo">
-      <a href="index.html">
-      <img src="img/images.png" 
-         alt="Salamanca Vívela" 
-         class="logo-img">
-      </a>
-    </div>
-    <nav class="nav-desktop">
-      <a href="productos.html">Productos</a>
-      <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
-      <a href="contacto.html">Contacto</a>
-    </nav>
+        <div class="container header-container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="img/images.png" alt="Salamanca Vívela" class="logo-img">
+                </a>
+            </div>
+            <nav class="nav-desktop">
+                <a href="productos.html">Productos</a>
+                <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
+                <a href="contacto.html">Contacto</a>
+            </nav>
 
-    <div id="authButtons" class="auth-buttons">
-      <a href="#" id="loginBtn" class="btn-login">
-        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-      </a>
-      <a href="#" id="registerBtn" class="btn-register">
-        <i class="fas fa-user-plus"></i> Registrarse
-      </a>
-    </div>
+            <div id="authButtons" class="auth-buttons">
+                <a href="#" id="loginBtn" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </a>
+                <a href="#" id="registerBtn" class="btn-register">
+                    <i class="fas fa-user-plus"></i> Registrarse
+                </a>
+            </div>
 
-    <!-- Menú de usuario -->
-    <div id="userMenu" class="user-menu" style="display:none;">
-      <div class="user-avatar"><span id="userAvatar">U</span>
-        <div class="user-dropdown">
-          <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
-          <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+            <!-- Menú de usuario -->
+            <div id="userMenu" class="user-menu" style="display:none;">
+                <div class="user-avatar"><span id="userAvatar">U</span>
+                    <div class="user-dropdown">
+                        <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                        <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                    </div>
+                </div>
+                <span id="userNameDisplay" class="user-name">Usuario</span>
+            </div>
+
+            <!-- Acciones header -->
+            <div class="header-actions">
+                <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i
+                        class="fas fa-minus"></i></button>
+                <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
+                <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i
+                        class="fas fa-plus"></i></button>
+                <span class="header-separator"></span>
+                <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span
+                        class="cart-count">0</span></a>
+                <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun"
+                        style="display:none"></i></button>
+            </div>
         </div>
-      </div>
-      <span id="userNameDisplay" class="user-name">Usuario</span>
-    </div>
-
-    <!-- Acciones header -->
-    <div class="header-actions">
-      <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i class="fas fa-minus"></i></button>
-      <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
-      <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i class="fas fa-plus"></i></button>
-      <span class="header-separator"></span>
-      <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></a>
-      <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun" style="display:none"></i></button>
-    </div>
-  </div>
-</header>
+    </header>
 
     <main class="info-page">
         <div class="page-header">
@@ -79,7 +85,7 @@
             <!-- Proceso de compra -->
             <section class="info-section">
                 <h2><i class="fas fa-cart-plus"></i> Proceso de Compra</h2>
-                
+
                 <div class="timeline">
                     <div class="timeline-item">
                         <div class="timeline-number">1</div>
@@ -88,7 +94,7 @@
                             <p>Añade los productos que desees al carrito de compras.</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
                         <div class="timeline-number">2</div>
                         <div class="timeline-content">
@@ -96,7 +102,7 @@
                             <p>Verifica cantidades, tallas y precios antes de continuar.</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
                         <div class="timeline-number">3</div>
                         <div class="timeline-content">
@@ -104,7 +110,7 @@
                             <p>Necesitarás una cuenta para completar la compra y hacer seguimiento.</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
                         <div class="timeline-number">4</div>
                         <div class="timeline-content">
@@ -112,7 +118,7 @@
                             <p>Introduce tu dirección de envío y selecciona el método de pago.</p>
                         </div>
                     </div>
-                    
+
                     <div class="timeline-item">
                         <div class="timeline-number">5</div>
                         <div class="timeline-content">
@@ -126,7 +132,7 @@
             <!-- Métodos de pago -->
             <section class="info-section">
                 <h2><i class="fas fa-credit-card"></i> Métodos de Pago</h2>
-                
+
                 <table class="info-table">
                     <thead>
                         <tr>
@@ -137,7 +143,8 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td><i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> Tarjeta de crédito/débito</td>
+                            <td><i class="fab fa-cc-visa"></i> <i class="fab fa-cc-mastercard"></i> Tarjeta de
+                                crédito/débito</td>
                             <td>0€</td>
                             <td>Inmediato</td>
                         </tr>
@@ -148,7 +155,7 @@
                         </tr>
                     </tbody>
                 </table>
-                
+
                 <div class="alert alert-success">
                     <i class="fas fa-shield-alt"></i>
                     <p>Todos los pagos online están protegidos con encriptación SSL. Tus datos están seguros.</p>
@@ -158,7 +165,7 @@
             <!-- Gastos de envío -->
             <section class="info-section">
                 <h2><i class="fas fa-truck"></i> Gastos de Envío</h2>
-                
+
                 <table class="info-table">
                     <thead>
                         <tr>
@@ -185,9 +192,10 @@
             <!-- Seguimiento de pedidos -->
             <section class="info-section">
                 <h2><i class="fas fa-search"></i> Seguimiento de Pedidos</h2>
-                
-                <p>Una vez realices tu compra, recibirás un email con el número de seguimiento. También puedes consultar el estado en:</p>
-                
+
+                <p>Una vez realices tu compra, recibirás un email con el número de seguimiento. También puedes consultar
+                    el estado en:</p>
+
                 <ul class="info-list">
                     <li><i class="fas fa-check-circle"></i> Tu panel de usuario, en "Mis Pedidos"</li>
                     <li><i class="fas fa-check-circle"></i> En el email de confirmación de envío</li>
@@ -210,56 +218,58 @@
         </div>
 
         <div class="page-footer">
-            <p>Última actualización: Marzo 2026 | <a href="AvisoLegal.html">Aviso Legal</a> | <a href="Cookies.html">Cookies</a></p>
+            <p>Última actualización: Marzo 2026 | <a href="AvisoLegal.html">Aviso Legal</a> | <a
+                    href="Cookies.html">Cookies</a></p>
         </div>
     </main>
 
     <!-- Footer -->
-<footer class="main-footer">
-    <div class="container">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>SalamancaVivela</h3>
-                <p>Tu tienda online de productos artesanales y típicos de Salamanca.</p>
-                <div class="social-links">
-                    <a href="https://www.facebook.com/SalamancaVivelaES"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/salamancavivela/"><i class="fab fa-instagram"></i></a>
-                    <a href="https://x.com/SalamancaVivela"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.tiktok.com/@salamancavivela"><i class="fab fa-tiktok"></i></a>
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>SalamancaVivela</h3>
+                    <p>Tu tienda online de productos artesanales y típicos de Salamanca.</p>
+                    <div class="social-links">
+                        <a href="https://www.facebook.com/SalamancaVivelaES"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com/salamancavivela/"><i class="fab fa-instagram"></i></a>
+                        <a href="https://x.com/SalamancaVivela"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.tiktok.com/@salamancavivela"><i class="fab fa-tiktok"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Enlaces rápidos</h3>
+                    <ul>
+                        <li><a href="index.html">Inicio</a></li>
+                        <li><a href="productos.html">Productos</a></li>
+                        <li><a href="carrito.html">Carrito</a></li>
+                        <li><a href="contacto.html">Contacto</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h3>Contacto</h3>
+                    <ul>
+                        <li><i class="fas fa-map-marker-alt"></i> Calle Azafranal 26, Salamanca</li>
+                        <li><i class="fas fa-phone"></i> +34 644 16 46 57</li>
+                        <li><i class="fas fa-envelope"></i> administracion@salamancavivela.com</li>
+                    </ul>
                 </div>
             </div>
-            
-            <div class="footer-section">
-                <h3>Enlaces rápidos</h3>
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="productos.html">Productos</a></li>
-                    <li><a href="carrito.html">Carrito</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <ul>
-                    <li><i class="fas fa-map-marker-alt"></i> Calle Azafranal 26, Salamanca</li>
-                    <li><i class="fas fa-phone"></i> +34 644 16 46 57</li>
-                    <li><i class="fas fa-envelope"></i> administracion@salamancavivela.com</li>
-                </ul>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 SalamancaVivela. Todos los derechos reservados.</p>
+                <div class="footer-links">
+                    <a href="Cookies.html">Cookies</a>
+                    <a href="AvisoLegal.html">Aviso legal</a>
+                    <a href="politica-devoluciones.html">Devoluciones</a>
+                    <a href="politica-compra.html">Compras</a>
+                    <a href="preguntas-frecuentes.html">Preguntas frecuentes</a>
+                </div>
             </div>
         </div>
-        
-        <div class="footer-bottom">
-            <p>&copy; 2024 SalamancaVivela. Todos los derechos reservados.</p>
-            <div class="footer-links">
-                <a href="Cookies.html">Cookies</a>
-                <a href="AvisoLegal.html">Aviso legal</a>
-                <a href="politica-devoluciones.html">Devoluciones</a>
-                <a href="politica-compra.html">Compras</a>
-                <a href="preguntas-frecuentes.html">Preguntas frecuentes</a>
-            </div>
-        </div>
-    </div>
-</footer>
+    </footer>
 </body>
+
 </html>

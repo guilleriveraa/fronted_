@@ -1,19 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Detalle Devolución - Admin SalamancaVivela</title>
-    
+
     <!-- CoreUI CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- Estilos personalizados -->
     <link rel="stylesheet" href="/fronted/admin/css/admin.css">
     <link rel="stylesheet" href="/fronted/admin/css/devolucion-detalle.css">
 </head>
+
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
@@ -48,7 +51,8 @@
                 </div>
                 <div class="admin-info">
                     <span id="adminName" class="fw-bold me-2">Cargando...</span>
-                    <img src="https://ui-avatars.com/api/?name=A&background=c62828&color=fff&size=40" class="avatar-sm" id="adminAvatar">
+                    <img src="https://ui-avatars.com/api/?name=A&background=c62828&color=fff&size=40" class="avatar-sm"
+                        id="adminAvatar">
                 </div>
             </div>
 
@@ -70,8 +74,8 @@
     </div>
 
     <!-- Botón menú móvil -->
-    <button class="btn btn-primary d-md-none position-fixed bottom-0 end-0 m-3 menu-toggle-btn" 
-            onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <button class="btn btn-primary d-md-none position-fixed bottom-0 end-0 m-3 menu-toggle-btn"
+        onclick="document.getElementById('sidebar').classList.toggle('active')">
         <i class="fas fa-bars"></i>
     </button>
 
@@ -82,11 +86,12 @@
     <script src="js/admin.js"></script>
     <script>
         // Función de logout
-        window.logout = function() {
+        window.logout = function () {
             localStorage.removeItem('token');
             window.location.href = '../index.html';
         };
     </script>
     <script src="js/devolucion-detalle.js"></script>
 </body>
+
 </html>

@@ -13,22 +13,22 @@ window.InitManager.register('GestionPedidosPage', async function () {
     try {
         // Cargar pedidos principales
         await loadOrders();
-        
+
         // Cargar pedidos elegibles para devolución
         await loadEligibleReturns();
-        
+
         // Configurar pestañas
         setupTabs();
-        
+
         // Configurar filtros
         setupFilters();
-        
+
         // Configurar eventos de devolución
         setupReturnEvents();
-        
+
         // Detectar si venimos de un pedido específico
         checkUrlForOrder();
-        
+
     } catch (error) {
         console.error('❌ Error:', error);
         showError('No se pudieron cargar los datos');
@@ -72,7 +72,7 @@ async function loadOrders() {
 
 function renderOrders(orders) {
     const container = document.getElementById('ordersContainer');
-    
+
     if (!orders.length) {
         container.innerHTML = `
             <div class="no-orders">
@@ -257,26 +257,26 @@ function renderEligibleOrders(orders) {
 }
 
 // ========== FUNCIONES DE DEVOLUCIÓN ==========
-window.selectProduct = function(orderId, productId) {
+window.selectProduct = function (orderId, productId) {
     console.log('✅ Producto seleccionado:', { orderId, productId });
     selectedOrderId = orderId;
     selectedProductId = productId;
-    
+
     // Opcional: resaltar la opción seleccionada
     document.querySelectorAll('.product-option').forEach(opt => {
         opt.classList.remove('selected');
     });
-    
+
     const selectedLabel = document.querySelector(`input[value="${productId}"][data-order="${orderId}"]`).closest('.product-option');
     if (selectedLabel) {
         selectedLabel.classList.add('selected');
     }
 };
 
-window.startReturnProcess = function(orderId) {
+window.startReturnProcess = function (orderId) {
     console.log('🔍 Iniciando devolución para pedido:', orderId);
     console.log('📦 Producto seleccionado:', { selectedOrderId, selectedProductId });
-    
+
     // Verificar si hay producto seleccionado para ESTE pedido
     if (!selectedProductId || selectedOrderId !== orderId) {
         alert('Selecciona un producto primero.');
@@ -286,14 +286,14 @@ window.startReturnProcess = function(orderId) {
     // Ocultar lista de pedidos y mostrar formulario
     const formContainer = document.getElementById('returnFormContainer');
     const ordersDiv = document.querySelector('.returns-orders');
-    
+
     if (formContainer) formContainer.style.display = 'block';
     if (ordersDiv) ordersDiv.style.display = 'none';
-    
+
     console.log('✅ Formulario de devolución mostrado');
 };
 
-window.cancelReturn = function() {
+window.cancelReturn = function () {
     document.getElementById('returnFormContainer').style.display = 'none';
     document.querySelector('.returns-orders').style.display = 'block';
     selectedOrderId = null;
@@ -342,7 +342,7 @@ async function handleReturnSubmit(e) {
         }
 
         showReturnStatus('Solicitud enviada correctamente', 'success');
-        
+
         // Reset y volver a la lista
         setTimeout(() => {
             cancelReturn();
@@ -372,11 +372,11 @@ function setupTabs() {
     document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const tabName = btn.dataset.tab;
-            
+
             // Actualizar botones
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             btn.classList.add('active');
-            
+
             // Actualizar contenido
             document.querySelectorAll('.tab-content').forEach(content => {
                 content.classList.remove('active');
@@ -389,7 +389,7 @@ function setupTabs() {
 // ========== FILTROS DE PEDIDOS ==========
 function setupFilters() {
     document.querySelectorAll('.filter-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
 
@@ -407,17 +407,17 @@ function setupFilters() {
 }
 
 // ========== FUNCIÓN PARA CAMBIAR A DEVOLUCIONES ==========
-window.switchToReturns = function(orderId) {
+window.switchToReturns = function (orderId) {
     // Cambiar a la pestaña de devoluciones
     document.querySelector('[data-tab="devoluciones"]').click();
-    
+
     // Seleccionar el pedido automáticamente
     setTimeout(() => {
         const orderCard = document.querySelector(`.return-card[data-order-id="${orderId}"]`);
         if (orderCard) {
             orderCard.scrollIntoView({ behavior: 'smooth' });
             orderCard.classList.add('highlight');
-            
+
             // Seleccionar primer producto
             setTimeout(() => {
                 const firstRadio = orderCard.querySelector('input[type="radio"]');
@@ -441,7 +441,7 @@ function checkUrlForOrder() {
 }
 
 // ========== FUNCIONES AUXILIARES ==========
-window.viewOrderDetails = function(orderId) {
+window.viewOrderDetails = function (orderId) {
     window.location.href = `pedido-detalle.html?id=${orderId}`;
 };
 
@@ -478,7 +478,7 @@ function getTransportistaName(company) {
 
 function getTrackingUrl(trackingNumber, company) {
     if (!trackingNumber) return '#';
-    
+
     const urls = {
         'correos': `https://www.correos.es/es/es/individuales/rastreo?tracking-number=${trackingNumber}`,
         'seur': `https://www.seur.com/livetracking/pages/seguimiento-online-busqueda.do?segOnline=${trackingNumber}`,
@@ -490,7 +490,7 @@ function getTrackingUrl(trackingNumber, company) {
         'gls': `https://gls-spain.es/es/rastreo-envios?numero=${trackingNumber}`,
         'tnt': `https://www.tnt.com/express/es_es/site/herramientas-de-seguimiento/segui-tus-envios.html?consignments=${trackingNumber}`
     };
-    
+
     return urls[company?.toLowerCase()] || `https://www.google.com/search?q=${encodeURIComponent(trackingNumber)}`;
 }
 console.log('✅ gestion-pedidos-page.js cargado');

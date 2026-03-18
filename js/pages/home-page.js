@@ -15,7 +15,7 @@ window.InitManager.register('HomePage', function () {
 function setupBuyButtons() {
   document.querySelectorAll('.btn-buy').forEach(btn => {
     btn.addEventListener('click', async () => {
-      
+
       if (!window.sessionService || !window.sessionService.isLoggedIn()) {
         alert('Debes iniciar sesión para añadir productos');
         if (window.showAuthModal) {
@@ -70,35 +70,35 @@ async function loadLatestProducts() {
   console.log('🚀 loadLatestProducts INICIADO');
   const container = document.getElementById('latestProductsContainer');
   console.log('📦 Contenedor encontrado:', container ? 'SÍ' : 'NO');
-  
+
   if (!container) {
     console.log('⚠️ No se encontró el contenedor de últimos productos');
     return;
   }
-  
+
   try {
     console.log('📡 Fetching productos desde:', `${window.API_URL}/productos`);
     const response = await fetch(`${window.API_URL}/productos`);
     console.log('📡 Respuesta status:', response.status);
-    
+
     if (!response.ok) throw new Error('Error al cargar productos');
-    
+
     const productos = await response.json();
     console.log('📦 Productos recibidos:', productos.length, productos);
-    
+
     if (productos.length === 0) {
       console.log('⚠️ No hay productos en la BD');
       container.innerHTML = '<p class="no-products">No hay productos disponibles</p>';
       return;
     }
-    
+
     const ultimosProductos = productos
       .sort((a, b) => b.id - a.id)
       .slice(0, 3);
-    
+
     console.log('✨ Últimos 3 productos:', ultimosProductos.map(p => p.nombre));
     renderLatestProducts(ultimosProductos);
-    
+
   } catch (error) {
     console.error('❌ Error cargando últimos productos:', error);
     if (container) {
@@ -113,12 +113,12 @@ async function loadLatestProducts() {
 function renderLatestProducts(productos) {
   const container = document.getElementById('latestProductsContainer');
   if (!container) return;
-  
+
   if (!productos.length) {
     container.innerHTML = '<p class="no-products">No hay productos disponibles</p>';
     return;
   }
-  
+
   container.innerHTML = productos.map(p => `
     <div class="product-card">
       <div class="product-image">
@@ -148,11 +148,11 @@ function renderLatestProducts(productos) {
 // ===============================
 // FUNCIONES GLOBALES (para los botones)
 // ===============================
-window.quickView = async function(productId) {
+window.quickView = async function (productId) {
   try {
     const response = await fetch(`${window.API_URL}/productos/${productId}`);
-      if (!response.ok) throw new Error('Error al cargar producto');
-    
+    if (!response.ok) throw new Error('Error al cargar producto');
+
     const producto = await response.json();
     alert(`🔍 ${producto.nombre}\nPrecio: ${producto.precio}€\n${producto.descripcion || 'Sin descripción'}`);
   } catch (error) {
@@ -161,12 +161,12 @@ window.quickView = async function(productId) {
   }
 };
 
-window.addToCart = async function(productId) {
+window.addToCart = async function (productId) {
   if (!window.sessionService?.isLoggedIn()) {
     if (window.showAuthModal) window.showAuthModal('login');
     return;
   }
-  
+
   try {
 
     const response = await fetch(`${window.API_URL}/cart/add`, {
@@ -177,9 +177,9 @@ window.addToCart = async function(productId) {
       },
       body: JSON.stringify({ productId, quantity: 1 })
     });
-    
+
     const data = await response.json();
-    
+
     if (response.ok) {
       alert('✅ Producto añadido al carrito');
       if (window.CartCore) window.CartCore.updateCartCounters();

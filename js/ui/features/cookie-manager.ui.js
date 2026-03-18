@@ -40,7 +40,7 @@ window.InitManager.register('CookieManager', function () {
         // 2. Cookies analíticas (Google Analytics)
         if (prefs.analytics) {
             console.log('📊 Activando cookies analíticas');
-            
+
             if (GA_ID !== 'G-XXXXXXXXXX' && !window.ga) { // Solo si configuraste un ID real
                 // Cargar Google Analytics
                 const script = document.createElement('script');
@@ -49,7 +49,7 @@ window.InitManager.register('CookieManager', function () {
                 script.setAttribute('data-cookie-type', 'analytics');
                 script.onload = () => {
                     window.dataLayer = window.dataLayer || [];
-                    function gtag(){dataLayer.push(arguments);}
+                    function gtag() { dataLayer.push(arguments); }
                     window.gtag = gtag;
                     gtag('js', new Date());
                     gtag('config', GA_ID, { anonymize_ip: true });
@@ -68,27 +68,30 @@ window.InitManager.register('CookieManager', function () {
         // 3. Cookies de marketing (Facebook Pixel)
         if (prefs.marketing) {
             console.log('🎯 Activando cookies de marketing');
-            
+
             if (FB_PIXEL_ID !== '123456789012345' && !window.fbq) { // Solo si configuraste un ID real
                 // Cargar Facebook Pixel
-                !function(f,b,e,v,n,t,s)
-                {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-                n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-                if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-                n.queue=[];t=b.createElement(e);t.async=!0;
-                t.src=v;s=b.getElementsByTagName(e)[0];
-                s.parentNode.insertBefore(t,s)}(window, document,'script',
-                'https://connect.facebook.net/en_US/fbevents.js');
-                
+                !function (f, b, e, v, n, t, s) {
+                    if (f.fbq) return; n = f.fbq = function () {
+                        n.callMethod ?
+                        n.callMethod.apply(n, arguments) : n.queue.push(arguments)
+                    };
+                    if (!f._fbq) f._fbq = n; n.push = n; n.loaded = !0; n.version = '2.0';
+                    n.queue = []; t = b.createElement(e); t.async = !0;
+                    t.src = v; s = b.getElementsByTagName(e)[0];
+                    s.parentNode.insertBefore(t, s)
+                }(window, document, 'script',
+                    'https://connect.facebook.net/en_US/fbevents.js');
+
                 fbq('init', FB_PIXEL_ID);
                 fbq('track', 'PageView');
-                
+
                 console.log('✅ Facebook Pixel cargado');
             }
         } else {
             // Desactivar Facebook Pixel si ya estaba cargado
             if (window.fbq) {
-                window.fbq = function(){}; // Sobrescribir con función vacía
+                window.fbq = function () { }; // Sobrescribir con función vacía
                 console.log('🚫 Facebook Pixel desactivado');
             }
         }
@@ -105,10 +108,10 @@ window.InitManager.register('CookieManager', function () {
                     analytics: parsed.analytics === true,
                     marketing: parsed.marketing === true
                 };
-                
+
                 // 🔥 Aplicar las preferencias al cargar
                 aplicarPreferencias(cookiePreferences);
-                
+
             } catch (e) {
                 console.warn("Error parsing cookie preferences", e);
             }
@@ -130,10 +133,10 @@ window.InitManager.register('CookieManager', function () {
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
         console.log('💾 Preferencias guardadas:', dataToSave);
-        
+
         // 🔥 Aplicar las nuevas preferencias
         aplicarPreferencias(cookiePreferences);
-        
+
         hideBanner();
     }
 
@@ -142,12 +145,12 @@ window.InitManager.register('CookieManager', function () {
         // Eliminar scripts de cookies previos
         const scripts = document.querySelectorAll('script[data-cookie-type]');
         scripts.forEach(script => script.remove());
-        
+
         // Resetear variables globales
         if (window.gtag) delete window.gtag;
-        if (window.fbq) window.fbq = function(){};
+        if (window.fbq) window.fbq = function () { };
         if (window.dataLayer) window.dataLayer = [];
-        
+
         console.log('🧹 Servicios previos limpiados');
     }
 
@@ -201,7 +204,7 @@ window.InitManager.register('CookieManager', function () {
     if (settingsBtn) {
         settingsBtn.addEventListener('click', () => {
             if (settingsPanel) settingsPanel.classList.toggle('active');
-            
+
             // Cargar valores actuales en el panel
             if (analyticsToggle) analyticsToggle.checked = cookiePreferences.analytics;
             if (marketingToggle) marketingToggle.checked = cookiePreferences.marketing;

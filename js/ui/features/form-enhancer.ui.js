@@ -22,7 +22,7 @@ window.InitManager.register('CookieManager', function () {
 
     // --- Clave para localStorage ---
     const STORAGE_KEY = 'cookiesAccepted';
-    
+
     // --- Tu ID de Google Analytics (CÁMBIALO POR EL TUYO) ---
     const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // ← CAMBIA ESTO
 
@@ -36,7 +36,7 @@ window.InitManager.register('CookieManager', function () {
     // --- FUNCIÓN IMPORTANTE: Cargar Google Analytics ---
     function loadGoogleAnalytics() {
         if (typeof window.gtag === 'function') return; // Ya está cargado
-        
+
         // Cargar el script de GA
         const script = document.createElement('script');
         script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
@@ -45,14 +45,14 @@ window.InitManager.register('CookieManager', function () {
 
         // Inicializar gtag
         window.dataLayer = window.dataLayer || [];
-        window.gtag = function() { dataLayer.push(arguments); };
+        window.gtag = function () { dataLayer.push(arguments); };
         gtag('js', new Date());
         gtag('config', GA_MEASUREMENT_ID, {
             'anonymize_ip': true,
             'cookie_flags': 'max-age=7200;secure;samesite=none',
             'cookie_domain': 'none'
         });
-        
+
         console.log('📊 Google Analytics cargado');
     }
 
@@ -84,19 +84,19 @@ window.InitManager.register('CookieManager', function () {
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(cookiePreferences));
         console.log('💾 Preferencias guardadas:', cookiePreferences);
-        
+
         applyConsent(cookiePreferences);
     }
 
     // --- Aplicar consentimiento ---
     function applyConsent(prefs) {
         console.log('🛡️ Aplicando consentimiento:', prefs);
-        
+
         // Cargar Google Analytics SOLO si el usuario aceptó
         if (prefs.analytics) {
             loadGoogleAnalytics();
         }
-        
+
         // Si ya hay gtag, actualizar consentimiento
         if (typeof window.gtag === 'function') {
             gtag('consent', 'update', {

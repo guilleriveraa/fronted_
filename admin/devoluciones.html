@@ -1,16 +1,19 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Devoluciones - Admin SalamancaVivela</title>
-    
+
     <!-- CoreUI CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="css/admin.css">
 </head>
+
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
@@ -37,7 +40,8 @@
                 <h2><i class="fas fa-undo-alt me-2" style="color: #c62828;"></i>Gestionar Devoluciones</h2>
                 <div>
                     <span id="adminName" class="fw-bold me-2">Cargando...</span>
-                    <img src="https://ui-avatars.com/api/?name=A&background=c62828&color=fff&size=40" class="avatar-sm" id="adminAvatar">
+                    <img src="https://ui-avatars.com/api/?name=A&background=c62828&color=fff&size=40" class="avatar-sm"
+                        id="adminAvatar">
                 </div>
             </div>
 
@@ -67,7 +71,9 @@
                                 </tr>
                             </thead>
                             <tbody id="devoluciones-list">
-                                <tr><td colspan="7" class="text-center">Cargando devoluciones...</td></tr>
+                                <tr>
+                                    <td colspan="7" class="text-center">Cargando devoluciones...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -77,8 +83,8 @@
     </div>
 
     <!-- Botón menú móvil -->
-    <button class="btn btn-primary d-md-none position-fixed bottom-0 end-0 m-3" 
-            onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <button class="btn btn-primary d-md-none position-fixed bottom-0 end-0 m-3"
+        onclick="document.getElementById('sidebar').classList.toggle('active')">
         <i class="fas fa-bars"></i>
     </button>
 
@@ -90,10 +96,11 @@
     <script src="js/devoluciones.js"></script>
     <script>
         // Función de logout
-        window.logout = function() {
+        window.logout = function () {
             localStorage.removeItem('token');
             window.location.href = '/index.html';
         };
     </script>
 </body>
+
 </html>

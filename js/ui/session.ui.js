@@ -5,7 +5,7 @@ function updateSessionUI() {
         console.warn('sessionService no disponible');
         return;
     }
-    
+
     const user = window.sessionService.getUser();
     const authButtons = document.getElementById('authButtons');
     const usuarioMenu = document.getElementById('userMenu');
@@ -20,12 +20,12 @@ function updateSessionUI() {
         console.log('✅ Usuario logueado, mostrando menú');
         authButtons.style.display = 'none';
         usuarioMenu.style.display = 'flex';
-        
+
         const userNameDisplay = document.getElementById('userNameDisplay');
         if (userNameDisplay && user.nombre) {
             userNameDisplay.textContent = user.nombre;
         }
-        
+
         const userAvatar = document.getElementById('userAvatar');
         if (userAvatar && user.nombre) {
             userAvatar.textContent = user.nombre.charAt(0).toUpperCase();
@@ -33,7 +33,7 @@ function updateSessionUI() {
 
         // 🔥 NUEVO: Verificar si el usuario es admin
         checkIfAdmin(user.id);
-        
+
     } else {
         console.log('❌ Usuario no logueado, mostrando botones');
         authButtons.style.display = 'flex';
@@ -50,9 +50,9 @@ async function checkIfAdmin(userId) {
                 'Authorization': 'Bearer ' + token
             }
         });
-        
+
         const data = await response.json();
-        
+
         if (data.isAdmin) {
             console.log('👑 Usuario es administrador, mostrando enlace');
             addAdminLinkToMenu();
@@ -66,16 +66,16 @@ async function checkIfAdmin(userId) {
 function addAdminLinkToMenu() {
     const dropdown = document.querySelector('.user-dropdown');
     if (!dropdown) return;
-    
+
     // Verificar si ya existe el enlace para no duplicar
     if (document.querySelector('.dropdown-item.admin-link')) return;
-    
+
     // Crear el nuevo enlace
     const adminLink = document.createElement('a');
     adminLink.href = '/admin/index.html';
     adminLink.className = 'dropdown-item admin-link';
     adminLink.innerHTML = '<i class="fas fa-cog"></i> Panel Administrador';
-    
+
     // Insertar antes del divider
     const divider = dropdown.querySelector('.dropdown-divider');
     if (divider) {
@@ -88,12 +88,12 @@ function addAdminLinkToMenu() {
         newDivider.className = 'dropdown-divider';
         dropdown.appendChild(newDivider);
     }
-    
+
     console.log('✅ Enlace admin añadido al menú');
 }
 
 // Función global para logout
-window.logoutUser = function() {
+window.logoutUser = function () {
     console.log('🚪 logoutUser llamado');
     if (window.sessionService) {
         window.sessionService.logout();
@@ -105,23 +105,23 @@ window.logoutUser = function() {
 
 function setupLogout() {
     console.log('🔄 setupLogout ejecutado');
-    
+
     // Eliminar todos los eventos onclick anteriores de UNA SOLA VEZ
     document.querySelectorAll('.logout').forEach(btn => {
         // Reemplazar el botón para eliminar todos los eventos
         const newBtn = btn.cloneNode(true);
         btn.parentNode.replaceChild(newBtn, btn);
     });
-    
+
     // Asignar evento a los nuevos botones
     document.querySelectorAll('.logout').forEach(btn => {
         console.log('🎯 Asignando evento a botón:', btn);
-        
-        btn.addEventListener('click', function(e) {
+
+        btn.addEventListener('click', function (e) {
             e.preventDefault();
             e.stopPropagation();
             console.log('👆 Click en botón de logout');
-            
+
             if (window.sessionService) {
                 window.sessionService.logout();
                 updateSessionUI();
@@ -133,69 +133,69 @@ function setupLogout() {
 }
 
 // Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('📢 DOMContentLoaded - Inicializando UI de sesión');
     setupLogout();
     updateSessionUI();
-    
+
     // Código del dropdown - VERSIÓN MEJORADA
-const avatar = document.querySelector('.user-avatar');
-const dropdown = document.querySelector('.user-dropdown');
-let timeoutId;
-let isHovering = false;
+    const avatar = document.querySelector('.user-avatar');
+    const dropdown = document.querySelector('.user-dropdown');
+    let timeoutId;
+    let isHovering = false;
 
-if (avatar && dropdown) {
-    // Función para mostrar el dropdown
-    function showDropdown() {
-        clearTimeout(timeoutId);
-        dropdown.style.display = 'block';
-    }
+    if (avatar && dropdown) {
+        // Función para mostrar el dropdown
+        function showDropdown() {
+            clearTimeout(timeoutId);
+            dropdown.style.display = 'block';
+        }
 
-    // Función para ocultar el dropdown con retraso
-    function hideDropdown() {
-        timeoutId = setTimeout(function() {
-            if (!isHovering) {
+        // Función para ocultar el dropdown con retraso
+        function hideDropdown() {
+            timeoutId = setTimeout(function () {
+                if (!isHovering) {
+                    dropdown.style.display = 'none';
+                }
+            }, 800); // Aumentado a 500ms
+        }
+
+        // Eventos para el avatar
+        avatar.addEventListener('mouseenter', function () {
+            isHovering = true;
+            showDropdown();
+        });
+
+        avatar.addEventListener('mouseleave', function () {
+            isHovering = false;
+            hideDropdown();
+        });
+
+        // Eventos para el dropdown
+        dropdown.addEventListener('mouseenter', function () {
+            isHovering = true;
+            clearTimeout(timeoutId);
+            dropdown.style.display = 'block';
+        });
+
+        dropdown.addEventListener('mouseleave', function () {
+            isHovering = false;
+            hideDropdown();
+        });
+
+        // Cerrar al hacer clic fuera (opcional pero recomendado)
+        document.addEventListener('click', function (e) {
+            if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.style.display = 'none';
             }
-        }, 800); // Aumentado a 500ms
+        });
+
+        console.log('✅ Menú dropdown mejorado con 500ms de retraso');
     }
-
-    // Eventos para el avatar
-    avatar.addEventListener('mouseenter', function() {
-        isHovering = true;
-        showDropdown();
-    });
-
-    avatar.addEventListener('mouseleave', function() {
-        isHovering = false;
-        hideDropdown();
-    });
-
-    // Eventos para el dropdown
-    dropdown.addEventListener('mouseenter', function() {
-        isHovering = true;
-        clearTimeout(timeoutId);
-        dropdown.style.display = 'block';
-    });
-
-    dropdown.addEventListener('mouseleave', function() {
-        isHovering = false;
-        hideDropdown();
-    });
-
-    // Cerrar al hacer clic fuera (opcional pero recomendado)
-    document.addEventListener('click', function(e) {
-        if (!avatar.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.style.display = 'none';
-        }
-    });
-
-    console.log('✅ Menú dropdown mejorado con 500ms de retraso');
-}
 });
 
 // También ejecutar cuando la página se carga completamente (por si acaso)
-window.addEventListener('load', function() {
+window.addEventListener('load', function () {
     console.log('📢 window.load - Reasignando eventos de logout');
     setupLogout();
     updateSessionUI();

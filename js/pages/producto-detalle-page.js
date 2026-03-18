@@ -1,15 +1,15 @@
 // js/pages/producto-detalle-page.js
 
-window.cargarProductoDetalle = async function(productoId) {
+window.cargarProductoDetalle = async function (productoId) {
     const container = document.getElementById('productDetailContainer');
     if (!container) return;
-    
+
     try {
         const response = await fetch(`${window.API_URL}/productos/${productoId}`);
         if (!response.ok) throw new Error('Error al cargar producto');
-        
+
         const producto = await response.json();
-        
+
         container.innerHTML = `
             <div class="product-detail">
                 <div class="product-gallery">
@@ -31,11 +31,11 @@ window.cargarProductoDetalle = async function(productoId) {
                 </div>
             </div>
         `;
-        
+
         // Actualizar categoría en el breadcrumb
-        document.getElementById('product-category').textContent = 
+        document.getElementById('product-category').textContent =
             producto.categoria_nombre || 'Producto';
-            
+
     } catch (error) {
         console.error('Error:', error);
         container.innerHTML = '<p class="error">Error al cargar el producto</p>';

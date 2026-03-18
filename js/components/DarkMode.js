@@ -1,5 +1,5 @@
 ﻿// js/darkmode.js - Modo oscuro con InitManager
-window.InitManager.register('DarkMode', function() {
+window.InitManager.register('DarkMode', function () {
   const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
   const themeToggle = document.getElementById('themeToggle');
 
@@ -20,9 +20,9 @@ window.InitManager.register('DarkMode', function() {
 
   // Función para cambiar tema
   function setTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  localStorage.setItem('theme', theme); // ← guardar elección
-  updateToggleIcons(theme);
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem('theme', theme); // ← guardar elección
+    updateToggleIcons(theme);
   }
 
 
@@ -31,7 +31,7 @@ window.InitManager.register('DarkMode', function() {
 
   if (savedTheme) {
     setTheme(savedTheme);
-  }else if (prefersDarkScheme.matches) {
+  } else if (prefersDarkScheme.matches) {
     setTheme('dark');
   } else {
     setTheme('light');

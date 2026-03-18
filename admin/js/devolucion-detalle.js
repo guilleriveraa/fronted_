@@ -104,7 +104,7 @@ function renderizarDetalle(devolucion, pedido, items) {
     const itemsHTML = items.map(item => `
         <tr>
             <td>
-                <img src="${item.imagen || '../img/default-product.jpg'}" 
+                <img src="${item.imagen || '/fronted/img/default-product.jpg'}" 
                      alt="${item.nombre}" 
                      style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;"
                      onerror="this.src='https://via.placeholder.com/50'">

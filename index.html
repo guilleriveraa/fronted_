@@ -1,343 +1,354 @@
 ﻿<!DOCTYPE html>
 <html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SalamancaVivela - Tienda de productos artesanales</title>
 
-<!-- Estilos -->
-<link rel="stylesheet" href="css/Style.css">
-<link rel="stylesheet" href="css/home.css">
-<link rel="stylesheet" href="css/features.css">
-<link rel="stylesheet" href="css/modal.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SalamancaVivela - Tienda de productos artesanales</title>
+
+  <!-- Estilos -->
+  <link rel="stylesheet" href="css/Style.css">
+  <link rel="stylesheet" href="css/home.css">
+  <link rel="stylesheet" href="css/features.css">
+  <link rel="stylesheet" href="css/modal.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    crossorigin="anonymous">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Open+Sans:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
 </head>
+
 <body data-theme="light">
 
-<!-- Header -->
-<header class="main-header">
-  <div class="container header-container">
-    <div class="logo">
-      <a href="index.html">
-      <img src="img/images.png" 
-         alt="Salamanca Vívela" 
-         class="logo-img">
-      </a>
-    </div>
-    <nav class="nav-desktop">
-      <a href="productos.html">Productos</a>
-      <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
-      <a href="contacto.html">Contacto</a>
-    </nav>
+  <!-- Header -->
+  <header class="main-header">
+    <div class="container header-container">
+      <div class="logo">
+        <a href="index.html">
+          <img src="img/images.png" alt="Salamanca Vívela" class="logo-img">
+        </a>
+      </div>
+      <nav class="nav-desktop">
+        <a href="productos.html">Productos</a>
+        <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
+        <a href="contacto.html">Contacto</a>
+      </nav>
 
-    <div id="authButtons" class="auth-buttons">
-      <a href="#" id="loginBtn" class="btn-login">
-        <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-      </a>
-      <a href="#" id="registerBtn" class="btn-register">
-        <i class="fas fa-user-plus"></i> Registrarse
-      </a>
-    </div>
+      <div id="authButtons" class="auth-buttons">
+        <a href="#" id="loginBtn" class="btn-login">
+          <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+        </a>
+        <a href="#" id="registerBtn" class="btn-register">
+          <i class="fas fa-user-plus"></i> Registrarse
+        </a>
+      </div>
 
-    <!-- Menú de usuario -->
-    <div id="userMenu" class="user-menu" style="display:none;">
-      <div class="user-avatar"><span id="userAvatar">U</span>
-        <div class="user-dropdown">
-          <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
-          <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
-          <div class="dropdown-divider"></div>
-          <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+      <!-- Menú de usuario -->
+      <div id="userMenu" class="user-menu" style="display:none;">
+        <div class="user-avatar"><span id="userAvatar">U</span>
+          <div class="user-dropdown">
+            <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+            <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
+            <div class="dropdown-divider"></div>
+            <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+          </div>
+        </div>
+        <span id="userNameDisplay" class="user-name">Usuario</span>
+      </div>
+
+      <!-- Acciones header -->
+      <div class="header-actions">
+        <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i class="fas fa-minus"></i></button>
+        <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
+        <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i class="fas fa-plus"></i></button>
+        <span class="header-separator"></span>
+        <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span
+            class="cart-count">0</span></a>
+        <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun"
+            style="display:none"></i></button>
+      </div>
+    </div>
+  </header>
+  <!-- Hero Section -->
+  <section class="hero" id="inicio">
+    <div class="hero-overlay"></div>
+    <div class="container">
+      <div class="hero-content animate-on-scroll">
+        <h1>Descubre la esencia de <span>Salamanca</span></h1>
+        <p class="hero-subtitle">Productos artesanales únicos, creados con pasión y tradición</p>
+        <a href="productos.html" class="btn-hero"><i class="fas fa-gift"></i> Explorar Productos</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="features">
+    <div class="container">
+      <div class="features-grid">
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
+          <h3>Envío Gratis</h3>
+          <p>En pedidos superiores a 50€ en toda España</p>
+        </div>
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon"><i class="fas fa-handshake"></i></div>
+          <h3>Artesanía Local</h3>
+          <p>Productos elaborados por artesanos salmantinos</p>
+        </div>
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon"><i class="fas fa-undo-alt"></i></div>
+          <h3>Devolución Fácil</h3>
+          <p>30 días para cambiar o devolver tu compra</p>
+        </div>
+        <div class="feature-card animate-on-scroll">
+          <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+          <h3>Pago Seguro</h3>
+          <p>Compra protegida con encriptación SSL</p>
         </div>
       </div>
-      <span id="userNameDisplay" class="user-name">Usuario</span>
     </div>
+  </section>
 
-    <!-- Acciones header -->
-    <div class="header-actions">
-      <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i class="fas fa-minus"></i></button>
-      <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
-      <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i class="fas fa-plus"></i></button>
-      <span class="header-separator"></span>
-      <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span class="cart-count">0</span></a>
-      <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun" style="display:none"></i></button>
-    </div>
-  </div>
-</header>
-<!-- Hero Section -->
-<section class="hero" id="inicio">
-  <div class="hero-overlay"></div>
-  <div class="container">
-    <div class="hero-content animate-on-scroll">
-      <h1>Descubre la esencia de <span>Salamanca</span></h1>
-      <p class="hero-subtitle">Productos artesanales únicos, creados con pasión y tradición</p>
-      <a href="productos.html" class="btn-hero"><i class="fas fa-gift"></i> Explorar Productos</a>
-    </div>
-  </div>
-</section>
+  <!-- Featured Products -->
+  <section class="featured-products" id="productos">
+    <div class="container">
+      <div class="section-header">
+        <h2>Últimos Productos</h2>
+        <p>Las novedades más recientes de nuestra tienda</p>
+      </div>
 
-<!-- Features Section -->
-<section class="features">
-  <div class="container">
-    <div class="features-grid">
-      <div class="feature-card animate-on-scroll">
-        <div class="feature-icon"><i class="fas fa-shipping-fast"></i></div>
-        <h3>Envío Gratis</h3>
-        <p>En pedidos superiores a 50€ en toda España</p>
+      <!-- Contenedor para productos dinámicos -->
+      <div class="products-grid" id="latestProductsContainer">
+        <div class="loading-spinner">
+          <i class="fas fa-spinner fa-spin"></i>
+          <p>Cargando últimos productos...</p>
+        </div>
       </div>
-      <div class="feature-card animate-on-scroll">
-        <div class="feature-icon"><i class="fas fa-handshake"></i></div>
-        <h3>Artesanía Local</h3>
-        <p>Productos elaborados por artesanos salmantinos</p>
-      </div>
-      <div class="feature-card animate-on-scroll">
-        <div class="feature-icon"><i class="fas fa-undo-alt"></i></div>
-        <h3>Devolución Fácil</h3>
-        <p>30 días para cambiar o devolver tu compra</p>
-      </div>
-      <div class="feature-card animate-on-scroll">
-        <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
-        <h3>Pago Seguro</h3>
-        <p>Compra protegida con encriptación SSL</p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<!-- Featured Products -->
-<section class="featured-products" id="productos">
-  <div class="container">
-    <div class="section-header">
-      <h2>Últimos Productos</h2>
-      <p>Las novedades más recientes de nuestra tienda</p>
-    </div>
-    
-    <!-- Contenedor para productos dinámicos -->
-    <div class="products-grid" id="latestProductsContainer">
-      <div class="loading-spinner">
-        <i class="fas fa-spinner fa-spin"></i>
-        <p>Cargando últimos productos...</p>
+      <div class="view-all">
+        <a href="productos.html" class="btn-view-all">
+          <i class="fas fa-arrow-right"></i> Ver todos los productos
+        </a>
       </div>
     </div>
-    
-    <div class="view-all">
-      <a href="productos.html" class="btn-view-all">
-        <i class="fas fa-arrow-right"></i> Ver todos los productos
-      </a>
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- Auth Modal -->
-<div id="authModal" class="auth-modal">
-  <div class="auth-modal-content">
-    <span class="auth-close">&times;</span>
-    <div class="auth-forms">
-      <!-- LOGIN -->
-<div id="loginContainer" class="auth-form">
-    <h3>Iniciar Sesión</h3>
-    <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
-    <input type="password" id="loginPassword" placeholder="Contraseña" required>
-    
-    <!-- Enlace de recuperación por EMAIL (el que ya tienes) -->
-    <!-- <div class="forgot-password-link">
+  <!-- Auth Modal -->
+  <div id="authModal" class="auth-modal">
+    <div class="auth-modal-content">
+      <span class="auth-close">&times;</span>
+      <div class="auth-forms">
+        <!-- LOGIN -->
+        <div id="loginContainer" class="auth-form">
+          <h3>Iniciar Sesión</h3>
+          <input type="email" id="loginEmail" placeholder="Correo electrónico" required>
+          <input type="password" id="loginPassword" placeholder="Contraseña" required>
+
+          <!-- Enlace de recuperación por EMAIL (el que ya tienes) -->
+          <!-- <div class="forgot-password-link">
         <a href="forgot-password.html">📧 Recuperar por email</a>
     </div> -->
-    
-    <!-- 🔥 NUEVO: Enlace de recuperación por PREGUNTAS DE SEGURIDAD -->
-    <div class="forgot-password-link" style="margin-top: 5px;">
-        <a href="recuperar-password.html">❓ Recuperar con pregunta de seguridad</a>
-    </div>
-    
-    <button type="button" class="btn-auth-submit" id="loginButton">Entrar</button>
-</div>
 
-      <!-- REGISTER CON PREGUNTAS DE SEGURIDAD -->
-      <div id="registerContainer" class="auth-form" style="display:none;">
-        <h3>Registrarse</h3>
-        <input type="text" id="registerName" placeholder="Nombre" required>
-        <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
-        <input type="password" id="registerPassword" placeholder="Contraseña" required>
-        
-        <!-- 🔥 NUEVO: Preguntas de seguridad -->
-        <div class="security-question-section" style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
-          <h4 style="font-size: 14px; margin-bottom: 10px; color: #333;">🔐 Recuperación de cuenta</h4>
-          
-          <select id="registerPregunta" class="form-control" style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;" required>
-            <option value="">Selecciona una pregunta de seguridad</option>
-            <option value="nombre_mascota">¿Cuál era el nombre de tu primera mascota?</option>
-            <option value="ciudad_nacimiento">¿En qué ciudad naciste?</option>
-            <option value="comida_favorita">¿Cuál es tu comida favorita?</option>
-            <option value="colegio">¿Nombre de tu colegio primario?</option>
-          </select>
-          
-          <input type="text" id="registerRespuesta" placeholder="Tu respuesta" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
-          <small style="color: #666; display: block; margin-top: 5px; font-size: 12px;">
-            Esta respuesta te ayudará a recuperar tu cuenta si olvidas la contraseña
-          </small>
+          <!-- 🔥 NUEVO: Enlace de recuperación por PREGUNTAS DE SEGURIDAD -->
+          <div class="forgot-password-link" style="margin-top: 5px;">
+            <a href="recuperar-password.html">❓ Recuperar con pregunta de seguridad</a>
+          </div>
+
+          <button type="button" class="btn-auth-submit" id="loginButton">Entrar</button>
         </div>
-        
-        <button type="button" class="btn-auth-submit" id="registerButton" style="margin-top: 15px;">Registrar</button>
+
+        <!-- REGISTER CON PREGUNTAS DE SEGURIDAD -->
+        <div id="registerContainer" class="auth-form" style="display:none;">
+          <h3>Registrarse</h3>
+          <input type="text" id="registerName" placeholder="Nombre" required>
+          <input type="email" id="registerEmail" placeholder="Correo electrónico" required>
+          <input type="password" id="registerPassword" placeholder="Contraseña" required>
+
+          <!-- 🔥 NUEVO: Preguntas de seguridad -->
+          <div class="security-question-section"
+            style="margin-top: 15px; border-top: 1px solid #eee; padding-top: 15px;">
+            <h4 style="font-size: 14px; margin-bottom: 10px; color: #333;">🔐 Recuperación de cuenta</h4>
+
+            <select id="registerPregunta" class="form-control"
+              style="width: 100%; padding: 8px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 4px;"
+              required>
+              <option value="">Selecciona una pregunta de seguridad</option>
+              <option value="nombre_mascota">¿Cuál era el nombre de tu primera mascota?</option>
+              <option value="ciudad_nacimiento">¿En qué ciudad naciste?</option>
+              <option value="comida_favorita">¿Cuál es tu comida favorita?</option>
+              <option value="colegio">¿Nombre de tu colegio primario?</option>
+            </select>
+
+            <input type="text" id="registerRespuesta" placeholder="Tu respuesta"
+              style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
+            <small style="color: #666; display: block; margin-top: 5px; font-size: 12px;">
+              Esta respuesta te ayudará a recuperar tu cuenta si olvidas la contraseña
+            </small>
+          </div>
+
+          <button type="button" class="btn-auth-submit" id="registerButton" style="margin-top: 15px;">Registrar</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
-<!-- BANNER DE COOKIES -->
-<div class="cookie-banner" id="cookieBanner">
-  <div class="cookie-content">
-    <div class="cookie-text">
-      <h4><i class="fas fa-cookie-bite"></i> Uso de cookies</h4>
-      <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, analizar el tráfico y personalizar contenidos. Puedes aceptar todas las cookies o configurar tus preferencias.</p>
-    </div>
-    <div class="cookie-buttons">
-      <button class="cookie-btn cookie-essential" id="cookieEssential">
-        Solo necesarias
-      </button>
-      <button class="cookie-btn cookie-accept" id="cookieAccept">
-        Aceptar todas
-      </button>
-      <button class="cookie-btn cookie-settings" id="cookieSettings">
-        <i class="fas fa-cog"></i> Configurar
-      </button>
-    </div>
-  </div>
-  
-  <!-- Configuración avanzada de cookies -->
-  <div class="cookie-settings-panel" id="cookieSettingsPanel">
-    <div class="settings-header">
-      <h4>Configuración de cookies</h4>
-      <button class="settings-close" id="settingsClose">
-        <i class="fas fa-times"></i>
-      </button>
-    </div>
-    <div class="settings-content">
-      <div class="cookie-category">
-        <div class="category-header">
-          <input type="checkbox" id="cookieEssentialToggle" checked disabled>
-          <label for="cookieEssentialToggle">
-            <strong>Cookies esenciales</strong>
-            <span class="badge required">Siempre activas</span>
-          </label>
-        </div>
-        <p>Necesarias para el funcionamiento básico del sitio.</p>
+  <!-- BANNER DE COOKIES -->
+  <div class="cookie-banner" id="cookieBanner">
+    <div class="cookie-content">
+      <div class="cookie-text">
+        <h4><i class="fas fa-cookie-bite"></i> Uso de cookies</h4>
+        <p>Utilizamos cookies propias y de terceros para mejorar tu experiencia, analizar el tráfico y personalizar
+          contenidos. Puedes aceptar todas las cookies o configurar tus preferencias.</p>
       </div>
-      
-      <div class="cookie-category">
-        <div class="category-header">
-          <input type="checkbox" id="cookieAnalyticsToggle">
-          <label for="cookieAnalyticsToggle">
-            <strong>Cookies analíticas</strong>
-          </label>
-        </div>
-        <p>Nos permiten analizar el uso del sitio y mejorar tu experiencia.</p>
-      </div>
-      
-      <div class="cookie-category">
-        <div class="category-header">
-          <input type="checkbox" id="cookieMarketingToggle">
-          <label for="cookieMarketingToggle">
-            <strong>Cookies de marketing</strong>
-          </label>
-        </div>
-        <p>Para personalizar los anuncios según tus intereses.</p>
-      </div>
-      
-      <div class="settings-actions">
-        <button class="btn-save" id="saveCookieSettings">
-          Guardar preferencias
+      <div class="cookie-buttons">
+        <button class="cookie-btn cookie-essential" id="cookieEssential">
+          Solo necesarias
+        </button>
+        <button class="cookie-btn cookie-accept" id="cookieAccept">
+          Aceptar todas
+        </button>
+        <button class="cookie-btn cookie-settings" id="cookieSettings">
+          <i class="fas fa-cog"></i> Configurar
         </button>
       </div>
     </div>
-  </div>
-</div>
 
-<!-- Overlay para cookies -->
-<div class="cookie-overlay" id="cookieOverlay"></div>
-<!-- Footer -->
-<footer class="main-footer">
-    <div class="container">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>SalamancaVivela</h3>
-                <p>Tu tienda online de productos artesanales y típicos de Salamanca.</p>
-                <div class="social-links">
-                    <a href="https://www.facebook.com/SalamancaVivelaES"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/salamancavivela/"><i class="fab fa-instagram"></i></a>
-                    <a href="https://x.com/SalamancaVivela"><i class="fab fa-twitter"></i></a>
-                    <a href="https://www.tiktok.com/@salamancavivela"><i class="fab fa-tiktok"></i></a>
-                </div>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Enlaces rápidos</h3>
-                <ul>
-                    <li><a href="index.html">Inicio</a></li>
-                    <li><a href="productos.html">Productos</a></li>
-                    <li><a href="carrito.html">Carrito</a></li>
-                    <li><a href="contacto.html">Contacto</a></li>
-                </ul>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Contacto</h3>
-                <ul>
-                    <li><i class="fas fa-map-marker-alt"></i> Calle Azafranal 26, Salamanca</li>
-                    <li><i class="fas fa-phone"></i> +34 644 16 46 57</li>
-                    <li><i class="fas fa-envelope"></i> administracion@salamancavivela.com</li>
-                </ul>
-            </div>
+    <!-- Configuración avanzada de cookies -->
+    <div class="cookie-settings-panel" id="cookieSettingsPanel">
+      <div class="settings-header">
+        <h4>Configuración de cookies</h4>
+        <button class="settings-close" id="settingsClose">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="settings-content">
+        <div class="cookie-category">
+          <div class="category-header">
+            <input type="checkbox" id="cookieEssentialToggle" checked disabled>
+            <label for="cookieEssentialToggle">
+              <strong>Cookies esenciales</strong>
+              <span class="badge required">Siempre activas</span>
+            </label>
+          </div>
+          <p>Necesarias para el funcionamiento básico del sitio.</p>
         </div>
-        
-        <div class="footer-bottom">
-            <p>&copy; 2024 SalamancaVivela. Todos los derechos reservados.</p>
-            <div class="footer-links">
-                <a href="Cookies.html">Cookies</a>
-                <a href="AvisoLegal.html">Aviso legal</a>
-                <a href="politica-devoluciones.html">Devoluciones</a>
-                <a href="politica-compra.html">Compras</a>
-                <a href="preguntas-frecuentes.html">Preguntas frecuentes</a>
-            </div>
+
+        <div class="cookie-category">
+          <div class="category-header">
+            <input type="checkbox" id="cookieAnalyticsToggle">
+            <label for="cookieAnalyticsToggle">
+              <strong>Cookies analíticas</strong>
+            </label>
+          </div>
+          <p>Nos permiten analizar el uso del sitio y mejorar tu experiencia.</p>
         </div>
+
+        <div class="cookie-category">
+          <div class="category-header">
+            <input type="checkbox" id="cookieMarketingToggle">
+            <label for="cookieMarketingToggle">
+              <strong>Cookies de marketing</strong>
+            </label>
+          </div>
+          <p>Para personalizar los anuncios según tus intereses.</p>
+        </div>
+
+        <div class="settings-actions">
+          <button class="btn-save" id="saveCookieSettings">
+            Guardar preferencias
+          </button>
+        </div>
+      </div>
     </div>
-</footer>
-<!-- 1. CORE -->
-<script src="js/core/constant.js"></script>
-<script src="js/core/init-manager.js"></script>
-<script src="js/core/cart.core.js"></script>
+  </div>
 
-<!-- 2. SERVICIOS -->
-<script src="js/services/api.services.js"></script>
-<script src="js/services/session.service.js"></script>
-<script src="js/core/auth-interceptor.js"></script>
+  <!-- Overlay para cookies -->
+  <div class="cookie-overlay" id="cookieOverlay"></div>
+  <!-- Footer -->
+  <footer class="main-footer">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-section">
+          <h3>SalamancaVivela</h3>
+          <p>Tu tienda online de productos artesanales y típicos de Salamanca.</p>
+          <div class="social-links">
+            <a href="https://www.facebook.com/SalamancaVivelaES"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://www.instagram.com/salamancavivela/"><i class="fab fa-instagram"></i></a>
+            <a href="https://x.com/SalamancaVivela"><i class="fab fa-twitter"></i></a>
+            <a href="https://www.tiktok.com/@salamancavivela"><i class="fab fa-tiktok"></i></a>
+          </div>
+        </div>
 
-<!-- 3. UI -->
-<script src="js/ui/session.ui.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        if (window.updateSessionUI) {
-            window.updateSessionUI();
-        }
+        <div class="footer-section">
+          <h3>Enlaces rápidos</h3>
+          <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="productos.html">Productos</a></li>
+            <li><a href="carrito.html">Carrito</a></li>
+            <li><a href="contacto.html">Contacto</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-section">
+          <h3>Contacto</h3>
+          <ul>
+            <li><i class="fas fa-map-marker-alt"></i> Calle Azafranal 26, Salamanca</li>
+            <li><i class="fas fa-phone"></i> +34 644 16 46 57</li>
+            <li><i class="fas fa-envelope"></i> administracion@salamancavivela.com</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <p>&copy; 2024 SalamancaVivela. Todos los derechos reservados.</p>
+        <div class="footer-links">
+          <a href="Cookies.html">Cookies</a>
+          <a href="AvisoLegal.html">Aviso legal</a>
+          <a href="politica-devoluciones.html">Devoluciones</a>
+          <a href="politica-compra.html">Compras</a>
+          <a href="preguntas-frecuentes.html">Preguntas frecuentes</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+  <!-- 1. CORE -->
+  <script src="js/core/constant.js"></script>
+  <script src="js/core/init-manager.js"></script>
+  <script src="js/core/cart.core.js"></script>
+
+  <!-- 2. SERVICIOS -->
+  <script src="js/services/api.services.js"></script>
+  <script src="js/services/session.service.js"></script>
+  <script src="js/core/auth-interceptor.js"></script>
+
+  <!-- 3. UI -->
+  <script src="js/ui/session.ui.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      if (window.updateSessionUI) {
+        window.updateSessionUI();
+      }
     });
-</script>
-<script src="js/ui/auth.ui.js"></script>
-<script src="js/components/DarkMode.js"></script>
-<script src="js/components/cart.js"></script>
+  </script>
+  <script src="js/ui/auth.ui.js"></script>
+  <script src="js/components/DarkMode.js"></script>
+  <script src="js/components/cart.js"></script>
 
-<!-- 4. MAIN -->
-<script src="js/core/Main.js"></script>
+  <!-- 4. MAIN -->
+  <script src="js/core/Main.js"></script>
 
-<!-- 5. PÁGINAS -->
-<script src="js/pages/home-page.js"></script>
-<script src="js/ui/contact.ui.js"></script>
+  <!-- 5. PÁGINAS -->
+  <script src="js/pages/home-page.js"></script>
+  <script src="js/ui/contact.ui.js"></script>
 
-<!-- 6. FEATURES -->
-<script src="js/ui/features/progress-bar.ui.js"></script>
-<script src="js/ui/features/back-to-top.ui.js"></script>
-<script src="js/ui/features/scroll-animations.ui.js"></script>
-<script src="js/ui/features/accessibility.ui.js"></script>
-<script src="js/ui/features/cookie-manager.ui.js"></script>
+  <!-- 6. FEATURES -->
+  <script src="js/ui/features/progress-bar.ui.js"></script>
+  <script src="js/ui/features/back-to-top.ui.js"></script>
+  <script src="js/ui/features/scroll-animations.ui.js"></script>
+  <script src="js/ui/features/accessibility.ui.js"></script>
+  <script src="js/ui/features/cookie-manager.ui.js"></script>
 
 </body>
+
 </html>

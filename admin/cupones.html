@@ -1,22 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Cupones - SalamancaVivela Admin</title>
-    
+
     <!-- CoreUI CSS (CDN) -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
-    
+
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+
     <!-- Fuentes -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
     <!-- CSS Personalizado -->
     <link rel="stylesheet" href="css/admin.css">
 </head>
+
 <body>
     <div class="wrapper">
         <!-- Sidebar -->
@@ -43,7 +46,8 @@
                 <h2><i class="fas fa-tag me-2" style="color: #c62828;"></i>Gestionar Cupones</h2>
                 <div>
                     <span id="adminName" class="fw-bold me-2">Cargando...</span>
-                    <img src="https://ui-avatars.com/api/?name=A&background=c62828&color=fff&size=40" class="avatar-sm" id="adminAvatar">
+                    <img src="https://ui-avatars.com/api/?name=A&background=c62828&color=fff&size=40" class="avatar-sm"
+                        id="adminAvatar">
                 </div>
             </div>
 
@@ -73,7 +77,9 @@
                                 </tr>
                             </thead>
                             <tbody id="cupones-list">
-                                <tr><td colspan="9" class="text-center">Cargando cupones...</td></tr>
+                                <tr>
+                                    <td colspan="9" class="text-center">Cargando cupones...</td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -93,18 +99,18 @@
                 <div class="modal-body">
                     <form id="cuponForm">
                         <input type="hidden" id="cuponId">
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Código</label>
                             <input type="text" class="form-control" id="codigo" placeholder="ej: DESCUENTO10" required>
                             <small class="text-muted">Solo mayúsculas, números y guiones</small>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Descripción</label>
                             <input type="text" class="form-control" id="descripcion" placeholder="10% de descuento">
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Tipo</label>
@@ -118,7 +124,7 @@
                                 <input type="number" class="form-control" id="valor_descuento" step="0.01" required>
                             </div>
                         </div>
-                        
+
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Monto mínimo</label>
@@ -130,7 +136,7 @@
                                 <input type="number" class="form-control" id="uso_maximo" value="1" min="1">
                             </div>
                         </div>
-                        
+
                         <div class="mb-3">
                             <label class="form-label">Fecha de expiración (opcional)</label>
                             <input type="date" class="form-control" id="fecha_fin">
@@ -146,8 +152,8 @@
     </div>
 
     <!-- Botón menú móvil -->
-    <button class="btn btn-primary d-md-none position-fixed bottom-0 end-0 m-3" 
-            onclick="document.getElementById('sidebar').classList.toggle('active')">
+    <button class="btn btn-primary d-md-none position-fixed bottom-0 end-0 m-3"
+        onclick="document.getElementById('sidebar').classList.toggle('active')">
         <i class="fas fa-bars"></i>
     </button>
 
@@ -155,14 +161,15 @@
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
     <!-- Popper.js (necesario para Bootstrap) -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
-    
+
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
-    
+
     <!-- CoreUI JavaScript (depende de Bootstrap) -->
     <script src="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/js/coreui.bundle.min.js"></script>
     <!-- Scripts -->
     <script src="js/admin.js"></script>
     <script src="js/cupones.js"></script>
 </body>
+
 </html>

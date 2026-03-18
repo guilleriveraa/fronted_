@@ -1,23 +1,23 @@
 // js/core/cart.core.js - Lógica central del carrito MEJORADA
 class CartCore {
-constructor() {
-    this.cart = null;
-    this.listeners = [];
-    this.notifyTimeout = null;
-    
-    // 🎁 NUEVO: Inicializar opción de regalo
-    this.gift = {
-        active: false,
-        message: '',
-        cost: 2.00
-    };
-    
-    // ===== NUEVO: Sincronización entre pestañas =====
-    this.setupCrossTabSync();
-    
-    // ===== NUEVO: Cargar carrito inicial =====
-    this.init();
-}
+    constructor() {
+        this.cart = null;
+        this.listeners = [];
+        this.notifyTimeout = null;
+
+        // 🎁 NUEVO: Inicializar opción de regalo
+        this.gift = {
+            active: false,
+            message: '',
+            cost: 2.00
+        };
+
+        // ===== NUEVO: Sincronización entre pestañas =====
+        this.setupCrossTabSync();
+
+        // ===== NUEVO: Cargar carrito inicial =====
+        this.init();
+    }
 
     // ===== NUEVO: Inicialización =====
     async init() {
@@ -57,10 +57,10 @@ constructor() {
     // Obtener carrito (desde API o localStorage)
     async getCart() {
         if (this.cart) return this.cart;
-        
+
         try {
             const token = localStorage.getItem(window.TOKEN_KEY);
-            
+
             if (!token) {
                 // ===== MEJORADO: Intentar cargar de localStorage primero =====
                 const localCart = this.getCartFromStorage();
@@ -82,7 +82,7 @@ constructor() {
             }
 
             let cartData = await response.json();
-            
+
             // 🔥🔥🔥 CAMBIO 1: Procesar items para asegurar que tienen talla
             if (cartData.items) {
                 cartData.items = cartData.items.map(item => ({
@@ -90,12 +90,12 @@ constructor() {
                     talla: item.talla || null
                 }));
             }
-            
+
             this.cart = cartData;
-            
+
             // ===== NUEVO: Sincronizar con localStorage =====
             this.saveCartToStorage(cartData);
-            
+
             return this.cart;
 
         } catch (error) {
@@ -109,160 +109,159 @@ constructor() {
     }
 
     // Carrito vacío por defecto
-getEmptyCart() {
-    return {
-        items: [],
-        subtotal: 0,
-        tax: 0,
-        shipping: 0,
-        total: 0,
-        gift: {
-            active: false,
-            message: '',
-            cost: 2.00
-        },
-        lastUpdated: new Date().toISOString()
-    };
-}
-// 🎁 NUEVO: Establecer opción de regalo
-setGiftOption(active, message = '') {
-    return new Promise(async (resolve) => {
-        const cart = await this.getCart();
-        
-        // Asegurar que existe el objeto gift
-        if (!cart.gift) {
-            cart.gift = { active: false, message: '', cost: 2.00 };
-        }
-        
-        cart.gift.active = active;
-        cart.gift.message = message.substring(0, 200); // Limitar a 200 caracteres
-        
-        // Actualizar carrito
-        this.cart = cart;
-        this.updateCartTotals(cart);
-        this.saveCartToStorage(cart);
-        this.notifyListeners();
-        
-        console.log('🎁 Opción de regalo actualizada:', cart.gift);
-        resolve(cart.gift);
-    });
-}
-// 🆕 NUEVO: Añadir producto al carrito con talla
-async addToCart(productId, quantity = 1, talla = null) {
-    const token = localStorage.getItem(window.TOKEN_KEY);
-    
-    try {
-        // Si no hay token, modo offline no permitido
-        if (!token) {
-            window.errorHandler?.warning('Debes iniciar sesión para añadir productos');
+    getEmptyCart() {
+        return {
+            items: [],
+            subtotal: 0,
+            tax: 0,
+            shipping: 0,
+            total: 0,
+            gift: {
+                active: false,
+                message: '',
+                cost: 2.00
+            },
+            lastUpdated: new Date().toISOString()
+        };
+    }
+    // 🎁 NUEVO: Establecer opción de regalo
+    setGiftOption(active, message = '') {
+        return new Promise(async (resolve) => {
+            const cart = await this.getCart();
+
+            // Asegurar que existe el objeto gift
+            if (!cart.gift) {
+                cart.gift = { active: false, message: '', cost: 2.00 };
+            }
+
+            cart.gift.active = active;
+            cart.gift.message = message.substring(0, 200); // Limitar a 200 caracteres
+
+            // Actualizar carrito
+            this.cart = cart;
+            this.updateCartTotals(cart);
+            this.saveCartToStorage(cart);
+            this.notifyListeners();
+
+            console.log('🎁 Opción de regalo actualizada:', cart.gift);
+            resolve(cart.gift);
+        });
+    }
+    // 🆕 NUEVO: Añadir producto al carrito con talla
+    async addToCart(productId, quantity = 1, talla = null) {
+        const token = localStorage.getItem(window.TOKEN_KEY);
+
+        try {
+            // Si no hay token, modo offline no permitido
+            if (!token) {
+                window.errorHandler?.warning('Debes iniciar sesión para añadir productos');
+                return false;
+            }
+
+            const response = await fetch(`${window.API_URL}/cart/add`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + token
+                },
+                body: JSON.stringify({
+                    productId,
+                    quantity,
+                    talla // 🆕 Incluir talla
+                })
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al añadir producto');
+            }
+
+            // Invalidar caché y recargar carrito
+            this.cart = null;
+            await this.getCart();
+            this.notifyListeners();
+
+            window.errorHandler?.success('Producto añadido al carrito');
+            return true;
+
+        } catch (error) {
+            console.error('Error adding to cart:', error);
+            window.errorHandler?.error('Error al añadir producto');
             return false;
         }
-
-        const response = await fetch(`${window.API_URL}/cart/add`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + token
-            },
-            body: JSON.stringify({ 
-                productId, 
-                quantity,
-                talla // 🆕 Incluir talla
-            })
-        });
-
-        if (!response.ok) {
-            throw new Error('Error al añadir producto');
-        }
-
-        // Invalidar caché y recargar carrito
-        this.cart = null;
-        await this.getCart();
-        this.notifyListeners();
-        
-        window.errorHandler?.success('Producto añadido al carrito');
-        return true;
-
-    } catch (error) {
-        console.error('Error adding to cart:', error);
-        window.errorHandler?.error('Error al añadir producto');
-        return false;
     }
-}
     // Guardar carrito en localStorage (offline)
     saveCartToStorage(cart) {
         // 🔥🔥🔥 CAMBIO 2: Procesar items antes de guardar
         let cartToSave = { ...cart };
-        
+
         if (cartToSave.items) {
             cartToSave.items = cartToSave.items.map(item => ({
                 ...item,
                 talla: item.talla || null
             }));
         }
-        
+
         // ===== MEJORADO: Añadir timestamp =====
         cartToSave = {
             ...cartToSave,
             lastUpdated: new Date().toISOString()
         };
-        
+
         localStorage.setItem('svl_cart', JSON.stringify(cartToSave));
     }
 
     // Recuperar carrito de localStorage
-// Recuperar carrito de localStorage
-getCartFromStorage() {
-    const saved = localStorage.getItem('svl_cart');
-    if (!saved) return null;
-    
-    try {
-        let cart = JSON.parse(saved);
-        
-        // 🎁 NUEVO: Añadir propiedad gift si no existe (para compatibilidad)
-        if (!cart.gift) {
-            cart.gift = { active: false, message: '', cost: 2.00 };
-        }
-        
-        // 🆕 NUEVO: Asegurar que cada item tiene campo talla (para compatibilidad)
-        if (cart.items) {
-            cart.items = cart.items.map(item => ({
-                ...item,
-                talla: item.talla || null // Si no existe, poner null
-            }));
-        }
-        
-        // ===== NUEVO: Validar que no sea demasiado antiguo (24h) =====
-        if (cart.lastUpdated) {
-            const lastUpdate = new Date(cart.lastUpdated);
-            const now = new Date();
-            const hoursDiff = (now - lastUpdate) / (1000 * 60 * 60);
-            
-            if (hoursDiff > 24) {
-                console.log('🗑️ Carrito offline demasiado antiguo, limpiando...');
-                localStorage.removeItem('svl_cart');
-                return null;
+    getCartFromStorage() {
+        const saved = localStorage.getItem('svl_cart');
+        if (!saved) return null;
+
+        try {
+            let cart = JSON.parse(saved);
+
+            // 🎁 NUEVO: Añadir propiedad gift si no existe (para compatibilidad)
+            if (!cart.gift) {
+                cart.gift = { active: false, message: '', cost: 2.00 };
             }
+
+            // 🆕 NUEVO: Asegurar que cada item tiene campo talla (para compatibilidad)
+            if (cart.items) {
+                cart.items = cart.items.map(item => ({
+                    ...item,
+                    talla: item.talla || null // Si no existe, poner null
+                }));
+            }
+
+            // ===== NUEVO: Validar que no sea demasiado antiguo (24h) =====
+            if (cart.lastUpdated) {
+                const lastUpdate = new Date(cart.lastUpdated);
+                const now = new Date();
+                const hoursDiff = (now - lastUpdate) / (1000 * 60 * 60);
+
+                if (hoursDiff > 24) {
+                    console.log('🗑️ Carrito offline demasiado antiguo, limpiando...');
+                    localStorage.removeItem('svl_cart');
+                    return null;
+                }
+            }
+
+            return cart;
+        } catch (e) {
+            console.error('Error parsing cart from storage:', e);
+            localStorage.removeItem('svl_cart');
+            return null;
         }
-        
-        return cart;
-    } catch (e) {
-        console.error('Error parsing cart from storage:', e);
-        localStorage.removeItem('svl_cart');
-        return null;
     }
-}
 
     // Cambiar cantidad de un producto
     async changeQty(productId, delta) {
         const token = localStorage.getItem(window.TOKEN_KEY);
-        
+
         try {
             if (!token) {
                 // Modo offline
                 const cart = await this.getCart();
                 const item = cart.items.find(i => i.id === productId);
-                
+
                 if (item) {
                     item.quantity += delta;
                     if (item.quantity <= 0) {
@@ -272,12 +271,12 @@ getCartFromStorage() {
                     window.errorHandler?.warning('No puedes añadir productos sin conexión');
                     return;
                 }
-                
+
                 this.updateCartTotals(cart);
                 this.saveCartToStorage(cart);
                 this.cart = cart;
                 this.notifyListeners();
-                
+
                 window.errorHandler?.success('Carrito actualizado (modo offline)');
                 return;
             }
@@ -299,7 +298,7 @@ getCartFromStorage() {
             this.cart = null; // Invalidar caché
             await this.getCart(); // Recargar
             this.notifyListeners();
-            
+
             window.errorHandler?.success('Carrito actualizado');
 
         } catch (error) {
@@ -311,21 +310,21 @@ getCartFromStorage() {
     // Eliminar producto del carrito
     async removeFromCart(productId) {
         const token = localStorage.getItem(window.TOKEN_KEY);
-        
+
         try {
             if (!token) {
                 // Modo offline
                 const cart = await this.getCart();
                 const itemIndex = cart.items.findIndex(i => i.id === productId);
-                
+
                 if (itemIndex === -1) return;
-                
+
                 cart.items.splice(itemIndex, 1);
                 this.updateCartTotals(cart);
                 this.saveCartToStorage(cart);
                 this.cart = cart;
                 this.notifyListeners();
-                
+
                 window.errorHandler?.success('Producto eliminado');
                 return;
             }
@@ -345,7 +344,7 @@ getCartFromStorage() {
             this.cart = null;
             await this.getCart();
             this.notifyListeners();
-            
+
             window.errorHandler?.success('Producto eliminado');
 
         } catch (error) {
@@ -359,19 +358,19 @@ getCartFromStorage() {
         try {
             const cart = await this.getCart();
             const count = cart.items?.length || 0;
-            
+
             const counters = [
                 'headerCartCount',
                 'headerCartCount2',
                 'mobileCartCount'
             ];
-            
+
             counters.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
                     const oldCount = parseInt(el.textContent);
                     el.textContent = count;
-                    
+
                     // ===== NUEVO: Animación si cambió =====
                     if (oldCount !== count) {
                         el.classList.add('cart-count-changed');
@@ -385,23 +384,23 @@ getCartFromStorage() {
     }
 
     // Calcular totales del carrito (con opción de regalo)
-updateCartTotals(cart) {
-    // Calcular subtotal de productos
-    const itemsTotal = cart.items.reduce((sum, item) => 
-        sum + (item.price * item.quantity), 0
-    );
-    
-    // 🎁 Añadir coste de regalo si está activo
-    const giftCost = (cart.gift && cart.gift.active) ? (cart.gift.cost || 2.00) : 0;
-    
-    cart.subtotal = itemsTotal + giftCost;
-    cart.tax = 0;
-    
-    // El envío se calcula sobre el total de productos (sin regalo)
-    // para no regalar envío gratis con el extra
-    cart.shipping = itemsTotal > 50 ? 0 : 4.99;
-    cart.total = cart.subtotal + cart.shipping;
-}
+    updateCartTotals(cart) {
+        // Calcular subtotal de productos 
+        const itemsTotal = cart.items.reduce((sum, item) =>
+            sum + (item.price * item.quantity), 0
+        );
+
+        // 🎁 Añadir coste de regalo si está activo
+        const giftCost = (cart.gift && cart.gift.active) ? (cart.gift.cost || 2.00) : 0;
+
+        cart.subtotal = itemsTotal + giftCost;
+        cart.tax = 0;
+
+        // El envío se calcula sobre el total de productos (sin regalo)
+        // para no regalar envío gratis con el extra
+        cart.shipping = itemsTotal > 50 ? 0 : 4.99;
+        cart.total = cart.subtotal + cart.shipping;
+    }
 
     // Sistema de eventos MEJORADO
     onChange(callback) {
@@ -415,7 +414,7 @@ updateCartTotals(cart) {
         if (this.notifyTimeout) {
             clearTimeout(this.notifyTimeout);
         }
-        
+
         this.notifyTimeout = setTimeout(() => {
             this.listeners.forEach(cb => {
                 try {
@@ -432,7 +431,7 @@ updateCartTotals(cart) {
     // ===== NUEVO: Limpiar carrito completamente =====
     async clearCart() {
         const token = localStorage.getItem(window.TOKEN_KEY);
-        
+
         try {
             if (token) {
                 await fetch(`${window.API_URL}/cart/clear`, {
@@ -440,11 +439,11 @@ updateCartTotals(cart) {
                     headers: { 'Authorization': 'Bearer ' + token }
                 });
             }
-            
+
             this.cart = this.getEmptyCart();
             this.saveCartToStorage(this.cart);
             this.notifyListeners();
-            
+
         } catch (error) {
             console.error('Error clearing cart:', error);
         }

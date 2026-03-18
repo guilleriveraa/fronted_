@@ -4,19 +4,19 @@ const originalLog = console.log;
 const originalError = console.error;
 
 //console.log = function(...args) {
-    //originalLog.apply(console, args);
-    // También mostrar en la página
-   // const debug = document.getElementById('debug-output') || (() => {
-       // const div = document.createElement('div');
-       // div.id = 'debug-output';
-       // div.style.cssText = 'position:fixed; bottom:0; left:0; right:0; background:black; color:lime; padding:10px; font-family:monospace; max-height:200px; overflow:auto; z-index:9999;';
-       // document.body.appendChild(div);
-       // return div;
-    //})();
-    //debug.innerHTML += '<div>' + args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg).join(' ') + '</div>';
+//originalLog.apply(console, args);
+// También mostrar en la página
+// const debug = document.getElementById('debug-output') || (() => {
+// const div = document.createElement('div');
+// div.id = 'debug-output';
+// div.style.cssText = 'position:fixed; bottom:0; left:0; right:0; background:black; color:lime; padding:10px; font-family:monospace; max-height:200px; overflow:auto; z-index:9999;';
+// document.body.appendChild(div);
+// return div;
+//})();
+//debug.innerHTML += '<div>' + args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg).join(' ') + '</div>';
 //};
 
-console.error = function(...args) {
+console.error = function (...args) {
     originalError.apply(console, args);
     const debug = document.getElementById('debug-output') || document.createElement('div');
     debug.innerHTML += '<div style="color:red">❌ ' + args.map(arg => typeof arg === 'object' ? JSON.stringify(arg, null, 2) : arg).join(' ') + '</div>';
@@ -46,7 +46,7 @@ window.InitManager.register('PedidoDetallePage', async function () {
     try {
         // Verificar si el usuario es admin
         const isAdmin = await checkIfAdmin();
-        
+
         if (isAdmin) {
             console.log('👑 Usuario admin, usando rutas admin');
             await loadOrderDetailsAdmin(orderId);
@@ -152,17 +152,17 @@ async function loadOrderDetailsAdmin(orderId) {
 function mostrarBannerRecogida(order) {
     // Verificar si existe el contenedor del banner
     let banner = document.getElementById('recogidaBanner');
-    
+
     // Si no existe, crearlo
     if (!banner) {
         const mainContainer = document.querySelector('.order-detail-page .container');
         if (!mainContainer) return;
-        
+
         banner = document.createElement('div');
         banner.id = 'recogidaBanner';
         banner.className = 'recogida-banner';
         banner.style.display = 'none';
-        
+
         // Insertar después del page-header
         const pageHeader = document.querySelector('.page-header');
         if (pageHeader) {
@@ -171,16 +171,16 @@ function mostrarBannerRecogida(order) {
             mainContainer.prepend(banner);
         }
     }
-    
+
     // Verificar si es un pedido para recoger en tienda
-    const esRecogidaTienda = 
-        order.metodo_pago === 'pago_en_tienda' || 
+    const esRecogidaTienda =
+        order.metodo_pago === 'pago_en_tienda' ||
         order.direccion_envio === 'Recoger en tienda' ||
         (order.direccion_detalles && order.direccion_detalles.includes('Recoger en tienda'));
-    
+
     if (esRecogidaTienda) {
         const codigoRecogida = order.codigo_recogida || 'REC-' + order.id;
-        
+
         banner.innerHTML = `
             <div class="banner-content">
                 <i class="fas fa-store"></i>
@@ -203,13 +203,13 @@ function mostrarBannerRecogida(order) {
 
 function renderOrderDetails(order, items, isAdmin) {
     const container = document.getElementById('orderDetailContainer');
-    
+
     // Determinar el estado (puede venir como 'estado' o 'status')
     const estado = order.estado || order.status || 'pendiente';
-    
+
     // 🔥 NUEVO: Mostrar banner de recogida en tienda
     mostrarBannerRecogida(order);
-    
+
     // Actualizar badge de estado
     const statusBadge = document.getElementById('orderStatusBadge');
     statusBadge.innerHTML = `<span class="status-${estado}">${traducirEstado(estado)}</span>`;
@@ -232,9 +232,9 @@ function renderOrderDetails(order, items, isAdmin) {
     let direccionTexto = order.direccion_envio || 'No especificada';
 
     // 🔥 NUEVO: Verificar si es recogida en tienda
-    const esRecogidaTienda = order.metodo_pago === 'pago_en_tienda' || 
-                             order.direccion_envio === 'Recoger en tienda' ||
-                             (order.direccion_detalles && order.direccion_detalles.includes('Recoger en tienda'));
+    const esRecogidaTienda = order.metodo_pago === 'pago_en_tienda' ||
+        order.direccion_envio === 'Recoger en tienda' ||
+        (order.direccion_detalles && order.direccion_detalles.includes('Recoger en tienda'));
 
     if (esRecogidaTienda) {
         // Mostrar dirección especial para recogida en tienda
@@ -248,7 +248,7 @@ function renderOrderDetails(order, items, isAdmin) {
                 </div>
             </div>
         `;
-        
+
         // Si hay código de recogida, añadirlo
         if (order.codigo_recogida) {
             direccionTexto += `<div style="margin-top: 10px; padding: 8px; background: #e8f5e9; border-radius: 8px; text-align: center;">
@@ -256,7 +256,7 @@ function renderOrderDetails(order, items, isAdmin) {
                 <span style="font-family: monospace; font-size: 1.2rem; color: #c62828;">${order.codigo_recogida}</span>
             </div>`;
         }
-        
+
     } else if (order.direccion_detalles) {
         // Si hay dirección detallada, mostrarla mejor
         try {

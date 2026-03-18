@@ -1,60 +1,60 @@
 // js/pages/productos-page.js - VERSIÓN CON API
 
 window.InitManager.register('ProductosPage', async function () {
-  console.log('📦 Inicializando página de productos');
-  
-  await loadProducts();
-  setupCategoryFilters();
-  
+    console.log('📦 Inicializando página de productos');
+
+    await loadProducts();
+    setupCategoryFilters();
+
 }, []);
 
 async function loadProducts(categoria = '') {
-  const container = document.getElementById('productsContainer');
-  if (!container) return;
-  
-  // Mostrar loading
-  container.innerHTML = `
+    const container = document.getElementById('productsContainer');
+    if (!container) return;
+
+    // Mostrar loading
+    container.innerHTML = `
     <div class="loading-spinner">
       <i class="fas fa-spinner fa-spin"></i>
       <p>Cargando productos...</p>
     </div>
   `;
-  
-  try {
-    let url = `${window.API_URL}/productos`;
-    if (categoria && categoria !== 'todos') {
-      url += `?categoria=${categoria}`;
+
+    try {
+        let url = `${window.API_URL}/productos`;
+        if (categoria && categoria !== 'todos') {
+            url += `?categoria=${categoria}`;
+        }
+
+        console.log('📡 Fetching productos:', url);
+        const response = await fetch(url);
+
+        if (!response.ok) throw new Error('Error al cargar productos');
+
+        const productos = await response.json();
+        console.log('📦 Productos cargados:', productos.length);
+
+        renderProducts(productos);
+        window.allProducts = productos;
+
+    } catch (error) {
+        console.error('Error:', error);
+        container.innerHTML = '<p class="error">Error al cargar productos</p>';
     }
-    
-    console.log('📡 Fetching productos:', url);
-    const response = await fetch(url);
-    
-    if (!response.ok) throw new Error('Error al cargar productos');
-    
-    const productos = await response.json();
-    console.log('📦 Productos cargados:', productos.length);
-    
-    renderProducts(productos);
-    window.allProducts = productos;
-    
-  } catch (error) {
-    console.error('Error:', error);
-    container.innerHTML = '<p class="error">Error al cargar productos</p>';
-  }
 }
 
 function renderProducts(productos) {
     const container = document.getElementById('productsContainer');
-    
+
     if (!productos.length) {
         container.innerHTML = '<p class="no-products">No hay productos en esta categoría</p>';
         return;
     }
-    
+
     container.innerHTML = productos.map(p => {
         // Determinar si es textil (categoria_id = 2 - AJUSTA SEGÚN TU BD)
         const esTextil = p.categoria_id === 2;
-        
+
         // HTML para selector de tallas (solo si es textil)
         let tallasHTML = '';
         if (esTextil) {
@@ -75,7 +75,7 @@ function renderProducts(productos) {
                 </div>
             `;
         }
-        
+
         return `
             <div class="product-card" data-categoria="${p.categoria_nombre?.toLowerCase() || ''}" data-categoria-id="${p.categoria_id}">
                 <a href="producto-detalle.html?id=${p.id}" class="product-link">
@@ -108,21 +108,21 @@ function renderProducts(productos) {
 }
 
 function setupCategoryFilters() {
-  document.querySelectorAll('.category-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
-      this.classList.add('active');
-      
-      const categoria = this.dataset.category;
-      loadProducts(categoria);
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+            this.classList.add('active');
+
+            const categoria = this.dataset.category;
+            loadProducts(categoria);
+        });
     });
-  });
 }
 
 // 🔥🔥🔥 CAMBIO 1: Definir la función como const para asegurar que existe
-const addToCart = async function(productId) {
+const addToCart = async function (productId) {
     console.log('🎯 addToCart llamado con productId:', productId);
-    
+
     if (!window.sessionService?.isLoggedIn()) {
         if (window.showAuthModal) window.showAuthModal('login');
         return;
@@ -132,16 +132,16 @@ const addToCart = async function(productId) {
     let esTextil = false;
     let producto = null;
     let talla = null;
-    
+
     try {
         console.log('📡 Fetching producto:', productId);
         const response = await fetch(`${window.API_URL}/productos/${productId}`);
         console.log('📡 Respuesta status:', response.status);
-        
+
         if (response.ok) {
             producto = await response.json();
             console.log('📦 Producto recibido:', producto);
-            
+
             esTextil = producto.categoria_id === 2;
             console.log('👕 ¿Es textil?', esTextil, 'Categoría ID:', producto.categoria_id);
 
@@ -149,14 +149,14 @@ const addToCart = async function(productId) {
             if (esTextil) {
                 const select = document.getElementById(`talla-${productId}`);
                 console.log('🔍 Selector de talla encontrado?', !!select);
-                
+
                 if (!select) {
                     alert('Error: No se encontró el selector de tallas');
                     return;
                 }
                 talla = select.value;
                 console.log('📏 Talla seleccionada:', talla);
-                
+
                 if (!talla) {
                     alert('Por favor, selecciona una talla');
                     return;
@@ -183,15 +183,15 @@ const addToCart = async function(productId) {
     try {
         // 1. Enviar al backend
         console.log('📤 Enviando al backend:', { productId, talla });
-        
+
         const response = await fetch(`${window.API_URL}/cart/add`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': 'Bearer ' + window.sessionService.getToken()
             },
-            body: JSON.stringify({ 
-                productId, 
+            body: JSON.stringify({
+                productId,
                 quantity: 1,
                 talla: talla
             })
@@ -207,7 +207,7 @@ const addToCart = async function(productId) {
             console.log('🛒 Carrito actual antes:', cart);
 
             // Buscar si el producto ya está en el carrito con la misma talla
-            const itemExistente = cart.items.find(item => 
+            const itemExistente = cart.items.find(item =>
                 item.id === productId && item.talla === talla
             );
             console.log('🔍 Item existente?', itemExistente);
@@ -257,16 +257,16 @@ const addToCart = async function(productId) {
 // 🔥🔥🔥 CAMBIO 3: Exponer la función globalmente (DESPUÉS de definirla)
 window.addToCart = addToCart;
 
-window.quickView = async function(productId) {
-  try {
-    const response = await fetch(`${window.API_URL}/productos/${productId}`);
-    if (!response.ok) throw new Error('Error al cargar producto');
-    
-    const producto = await response.json();
-    alert(`🔍 ${producto.nombre}\nPrecio: ${producto.precio}€\n${producto.descripcion || 'Sin descripción'}`);
-  } catch (error) {
-    console.error('Error:', error);
-  }
+window.quickView = async function (productId) {
+    try {
+        const response = await fetch(`${window.API_URL}/productos/${productId}`);
+        if (!response.ok) throw new Error('Error al cargar producto');
+
+        const producto = await response.json();
+        alert(`🔍 ${producto.nombre}\nPrecio: ${producto.precio}€\n${producto.descripcion || 'Sin descripción'}`);
+    } catch (error) {
+        console.error('Error:', error);
+    }
 };
 
 console.log('✅ productos-page.js cargado con API');
