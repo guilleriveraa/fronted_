@@ -136,17 +136,37 @@ window.guardarProducto = async function () {
         producto.descripcion = descripcion;
     }
 
-    // Añadir imagen solo si tiene contenido y parece una URL
+    // Añadir imagen solo si tiene contenido
     const imagen = document.getElementById('imagen').value.trim();
     if (imagen) {
-        // Validación básica de URL (opcional, pero ayuda)
-        try {
-            new URL(imagen); // Lanza error si no es URL válida
-            producto.imagen = imagen;
-        } catch (e) {
-            alert('La URL de la imagen no es válida');
+        // Validar que la imagen tiene un formato aceptable
+        // Acepta URLs absolutas (con http) o rutas relativas desde la raíz (que empiecen con /)
+        const esUrlAbsoluta = imagen.startsWith('http://') || imagen.startsWith('https://');
+        const esRutaRelativaRaiz = imagen.startsWith('/');
+
+        // También debe terminar con extensión de imagen válida
+        const extensionesValidas = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.svg'];
+        const tieneExtensionValida = extensionesValidas.some(ext =>
+            imagen.toLowerCase().endsWith(ext)
+        );
+
+        if (!esUrlAbsoluta && !esRutaRelativaRaiz) {
+            alert('La imagen debe ser una URL absoluta (https://...) o una ruta relativa que empiece con /');
             return;
         }
+
+        if (!tieneExtensionValida) {
+            alert('La imagen debe tener una extensión válida (.jpg, .png, .gif, etc.)');
+            return;
+        }
+
+        // Validación adicional: si es ruta relativa, asegurar que no tenga .. ni otros caracteres peligrosos
+        if (esRutaRelativaRaiz && (imagen.includes('..') || imagen.includes('//'))) {
+            alert('La ruta de imagen contiene caracteres no permitidos');
+            return;
+        }
+
+        producto.imagen = imagen;
     }
 
     const id = document.getElementById('productoId').value;
