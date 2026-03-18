@@ -2,7 +2,7 @@
 
 let filtroActual = 'todas';
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Inicializando devoluciones...');
     loadUserInfo();
     cargarDevoluciones();
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function setupFiltros() {
     document.querySelectorAll('.btn-filtro').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             filtroActual = this.dataset.filtro;
@@ -24,22 +24,22 @@ async function cargarDevoluciones() {
     try {
         console.log('📦 Cargando devoluciones...');
         const response = await fetch(`${window.API_URL}/admin/devoluciones`);
-        
+
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
-        
+
         let devoluciones = await response.json();
         console.log('✅ Devoluciones cargadas:', devoluciones.length);
-        
+
         // Aplicar filtro
         if (filtroActual !== 'todas') {
             devoluciones = devoluciones.filter(d => d.estado === filtroActual);
         }
-        
+
         const tbody = document.getElementById('devoluciones-list');
         if (!tbody) return;
-        
+
         if (!Array.isArray(devoluciones) || devoluciones.length === 0) {
             tbody.innerHTML = '<tr><td colspan="7" class="text-center">No hay devoluciones</td></tr>';
             return;
@@ -53,8 +53,8 @@ async function cargarDevoluciones() {
                 'rechazada': 'danger',
                 'completada': 'info'
             }[d.estado] || 'secondary';
-            
-           return `
+
+            return `
 <tr>
     <td>#${d.id}</td>
     <td>${new Date(d.fecha).toLocaleDateString()}</td>
@@ -85,7 +85,7 @@ async function cargarDevoluciones() {
             </td>
     </tr>
     `}).join('');
-        
+
     } catch (error) {
         console.error('❌ Error cargando devoluciones:', error);
         const tbody = document.getElementById('devoluciones-list');
@@ -95,23 +95,23 @@ async function cargarDevoluciones() {
     }
 }
 
-window.cambiarEstado = async function(id, nuevoEstado) {
+window.cambiarEstado = async function (id, nuevoEstado) {
     try {
         console.log('🔄 Cambiando estado devolución:', id, 'a', nuevoEstado);
-        
+
         // Confirmar acción
         if (!confirm(`¿Estás seguro de cambiar el estado a "${nuevoEstado}"?`)) {
             return;
         }
-        
+
         const response = await fetch(`${window.API_URL}/admin/devoluciones/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ estado: nuevoEstado })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             // Mostrar notificación si existe
             if (window.mostrarNotificacion) {

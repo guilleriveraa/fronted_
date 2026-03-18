@@ -5,18 +5,18 @@ console.log('✅ API_URL definida:', window.API_URL);
 
 // Interceptor para añadir token a todas las peticiones
 const originalFetch = window.fetch;
-window.fetch = function(url, options = {}) {
+window.fetch = function (url, options = {}) {
     const token = localStorage.getItem('token');
-    
+
     options.headers = {
         'Content-Type': 'application/json',
         ...options.headers
     };
-    
+
     if (token) {
         options.headers['Authorization'] = 'Bearer ' + token;
     }
-    
+
     console.log('📡 Fetching:', url, 'with token:', token ? '✅ Sí' : '❌ No');
     return originalFetch(url, options);
 };
@@ -25,9 +25,9 @@ window.fetch = function(url, options = {}) {
 (function checkAuth() {
     const token = localStorage.getItem('token');
     const currentPage = window.location.pathname.split('/').pop();
-    
+
     console.log('🔐 Token en localStorage:', token ? '✅ Sí' : '❌ No');
-    
+
     if (!token && currentPage !== 'login.html' && currentPage !== '') {
         console.log('🚫 No token, redirigiendo a login');
         window.location.href = 'login.html';
@@ -36,18 +36,18 @@ window.fetch = function(url, options = {}) {
 })();
 
 // Función para cerrar sesión
-window.logout = function() {
+window.logout = function () {
     localStorage.removeItem('token');
     window.location.href = 'login.html';
 };
 
 // Función para confirmar acciones (reemplaza confirmAction)
-window.confirmarAccion = function(message) {
+window.confirmarAccion = function (message) {
     return confirm(message);
 };
 
 // Función para mostrar notificaciones
-window.mostrarNotificacion = function(message, tipo = 'success') {
+window.mostrarNotificacion = function (message, tipo = 'success') {
     // Crear elemento de notificación
     const notification = document.createElement('div');
     notification.className = `alert alert-${tipo} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
@@ -58,7 +58,7 @@ window.mostrarNotificacion = function(message, tipo = 'success') {
         <button type="button" class="btn-close" onclick="this.parentElement.remove()"></button>
     `;
     document.body.appendChild(notification);
-    
+
     // Auto-cerrar después de 3 segundos
     setTimeout(() => {
         if (notification.parentNode) {
@@ -68,24 +68,24 @@ window.mostrarNotificacion = function(message, tipo = 'success') {
 };
 
 // Cargar datos del usuario
-window.loadUserInfo = async function() {
+window.loadUserInfo = async function () {
     try {
         const token = localStorage.getItem('token');
         if (!token) return;
-        
+
         console.log('👤 Cargando info de usuario...');
         const response = await fetch(`${window.API_URL}/users/me`);
-        
+
         if (!response.ok) {
             throw new Error('Error al cargar usuario');
         }
-        
+
         const user = await response.json();
         console.log('✅ Usuario cargado:', user);
-        
+
         const userNameElement = document.getElementById('adminName');
         const userAvatarElement = document.getElementById('adminAvatar');
-        
+
         if (userNameElement) {
             userNameElement.textContent = user.nombre || 'Administrador';
         }

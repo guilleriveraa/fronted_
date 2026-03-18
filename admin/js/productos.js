@@ -3,11 +3,11 @@
 let productoModal = null;
 
 // Inicializar cuando el DOM esté listo
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Inicializando productos...');
     loadUserInfo();
     cargarProductos();
-    
+
     // Inicializar modal de Bootstrap
     const modalElement = document.getElementById('productoModal');
     if (modalElement) {
@@ -20,17 +20,17 @@ async function cargarProductos() {
     try {
         console.log('📦 Cargando productos...');
         const response = await fetch(`${window.API_URL}/productos`);
-        
+
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
-        
+
         const productos = await response.json();
         console.log('✅ Productos cargados:', productos.length);
-        
+
         const tbody = document.getElementById('productos-list');
         if (!tbody) return;
-        
+
         if (!Array.isArray(productos) || productos.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" class="text-center">No hay productos</td></tr>';
             return;
@@ -57,7 +57,7 @@ async function cargarProductos() {
                 </td>
             </tr>
         `).join('');
-        
+
     } catch (error) {
         console.error('❌ Error cargando productos:', error);
         const tbody = document.getElementById('productos-list');
@@ -68,7 +68,7 @@ async function cargarProductos() {
 }
 
 // Abrir modal para nuevo producto
-window.abrirModalNuevo = function() {
+window.abrirModalNuevo = function () {
     document.getElementById('modalTitulo').textContent = 'Nuevo Producto';
     document.getElementById('productoForm').reset();
     document.getElementById('productoId').value = '';
@@ -76,18 +76,18 @@ window.abrirModalNuevo = function() {
 };
 
 // Abrir modal para editar producto
-window.editarProducto = async function(id) {
+window.editarProducto = async function (id) {
     try {
         console.log('✏️ Editando producto:', id);
         const response = await fetch(`${window.API_URL}/productos/${id}`);
-        
+
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
-        
+
         const producto = await response.json();
         console.log('✅ Producto cargado:', producto);
-        
+
         document.getElementById('modalTitulo').textContent = 'Editar Producto';
         document.getElementById('productoId').value = producto.id;
         document.getElementById('nombre').value = producto.nombre;
@@ -95,16 +95,16 @@ window.editarProducto = async function(id) {
         document.getElementById('precio').value = producto.precio;
         document.getElementById('categoria_id').value = producto.categoria_id;
         document.getElementById('imagen').value = producto.imagen || '';
-        
+
         productoModal?.show();
-        
+
     } catch (error) {
         console.error('❌ Error cargando producto:', error);
         alert('Error al cargar el producto');
     }
 };
 
-window.guardarProducto = async function() {
+window.guardarProducto = async function () {
     // Validar campos obligatorios
     const nombre = document.getElementById('nombre').value.trim();
     const precio = document.getElementById('precio').value;
@@ -213,22 +213,22 @@ window.guardarProducto = async function() {
     }
 };
 
-window.eliminarProducto = async function(id) {
+window.eliminarProducto = async function (id) {
     if (!window.confirmarAccion('¿Estás seguro de eliminar este producto?')) return;
-    
+
     try {
         console.log('🗑️ Eliminando producto:', id);
         const token = localStorage.getItem('token');  // ✅ OBTENER TOKEN
-        
+
         const response = await fetch(`${window.API_URL}/admin/productos/${id}`, {
             method: 'DELETE',
             headers: {
                 'Authorization': 'Bearer ' + token  // ✅ AÑADIR TOKEN
             }
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             if (window.mostrarNotificacion) {
                 window.mostrarNotificacion('✅ Producto eliminado', 'success');

@@ -14,7 +14,7 @@ if (typeof window.API_URL === 'undefined') {
 let reseñasData = [];
 let reseñasFiltradas = [];
 // Inicializar cuando cargue la página
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('✅ DOM cargado');
     cargarReseñas();
     configurarEventos();
@@ -25,10 +25,10 @@ function configurarEventos() {
     document.getElementById('applyFilters')?.addEventListener('click', aplicarFiltros);
     document.getElementById('resetFilters')?.addEventListener('click', resetearFiltros);
     document.getElementById('refreshData')?.addEventListener('click', cargarReseñas);
-    
+
     const searchInput = document.getElementById('searchReviews');
     if (searchInput) {
-        searchInput.addEventListener('input', function() {
+        searchInput.addEventListener('input', function () {
             setTimeout(aplicarFiltros, 300);
         });
     }
@@ -39,18 +39,18 @@ async function cargarReseñas() {
     try {
         console.log('📦 Cargando reseñas...');
         const response = await fetch(`${window.API_URL}/admin/resenas`);
-        
+
         if (!response.ok) {
             throw new Error(`Error ${response.status}`);
         }
-        
+
         reseñasData = await response.json();
         reseñasFiltradas = [...reseñasData];
         console.log('✅ Reseñas cargadas:', reseñasData);
-        
+
         renderizarTabla();
         actualizarEstadisticas();
-        
+
     } catch (error) {
         console.error('❌ Error:', error);
         const tbody = document.getElementById('reviewsTableBody');
@@ -67,14 +67,14 @@ function aplicarFiltros() {
     const statusFilter = document.getElementById('filterStatus')?.value || 'all';
 
     reseñasFiltradas = reseñasData.filter(r => {
-        const matchesSearch = searchTerm === '' || 
+        const matchesSearch = searchTerm === '' ||
             (r.usuario_nombre?.toLowerCase() || '').includes(searchTerm) ||
             (r.producto_nombre?.toLowerCase() || '').includes(searchTerm) ||
             (r.comentario?.toLowerCase() || '').includes(searchTerm);
-        
+
         const matchesRating = ratingFilter === 'all' || r.calificacion === parseInt(ratingFilter);
         const matchesStatus = statusFilter === 'all' || r.estado === statusFilter;
-        
+
         return matchesSearch && matchesRating && matchesStatus;
     });
 
@@ -131,7 +131,7 @@ function renderizarTabla() {
 
 // Funciones auxiliares
 function getClaseEstado(estado) {
-    switch(estado) {
+    switch (estado) {
         case 'aprobada': return 'bg-success';
         case 'rechazada': return 'bg-danger';
         default: return 'bg-warning text-dark';
@@ -139,7 +139,7 @@ function getClaseEstado(estado) {
 }
 
 function getTextoEstado(estado) {
-    switch(estado) {
+    switch (estado) {
         case 'aprobada': return 'Aprobada';
         case 'rechazada': return 'Rechazada';
         default: return 'Pendiente';
@@ -173,14 +173,14 @@ function actualizarEstadisticas() {
     const pendientes = reseñasData.filter(r => r.estado === 'pendiente').length;
     const rechazadas = reseñasData.filter(r => r.estado === 'rechazada').length;
     const avg = total > 0 ? reseñasData.reduce((acc, r) => acc + (r.calificacion || 0), 0) / total : 0;
-    
+
     // Añadir comprobaciones para evitar errores
     const statTotal = document.getElementById('statTotal');
     const statVisible = document.getElementById('statVisible');
     const statHidden = document.getElementById('statHidden');
     const statAvg = document.getElementById('statAvg');
     const totalBadge = document.getElementById('totalReviews');
-    
+
     if (statTotal) statTotal.textContent = total;
     if (statVisible) statVisible.textContent = aprobadas;
     if (statHidden) statHidden.textContent = pendientes + rechazadas;
@@ -189,7 +189,7 @@ function actualizarEstadisticas() {
 }
 
 // Funciones globales para los botones
-window.cambiarEstadoReseña = async function(id, nuevoEstado) {
+window.cambiarEstadoReseña = async function (id, nuevoEstado) {
     try {
         console.log('🔄 Cambiando estado:', id, nuevoEstado);
         const response = await fetch(`${window.API_URL}/admin/resenas/${id}`, {
@@ -197,12 +197,12 @@ window.cambiarEstadoReseña = async function(id, nuevoEstado) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ estado: nuevoEstado })
         });
-        
+
         if (!response.ok) throw new Error('Error al actualizar');
-        
+
         mostrarNotificacion('Estado actualizado', 'success');
         cargarReseñas();
-        
+
     } catch (error) {
         console.error('❌ Error:', error);
         mostrarNotificacion('Error al actualizar', 'error');
@@ -210,9 +210,9 @@ window.cambiarEstadoReseña = async function(id, nuevoEstado) {
 };
 
 // Función para eliminar reseña
-window.eliminarReseña = async function(id) {
+window.eliminarReseña = async function (id) {
     if (!confirm('¿Estás seguro de eliminar esta reseña?')) return;
-    
+
     try {
         console.log('🗑️ Eliminando reseña:', id);
         const response = await fetch(`${window.API_URL}/admin/resenas/${id}`, {
@@ -221,16 +221,16 @@ window.eliminarReseña = async function(id) {
                 'Content-Type': 'application/json'
             }
         });
-        
+
         if (!response.ok) {
             const errorData = await response.json();
             throw new Error(errorData.message || 'Error al eliminar');
         }
-        
+
         console.log('✅ Reseña eliminada correctamente');
         mostrarNotificacion('Reseña eliminada', 'success');
         cargarReseñas(); // Recargar la lista
-        
+
     } catch (error) {
         console.error('❌ Error:', error);
         mostrarNotificacion(error.message || 'Error al eliminar', 'error');

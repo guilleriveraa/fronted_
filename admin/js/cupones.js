@@ -2,11 +2,11 @@
 
 let cuponModal = null;
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Inicializando cupones...');
     loadUserInfo();
     cargarCupones();
-    
+
     const modalElement = document.getElementById('cuponModal');
     if (modalElement) {
         cuponModal = new bootstrap.Modal(modalElement);
@@ -18,17 +18,17 @@ async function cargarCupones() {
     try {
         console.log('🎫 Cargando cupones...');
         const response = await fetch(`${window.API_URL}/admin/cupones`);
-        
+
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
-        
+
         const cupones = await response.json();
         console.log('✅ Cupones cargados:', cupones.length);
-        
+
         const tbody = document.getElementById('cupones-list');
         if (!tbody) return;
-        
+
         if (!Array.isArray(cupones) || cupones.length === 0) {
             tbody.innerHTML = '<tr><td colspan="9" class="text-center">No hay cupones</td></tr>';
             return;
@@ -59,7 +59,7 @@ async function cargarCupones() {
                 </td>
             </tr>
         `).join('');
-        
+
     } catch (error) {
         console.error('❌ Error cargando cupones:', error);
         const tbody = document.getElementById('cupones-list');
@@ -70,7 +70,7 @@ async function cargarCupones() {
 }
 
 // Abrir modal para nuevo cupón
-window.abrirModalNuevo = function() {
+window.abrirModalNuevo = function () {
     document.getElementById('modalTitulo').textContent = 'Nuevo Cupón';
     document.getElementById('cuponForm').reset();
     document.getElementById('cuponId').value = '';
@@ -78,20 +78,20 @@ window.abrirModalNuevo = function() {
 };
 
 // Editar cupón
-window.editarCupon = async function(id) {
+window.editarCupon = async function (id) {
     try {
         console.log('✏️ Editando cupón:', id);
         const response = await fetch(`${window.API_URL}/admin/cupones/${id}`, {
             headers: { 'Authorization': 'Bearer ' + localStorage.getItem('token') }
         });
-        
+
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
-        
+
         const cupon = await response.json();
         console.log('✅ Cupón cargado:', cupon);
-        
+
         document.getElementById('modalTitulo').textContent = 'Editar Cupón';
         document.getElementById('cuponId').value = cupon.id;
         document.getElementById('codigo').value = cupon.codigo;
@@ -100,15 +100,15 @@ window.editarCupon = async function(id) {
         document.getElementById('valor_descuento').value = cupon.valor_descuento;
         document.getElementById('monto_minimo').value = cupon.monto_minimo || 0;
         document.getElementById('uso_maximo').value = cupon.uso_maximo || 1;
-        
+
         if (cupon.fecha_fin) {
             document.getElementById('fecha_fin').value = cupon.fecha_fin.split('T')[0];
         } else {
             document.getElementById('fecha_fin').value = '';
         }
-        
+
         cuponModal?.show();
-        
+
     } catch (error) {
         console.error('❌ Error cargando cupón:', error);
         alert('Error al cargar el cupón');
@@ -116,7 +116,7 @@ window.editarCupon = async function(id) {
 };
 
 // Guardar cupón
-window.guardarCupon = async function() {
+window.guardarCupon = async function () {
     const cupon = {
         codigo: document.getElementById('codigo').value,
         descripcion: document.getElementById('descripcion').value,
@@ -126,22 +126,22 @@ window.guardarCupon = async function() {
         uso_maximo: document.getElementById('uso_maximo').value,
         fecha_fin: document.getElementById('fecha_fin').value || null
     };
-    
+
     const id = document.getElementById('cuponId').value;
     const url = id ? `${window.API_URL}/admin/cupones/${id}` : `${window.API_URL}/admin/cupones`;
     const method = id ? 'PUT' : 'POST';
-    
+
     console.log('💾 Guardando cupón:', cupon);
-    
+
     try {
         const response = await fetch(url, {
             method: method,
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(cupon)
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             cuponModal?.hide();
             alert(id ? 'Cupón actualizado' : 'Cupón creado');
@@ -156,7 +156,7 @@ window.guardarCupon = async function() {
 };
 
 // Activar/desactivar cupón
-window.toggleCupon = async function(id, activo) {
+window.toggleCupon = async function (id, activo) {
     try {
         console.log('🔄 Cambiando estado cupón:', id, 'activo:', activo);
         const response = await fetch(`${window.API_URL}/admin/cupones/${id}`, {
@@ -164,9 +164,9 @@ window.toggleCupon = async function(id, activo) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ activo: activo })
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             alert(`Cupón ${activo ? 'activado' : 'desactivado'}`);
         } else {
@@ -181,17 +181,17 @@ window.toggleCupon = async function(id, activo) {
 };
 
 // Eliminar cupón
-window.eliminarCupon = async function(id) {
+window.eliminarCupon = async function (id) {
     if (!confirm('¿Estás seguro de eliminar este cupón?')) return;
-    
+
     try {
         console.log('🗑️ Eliminando cupón:', id);
         const response = await fetch(`${window.API_URL}/admin/cupones/${id}`, {
             method: 'DELETE'
         });
-        
+
         const data = await response.json();
-        
+
         if (response.ok) {
             alert('Cupón eliminado');
             cargarCupones();

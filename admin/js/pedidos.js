@@ -2,7 +2,7 @@
 
 let filtroActual = 'todos';
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Inicializando pedidos...');
     loadUserInfo();
     cargarPedidos();
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function setupFiltros() {
     document.querySelectorAll('.btn-filtro').forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             document.querySelectorAll('.btn-filtro').forEach(b => b.classList.remove('active'));
             this.classList.add('active');
             filtroActual = this.dataset.filtro;
@@ -24,22 +24,22 @@ async function cargarPedidos() {
     try {
         console.log('📦 Cargando pedidos...');
         const response = await fetch(`${window.API_URL}/admin/pedidos`);
-        
+
         if (!response.ok) {
             throw new Error(`Error ${response.status}: ${response.statusText}`);
         }
-        
+
         let pedidos = await response.json();
         console.log('✅ Pedidos cargados:', pedidos.length);
-        
+
         // Aplicar filtro
         if (filtroActual !== 'todos') {
             pedidos = pedidos.filter(p => p.estado === filtroActual);
         }
-        
+
         const tbody = document.getElementById('pedidos-list');
         if (!tbody) return;
-        
+
         if (!Array.isArray(pedidos) || pedidos.length === 0) {
             // 🔥 CAMBIADO: colspan de 7 a 8 (por la nueva columna)
             tbody.innerHTML = '<tr><td colspan="9" class="text-center">No hay pedidos</td></tr>';
@@ -48,30 +48,30 @@ async function cargarPedidos() {
 
         // 🔥 MODIFICADO: Añadida columna de dirección
         tbody.innerHTML = pedidos.map(p => {
-    // Determinar el badge para el método de pago/entrega
-    let metodoBadge = '';
-    let codigoHtml = '';
-    
-    if (p.metodo_pago === 'pago_en_tienda') {
-        metodoBadge = '<span class="badge bg-warning text-dark"><i class="fas fa-store"></i> Recoger en tienda</span>';
-        if (p.codigo_recogida) {
-            codigoHtml = `<br><small class="text-muted">Código: ${p.codigo_recogida}</small>`;
-        }
-    } else if (p.metodo_pago === 'stripe') {
-        metodoBadge = '<span class="badge bg-success"><i class="fas fa-credit-card"></i> Pagado online</span>';
-    } else {
-        metodoBadge = '<span class="badge bg-secondary">' + (p.metodo_pago || 'No especificado') + '</span>';
-    }
-    
-    // Determinar el badge para el estado del pago
-    let estadoPagoBadge = '';
-    if (p.estado_pago === 'pendiente') {
-        estadoPagoBadge = '<br><span class="badge bg-warning text-dark">Pendiente de pago</span>';
-    } else if (p.estado_pago === 'pagado') {
-        estadoPagoBadge = '<br><span class="badge bg-success">Pagado</span>';
-    }
-    
-    return `
+            // Determinar el badge para el método de pago/entrega
+            let metodoBadge = '';
+            let codigoHtml = '';
+
+            if (p.metodo_pago === 'pago_en_tienda') {
+                metodoBadge = '<span class="badge bg-warning text-dark"><i class="fas fa-store"></i> Recoger en tienda</span>';
+                if (p.codigo_recogida) {
+                    codigoHtml = `<br><small class="text-muted">Código: ${p.codigo_recogida}</small>`;
+                }
+            } else if (p.metodo_pago === 'stripe') {
+                metodoBadge = '<span class="badge bg-success"><i class="fas fa-credit-card"></i> Pagado online</span>';
+            } else {
+                metodoBadge = '<span class="badge bg-secondary">' + (p.metodo_pago || 'No especificado') + '</span>';
+            }
+
+            // Determinar el badge para el estado del pago
+            let estadoPagoBadge = '';
+            if (p.estado_pago === 'pendiente') {
+                estadoPagoBadge = '<br><span class="badge bg-warning text-dark">Pendiente de pago</span>';
+            } else if (p.estado_pago === 'pagado') {
+                estadoPagoBadge = '<br><span class="badge bg-success">Pagado</span>';
+            }
+
+            return `
     <tr>
         <td>#${p.id}</td>
         <td>${p.cliente_nombre || 'Cliente'}</td>
@@ -110,7 +110,7 @@ async function cargarPedidos() {
     }
 }
 
-window.cambiarEstado = async function(id, nuevoEstado) {
+window.cambiarEstado = async function (id, nuevoEstado) {
     try {
         console.log('🔄 Cambiando estado pedido:', id, 'a', nuevoEstado);
         const response = await fetch(`${window.API_URL}/admin/pedidos/${id}`, {
@@ -118,13 +118,13 @@ window.cambiarEstado = async function(id, nuevoEstado) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ estado: nuevoEstado })
         });
-        
+
         if (!response.ok) throw new Error('Error al actualizar');
-        
+
         if (window.mostrarNotificacion) {
             window.mostrarNotificacion('✅ Estado actualizado', 'success');
         }
-        
+
     } catch (error) {
         console.error('❌ Error cambiando estado:', error);
         if (window.mostrarNotificacion) {
@@ -133,7 +133,7 @@ window.cambiarEstado = async function(id, nuevoEstado) {
     }
 };
 
-window.verDetalle = function(id) {
+window.verDetalle = function (id) {
     window.location.href = `../pedido-detalle.html?id=${id}`;
 };
 
