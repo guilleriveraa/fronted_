@@ -1,0 +1,192 @@
+/* ===== ESTILOS PARA PÁGINA DE RECOGIDA EN TIENDA ===== */
+/* Siguiendo la línea visual de SalamancaVivela */
+
+/* Hero section con icono de tienda */
+.recogida-hero {
+    background: linear-gradient(135deg, #f9f9f9 0%, #ffffff 100%);
+    padding: 3rem 1rem;
+    border-radius: 16px;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.recogida-hero::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    right: -50px;
+    width: 200px;
+    height: 200px;
+    background: rgba(200, 40, 40, 0.03);
+    border-radius: 50%;
+    z-index: 0;
+}
+
+.recogida-hero .fa-store {
+    color: #28a745 !important;
+    background: rgba(40, 167, 69, 0.1);
+    padding: 1.5rem;
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+    transition: transform 0.3s ease;
+}
+
+.recogida-hero .fa-store:hover {
+    transform: scale(1.05);
+}
+
+.recogida-hero h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    color: #333;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.recogida-hero .lead {
+    font-family: 'Open Sans', sans-serif;
+    color: #666;
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+/* Tarjeta principal de confirmación */
+.recogida-card {
+    background: white;
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    max-width: 600px;
+    margin: 0 auto;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.recogida-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 50px rgba(200, 40, 40, 0.15);
+}
+
+.recogida-card .card-body {
+    padding: 2.5rem 2rem;
+}
+
+.recogida-card .fa-check-circle {
+    color: #28a745 !important;
+    background: rgba(40, 167, 69, 0.1);
+    padding: 1rem;
+    border-radius: 50%;
+    display: inline-block;
+    margin-bottom: 1.5rem;
+    font-size: 3rem;
+    box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+}
+
+.recogida-card h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+}
+
+.recogida-card h3 span {
+    color: #c62828;
+    font-weight: 700;
+    background: rgba(200, 40, 40, 0.05);
+    padding: 0.2rem 0.5rem;
+    border-radius: 8px;
+}
+
+.recogida-card p {
+    font-family: 'Open Sans', sans-serif;
+    color: #666;
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+}
+
+.recogida-card strong {
+    color: #e83083;
+}
+
+.recogida-card hr {
+    margin: 2rem 0;
+    border: 0;
+    border-top: 2px dashed #f0f0f0;
+}
+
+/* Botón de volver a tienda */
+.recogida-card .btn-primary {
+    background: linear-gradient(135deg, #c62828 0%, #e83083 100%);
+    border: none;
+    padding: 12px 35px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    box-shadow: 0 5px 15px rgba(200, 40, 40, 0.3);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-top: 1rem;
+}
+
+.recogida-card .btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(200, 40, 40, 0.4);
+    background: linear-gradient(135deg, #e83083 0%, #c62828 100%);
+}
+
+.recogida-card .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 3px 10px rgba(200, 40, 40, 0.3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .recogida-hero h1 {
+        font-size: 2rem;
+    }
+    
+    .recogida-hero .lead {
+        font-size: 1rem;
+    }
+    
+    .recogida-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .recogida-card h3 {
+        font-size: 1.3rem;
+    }
+}
+
+/* Animación de entrada */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.recogida-hero,
+.recogida-card {
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.recogida-card {
+    animation-delay: 0.2s;
+}
