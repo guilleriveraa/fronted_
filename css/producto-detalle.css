@@ -107,3 +107,36 @@
         font-size: 1.8rem;
     }
 }
+.talla-selector {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f9f9f9;
+    border-radius: 5px;
+    border-left: 3px solid #e83083;
+}
+
+.talla-selector label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 500;
+    color: #333;
+}
+
+.talla-selector label i {
+    color: #e83083;
+    margin-right: 5px;
+}
+
+.talla-selector select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+.talla-selector select:focus {
+    outline: none;
+    border-color: #e83083;
+    box-shadow: 0 0 0 2px rgba(232, 48, 131, 0.1);
+}
