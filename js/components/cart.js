@@ -187,9 +187,7 @@ function renderCartSummary(cart) {
                 </button>
                 ` : ''}
             </div>
-            <button class="btn-checkout" onclick="proceedToCheckout()" id="checkoutBtn">
-                <i class="fas fa-lock"></i> Pagar con Tarjeta
-            </button>
+            
         </div>
     `;
 
