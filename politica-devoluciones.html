@@ -21,7 +21,7 @@
 
 <body data-theme="light">
 
-    <<header class="main-header">
+    <header class="main-header">
         <div class="container header-container">
             <div class="logo">
                 <a href="index.html">
@@ -70,198 +70,227 @@
                         style="display:none"></i></button>
             </div>
         </div>
-        </header>
+    </header>
 
-        <main class="info-page">
-            <!-- Cabecera -->
-            <div class="page-header">
-                <h1><i class="fas fa-undo-alt"></i> Política de Devoluciones</h1>
-                <p>Tu satisfacción es nuestra prioridad</p>
+    <!-- Menú móvil (hamburguesa) -->
+    <nav class="main-nav" id="mobileMenu">
+        <div class="nav-header">
+            <h3>SalamancaVivela</h3>
+            <button class="menu-close" id="menuClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="nav-content">
+            <div id="mobileAuthButtons" class="mobile-auth-buttons">
+                <a href="#" id="mobileLoginBtn" class="btn-login">Iniciar Sesión</a>
+                <a href="#" id="mobileRegisterBtn" class="btn-register">Registrarse</a>
             </div>
+            <div id="mobileUserMenu" class="mobile-user-menu" style="display: none;">
+                <div class="mobile-user-info">
+                    <div class="mobile-user-avatar" id="mobileUserAvatar">U</div>
+                    <span id="mobileUserName">Usuario</span>
+                </div>
+                <a href="perfil.html" class="mobile-menu-link"><i class="fas fa-user"></i> Mi Perfil</a>
+                <a href="pedidos.html" class="mobile-menu-link"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
+                <a href="#" id="mobileLogoutBtn" class="mobile-menu-link logout"><i class="fas fa-sign-out-alt"></i>
+                    Cerrar Sesión</a>
+            </div>
+            <a href="productos.html" class="mobile-menu-link"><i class="fas fa-tag"></i> Productos</a>
+            <a href="carrito.html" class="mobile-menu-link"><i class="fas fa-shopping-cart"></i> Carrito</a>
+            <a href="contacto.html" class="mobile-menu-link"><i class="fas fa-envelope"></i> Contacto</a>
+        </div>
+    </nav>
 
-            <!-- Navegación entre páginas -->
-            <nav class="info-nav">
-                <ul>
-                    <li><a href="politica-devoluciones.html" class="active">Devoluciones</a></li>
-                    <li><a href="politica-compra.html">Compras</a></li>
-                    <li><a href="preguntas-frecuentes.html">Preguntas Frecuentes</a></li>
+    <main class="info-page">
+        <!-- Cabecera -->
+        <div class="page-header">
+            <h1><i class="fas fa-undo-alt"></i> Política de Devoluciones</h1>
+            <p>Tu satisfacción es nuestra prioridad</p>
+        </div>
+
+        <!-- Navegación entre páginas -->
+        <nav class="info-nav">
+            <ul>
+                <li><a href="politica-devoluciones.html" class="active">Devoluciones</a></li>
+                <li><a href="politica-compra.html">Compras</a></li>
+                <li><a href="preguntas-frecuentes.html">Preguntas Frecuentes</a></li>
+            </ul>
+        </nav>
+
+        <!-- Contenido principal -->
+        <div class="info-content">
+            <!-- Plazo de devolución -->
+            <section class="info-section">
+                <h2><i class="fas fa-clock"></i> Plazo de Devolución</h2>
+                <p>En SalamancaVivela queremos que estés 100% satisfecho con tu compra. Por eso, tienes un plazo de
+                    <strong>30 días naturales</strong> desde la recepción del pedido para solicitar una devolución.
+                </p>
+
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i>
+                    <p><strong>Importante:</strong> Los productos deben estar en perfecto estado, sin usar y con su
+                        embalaje original.</p>
+                </div>
+            </section>
+
+            <!-- Proceso de devolución -->
+            <section class="info-section">
+                <h2><i class="fas fa-clipboard-list"></i> Proceso de Devolución</h2>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-number">1</div>
+                        <div class="timeline-content">
+                            <h4>Solicita la devolución</h4>
+                            <p>Envía un email a administracion@salamancavivela.com con tu número de pedido y el
+                                motivo de la devolución.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-number">2</div>
+                        <div class="timeline-content">
+                            <h4>Prepara el paquete</h4>
+                            <p>Empaqueta el producto en su caja original, incluyendo todos los accesorios y
+                                etiquetas.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-number">3</div>
+                        <div class="timeline-content">
+                            <h4>Envíanos el producto</h4>
+                            <p>Puedes usar la empresa de mensajería que prefieras. Te recomendamos usar un servicio
+                                con seguimiento.</p>
+                        </div>
+                    </div>
+
+                    <div class="timeline-item">
+                        <div class="timeline-number">4</div>
+                        <div class="timeline-content">
+                            <h4>Recibe tu reembolso</h4>
+                            <p>Una vez recibamos y verifiquemos el producto, procesaremos el reembolso en un plazo
+                                de 3-5 días hábiles.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Costes de devolución -->
+            <section class="info-section">
+                <h2><i class="fas fa-euro-sign"></i> Costes de Devolución</h2>
+
+                <table class="info-table">
+                    <thead>
+                        <tr>
+                            <th>Motivo de devolución</th>
+                            <th>Coste para el cliente</th>
+                            <th>Coste para la tienda</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Producto defectuoso o error en el envío</td>
+                            <td>0€</td>
+                            <td>Asumimos todos los gastos</td>
+                        </tr>
+                        <tr>
+                            <td>Cambio de opinión / no gusta</td>
+                            <td>Gastos de envío de vuelta</td>
+                            <td>No asumimos gastos</td>
+                        </tr>
+                        <tr>
+                            <td>Cambio por talla/color</td>
+                            <td>Gastos de ida y vuelta</td>
+                            <td>Gestionamos el cambio</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <p>Los gastos de envío originales no son reembolsables en caso de devolución por cambio de
+                        opinión.</p>
+                </div>
+            </section>
+
+            <!-- Excepciones -->
+            <section class="info-section">
+                <h2><i class="fas fa-ban"></i> Productos No Devolubles</h2>
+
+                <ul class="info-list">
+                    <li><i class="fas fa-times-circle"></i> Productos personalizados o hechos a medida</li>
+                    <li><i class="fas fa-times-circle"></i> Productos de higiene personal una vez abiertos</li>
+                    <li><i class="fas fa-times-circle"></i> Artículos en oferta o liquidación</li>
+                    <li><i class="fas fa-times-circle"></i> Tarjetas regalo</li>
                 </ul>
-            </nav>
+            </section>
 
-            <!-- Contenido principal -->
-            <div class="info-content">
-                <!-- Plazo de devolución -->
-                <section class="info-section">
-                    <h2><i class="fas fa-clock"></i> Plazo de Devolución</h2>
-                    <p>En SalamancaVivela queremos que estés 100% satisfecho con tu compra. Por eso, tienes un plazo de
-                        <strong>30 días naturales</strong> desde la recepción del pedido para solicitar una devolución.
+            <!-- Contacto -->
+            <div class="contact-extra">
+                <h3>¿Tienes dudas sobre una devolución?</h3>
+                <div class="contact-buttons">
+                    <a href="mailto:administracion@salamancavivela.com" class="btn-contact">
+                        <i class="fas fa-envelope"></i> administracion@salamancavivela.com
+                    </a>
+                    <a href="tel:+34644164657" class="btn-contact">
+                        <i class="fas fa-phone"></i> +34 644 16 46 57
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>SalamancaVivela</h3>
+                        <p>Tu tienda online de productos artesanales y típicos de Salamanca.</p>
+                        <div class="social-links">
+                            <a href="https://www.facebook.com/SalamancaVivelaES"><i class="fab fa-facebook-f"></i></a>
+                            <a href="https://www.instagram.com/salamancavivela/"><i class="fab fa-instagram"></i></a>
+                            <a href="https://x.com/SalamancaVivela"><i class="fab fa-twitter"></i></a>
+                            <a href="https://www.tiktok.com/@salamancavivela"><i class="fab fa-tiktok"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Enlaces rápidos</h3>
+                        <ul>
+                            <li><a href="index.html">Inicio</a></li>
+                            <li><a href="productos.html">Productos</a></li>
+                            <li><a href="carrito.html">Carrito</a></li>
+                            <li><a href="contacto.html">Contacto</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-section">
+                        <h3>Contacto</h3>
+                        <ul>
+                            <li><i class="fas fa-map-marker-alt"></i> Calle Azafranal 26, Salamanca</li>
+                            <li><i class="fas fa-phone"></i> +34 644 16 46 57</li>
+                            <li><i class="fas fa-envelope"></i> administracion@salamancavivela.com</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="footer-bottom">
+                    <p>© <span class="copyright-year">2024</span> SalamancaVivela. Todos los derechos reservados.
                     </p>
-
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle"></i>
-                        <p><strong>Importante:</strong> Los productos deben estar en perfecto estado, sin usar y con su
-                            embalaje original.</p>
-                    </div>
-                </section>
-
-                <!-- Proceso de devolución -->
-                <section class="info-section">
-                    <h2><i class="fas fa-clipboard-list"></i> Proceso de Devolución</h2>
-
-                    <div class="timeline">
-                        <div class="timeline-item">
-                            <div class="timeline-number">1</div>
-                            <div class="timeline-content">
-                                <h4>Solicita la devolución</h4>
-                                <p>Envía un email a administracion@salamancavivela.com con tu número de pedido y el
-                                    motivo de la devolución.</p>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-number">2</div>
-                            <div class="timeline-content">
-                                <h4>Prepara el paquete</h4>
-                                <p>Empaqueta el producto en su caja original, incluyendo todos los accesorios y
-                                    etiquetas.</p>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-number">3</div>
-                            <div class="timeline-content">
-                                <h4>Envíanos el producto</h4>
-                                <p>Puedes usar la empresa de mensajería que prefieras. Te recomendamos usar un servicio
-                                    con seguimiento.</p>
-                            </div>
-                        </div>
-
-                        <div class="timeline-item">
-                            <div class="timeline-number">4</div>
-                            <div class="timeline-content">
-                                <h4>Recibe tu reembolso</h4>
-                                <p>Una vez recibamos y verifiquemos el producto, procesaremos el reembolso en un plazo
-                                    de 3-5 días hábiles.</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- Costes de devolución -->
-                <section class="info-section">
-                    <h2><i class="fas fa-euro-sign"></i> Costes de Devolución</h2>
-
-                    <table class="info-table">
-                        <thead>
-                            <tr>
-                                <th>Motivo de devolución</th>
-                                <th>Coste para el cliente</th>
-                                <th>Coste para la tienda</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>Producto defectuoso o error en el envío</td>
-                                <td>0€</td>
-                                <td>Asumimos todos los gastos</td>
-                            </tr>
-                            <tr>
-                                <td>Cambio de opinión / no gusta</td>
-                                <td>Gastos de envío de vuelta</td>
-                                <td>No asumimos gastos</td>
-                            </tr>
-                            <tr>
-                                <td>Cambio por talla/color</td>
-                                <td>Gastos de ida y vuelta</td>
-                                <td>Gestionamos el cambio</td>
-                            </tr>
-                        </tbody>
-                    </table>
-
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <p>Los gastos de envío originales no son reembolsables en caso de devolución por cambio de
-                            opinión.</p>
-                    </div>
-                </section>
-
-                <!-- Excepciones -->
-                <section class="info-section">
-                    <h2><i class="fas fa-ban"></i> Productos No Devolubles</h2>
-
-                    <ul class="info-list">
-                        <li><i class="fas fa-times-circle"></i> Productos personalizados o hechos a medida</li>
-                        <li><i class="fas fa-times-circle"></i> Productos de higiene personal una vez abiertos</li>
-                        <li><i class="fas fa-times-circle"></i> Artículos en oferta o liquidación</li>
-                        <li><i class="fas fa-times-circle"></i> Tarjetas regalo</li>
-                    </ul>
-                </section>
-
-                <!-- Contacto -->
-                <div class="contact-extra">
-                    <h3>¿Tienes dudas sobre una devolución?</h3>
-                    <div class="contact-buttons">
-                        <a href="mailto:administracion@salamancavivela.com" class="btn-contact">
-                            <i class="fas fa-envelope"></i> administracion@salamancavivela.com
-                        </a>
-                        <a href="tel:+34644164657" class="btn-contact">
-                            <i class="fas fa-phone"></i> +34 644 16 46 57
-                        </a>
+                    <div class="footer-links">
+                        <a href="Cookies.html">Cookies</a>
+                        <a href="AvisoLegal.html">Aviso legal</a>
+                        <a href="politica-devoluciones.html">Devoluciones</a>
+                        <a href="politica-compra.html">Compras</a>
+                        <a href="preguntas-frecuentes.html">Preguntas frecuentes</a>
                     </div>
                 </div>
             </div>
-
-            <!-- Footer -->
-            <footer class="main-footer">
-                <div class="container">
-                    <div class="footer-content">
-                        <div class="footer-section">
-                            <h3>SalamancaVivela</h3>
-                            <p>Tu tienda online de productos artesanales y típicos de Salamanca.</p>
-                            <div class="social-links">
-                                <a href="https://www.facebook.com/SalamancaVivelaES"><i
-                                        class="fab fa-facebook-f"></i></a>
-                                <a href="https://www.instagram.com/salamancavivela/"><i
-                                        class="fab fa-instagram"></i></a>
-                                <a href="https://x.com/SalamancaVivela"><i class="fab fa-twitter"></i></a>
-                                <a href="https://www.tiktok.com/@salamancavivela"><i class="fab fa-tiktok"></i></a>
-                            </div>
-                        </div>
-
-                        <div class="footer-section">
-                            <h3>Enlaces rápidos</h3>
-                            <ul>
-                                <li><a href="index.html">Inicio</a></li>
-                                <li><a href="productos.html">Productos</a></li>
-                                <li><a href="carrito.html">Carrito</a></li>
-                                <li><a href="contacto.html">Contacto</a></li>
-                            </ul>
-                        </div>
-
-                        <div class="footer-section">
-                            <h3>Contacto</h3>
-                            <ul>
-                                <li><i class="fas fa-map-marker-alt"></i> Calle Azafranal 26, Salamanca</li>
-                                <li><i class="fas fa-phone"></i> +34 644 16 46 57</li>
-                                <li><i class="fas fa-envelope"></i> administracion@salamancavivela.com</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <div class="footer-bottom">
-                        <p>© <span class="copyright-year">2024</span> SalamancaVivela. Todos los derechos reservados.
-                        </p>
-                        <div class="footer-links">
-                            <a href="Cookies.html">Cookies</a>
-                            <a href="AvisoLegal.html">Aviso legal</a>
-                            <a href="politica-devoluciones.html">Devoluciones</a>
-                            <a href="politica-compra.html">Compras</a>
-                            <a href="preguntas-frecuentes.html">Preguntas frecuentes</a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-            <script src="js/core/copyright.js"></script>
+        </footer>
+        <script src="js/core/copyright.js"></script>
+        <script src="js/core/Main.js"></script>
+    </main>
 </body>
 
 </html>

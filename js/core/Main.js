@@ -94,3 +94,26 @@ window.InitManager.register('BasicFilters', function () {
 
   window.InitManager.log('✅ Filtros básicos activados');
 });
+// Menú hamburguesa
+const menuToggle = document.getElementById('menuToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+const menuClose = document.getElementById('menuClose');
+
+if (menuToggle && mobileMenu) {
+  menuToggle.addEventListener('click', () => {
+    mobileMenu.classList.add('active');
+  });
+
+  menuClose.addEventListener('click', () => {
+    mobileMenu.classList.remove('active');
+  });
+
+  // Cerrar al hacer clic fuera
+  document.addEventListener('click', (e) => {
+    if (mobileMenu.classList.contains('active') &&
+      !mobileMenu.contains(e.target) &&
+      !menuToggle.contains(e.target)) {
+      mobileMenu.classList.remove('active');
+    }
+  });
+}
