@@ -2623,159 +2623,47 @@ body {
     }
 }
 
-/* ===== MENÚ HAMBURGUESA COMPLETO ===== */
+/* ===== MENÚ MÓVIL - FONDO BLANCO SÓLIDO ===== */
+.main-nav {
+    background: var(--bg-card) !important;
+    background-color: var(--bg-card) !important;
+}
 
-/* Botón hamburguesa - VISIBLE EN MÓVIL */
-@media (max-width: 768px) {
-    .menu-toggle {
-        display: flex;
-        background: none;
-        border: none;
-        font-size: 1.5rem;
-        color: var(--primary);
-        cursor: pointer;
-        width: 40px;
-        height: 40px;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: all 0.3s ease;
-        background: var(--gray-light);
-    }
-    
-    .menu-toggle:hover {
-        background: var(--primary);
-        color: white;
-    }
-    
-    /* Ocultar menú desktop en móvil */
-    .nav-desktop {
-        display: none !important;
-    }
-    
-    /* Mostrar menú hamburguesa cuando está activo */
-    .main-nav {
-        position: fixed;
-        top: 0;
-        left: -100%;
-        width: 80%;
-        max-width: 320px;
-        height: 100vh;
-        background: var(--bg-card);
-        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
-        transition: left 0.3s ease;
-        z-index: 1001;
-        overflow-y: auto;
-        border-right: 3px solid var(--primary);
-    }
-    
-    .main-nav.active {
-        left: 0;
-    }
-    
-    .nav-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        border-bottom: 2px solid var(--primary);
-        background: var(--bg-primary);
-    }
-    
-    .menu-close {
-        background: none;
-        border: none;
-        color: var(--text-primary);
-        font-size: 1.3rem;
-        cursor: pointer;
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-radius: 50%;
-        transition: all 0.3s ease;
-    }
-    
-    .menu-close:hover {
-        background: var(--primary);
-        color: white;
-    }
-    
-    .nav-content {
-        padding: 20px;
-    }
-    
-    /* Enlaces del menú móvil */
-    .mobile-menu-link {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 15px;
-        color: var(--text-primary);
-        text-decoration: none;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        margin-bottom: 5px;
-        font-family: var(--font-body);
-    }
-    
-    .mobile-menu-link:hover {
-        background: var(--primary);
-        color: white;
-        padding-left: 25px;
-    }
-    
-    .mobile-menu-link i {
-        width: 24px;
-        text-align: center;
-    }
-    
-    .mobile-menu-link.logout {
-        color: #f44336;
-    }
-    
-    .mobile-menu-link.logout:hover {
-        background: #ffebee;
-        color: #f44336;
-    }
-    
-    .mobile-auth-buttons {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-        padding-bottom: 15px;
-        border-bottom: 1px solid var(--border-color);
-        margin-bottom: 15px;
-    }
-    
-    .mobile-auth-buttons .btn-login,
-    .mobile-auth-buttons .btn-register {
-        text-align: center;
-        justify-content: center;
-    }
-    
-    .mobile-user-info {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-        padding: 15px;
-        background: var(--gray-light);
-        border-radius: 10px;
-        margin-bottom: 15px;
-    }
-    
-    .mobile-user-avatar {
-        width: 50px;
-        height: 50px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, var(--primary), var(--secondary));
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.5rem;
-    }
+/* Asegurar que el contenido del menú también tenga fondo blanco */
+.main-nav .nav-header {
+    background: var(--bg-card) !important;
+    background-color: var(--bg-card) !important;
+    border-bottom: 2px solid var(--primary);
+}
+
+.main-nav .nav-content {
+    background: var(--bg-card) !important;
+    background-color: var(--bg-card) !important;
+}
+
+/* Los enlaces del menú */
+.main-nav .mobile-menu-link {
+    background: var(--bg-card);
+    color: var(--text-primary);
+}
+
+.main-nav .mobile-menu-link:hover {
+    background: var(--primary);
+    color: white;
+}
+
+/* Sección de autenticación */
+.main-nav .mobile-auth-buttons {
+    background: var(--bg-card);
+}
+
+/* Menú de usuario cuando está logueado */
+.main-nav .mobile-user-menu {
+    background: var(--bg-card);
+}
+
+.main-nav .mobile-user-info {
+    background: var(--gray-light);
 }
 
 /* ===== AJUSTES ADICIONALES PARA MÓVIL ===== */
