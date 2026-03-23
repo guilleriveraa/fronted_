@@ -21,56 +21,89 @@
 <body data-theme="light">
 
     <!-- Header -->
-    <header class="main-header">
-        <div class="container header-container">
-            <div class="logo">
-                <a href="index.html">
-                    <img src="img/images.png" alt="Salamanca Vívela" class="logo-img">
-                </a>
-            </div>
-            <nav class="nav-desktop">
-                <a href="productos.html">Productos</a>
-                <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
-                <a href="contacto.html">Contacto</a>
-            </nav>
-
-            <div id="authButtons" class="auth-buttons">
-                <a href="#" id="loginBtn" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                </a>
-                <a href="#" id="registerBtn" class="btn-register">
-                    <i class="fas fa-user-plus"></i> Registrarse
-                </a>
-            </div>
-
-            <!-- Menú de usuario -->
-            <div id="userMenu" class="user-menu" style="display:none;">
-                <div class="user-avatar"><span id="userAvatar">U</span>
-                    <div class="user-dropdown">
-                        <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
-                        <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
-                        <div class="dropdown-divider"></div>
-                        <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
-                    </div>
-                </div>
-                <span id="userNameDisplay" class="user-name">Usuario</span>
-            </div>
-
-            <!-- Acciones header -->
-            <div class="header-actions">
-                <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i
-                        class="fas fa-minus"></i></button>
-                <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
-                <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i
-                        class="fas fa-plus"></i></button>
-                <span class="header-separator"></span>
-                <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span
-                        class="cart-count">0</span></a>
-                <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun"
-                        style="display:none"></i></button>
-            </div>
+  <header class="main-header">
+    <div class="container header-container">
+        <div class="logo">
+            <a href="index.html">
+                <img src="img/images.png" alt="Salamanca Vívela" class="logo-img">
+            </a>
         </div>
-    </header>
+        
+        <!-- 🔥 BOTÓN HAMBURGUESA - AÑADE ESTO 🔥 -->
+        <button class="menu-toggle" id="menuToggle" aria-label="Menú">
+            <i class="fas fa-bars"></i>
+        </button>
+        
+        <nav class="nav-desktop">
+            <a href="productos.html">Productos</a>
+            <a href="carrito.html">Carrito <span id="headerCartCount" class="cart-count">0</span></a>
+            <a href="contacto.html">Contacto</a>
+        </nav>
+
+        <div id="authButtons" class="auth-buttons">
+            <a href="#" id="loginBtn" class="btn-login">
+                <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+            </a>
+            <a href="#" id="registerBtn" class="btn-register">
+                <i class="fas fa-user-plus"></i> Registrarse
+            </a>
+        </div>
+
+        <!-- Menú de usuario -->
+        <div id="userMenu" class="user-menu" style="display:none;">
+            <div class="user-avatar"><span id="userAvatar">U</span>
+                <div class="user-dropdown">
+                    <a href="perfil.html" class="dropdown-item"><i class="fas fa-user"></i> Mi Perfil</a>
+                    <a href="pedidos.html" class="dropdown-item"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
+                    <div class="dropdown-divider"></div>
+                    <a href="#" class="dropdown-item logout"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                </div>
+            </div>
+            <span id="userNameDisplay" class="user-name">Usuario</span>
+        </div>
+
+        <!-- Acciones header -->
+        <div class="header-actions">
+            <button id="fontSizeDecrease" class="header-btn" title="Disminuir fuente"><i class="fas fa-minus"></i></button>
+            <button id="fontSizeReset" class="header-btn" title="Fuente normal"><i class="fas fa-font"></i></button>
+            <button id="fontSizeIncrease" class="header-btn" title="Aumentar fuente"><i class="fas fa-plus"></i></button>
+            <span class="header-separator"></span>
+            <a href="carrito.html" class="header-btn cart-btn"><i class="fas fa-shopping-cart"></i><span
+                    class="cart-count">0</span></a>
+            <button id="themeToggle" class="header-btn"><i class="fas fa-moon"></i><i class="fas fa-sun"
+                    style="display:none"></i></button>
+        </div>
+    </div>
+</header>
+
+<!-- Menú móvil (hamburguesa) - DEBE ESTAR FUERA DEL HEADER -->
+<nav class="main-nav" id="mobileMenu">
+    <div class="nav-header">
+        <h3>SalamancaVivela</h3>
+        <button class="menu-close" id="menuClose">
+            <i class="fas fa-times"></i>
+        </button>
+    </div>
+    <div class="nav-content">
+        <div id="mobileAuthButtons" class="mobile-auth-buttons">
+            <a href="#" id="mobileLoginBtn" class="btn-login">Iniciar Sesión</a>
+            <a href="#" id="mobileRegisterBtn" class="btn-register">Registrarse</a>
+        </div>
+        <div id="mobileUserMenu" class="mobile-user-menu" style="display: none;">
+            <div class="mobile-user-info">
+                <div class="mobile-user-avatar" id="mobileUserAvatar">U</div>
+                <span id="mobileUserName">Usuario</span>
+            </div>
+            <a href="perfil.html" class="mobile-menu-link"><i class="fas fa-user"></i> Mi Perfil</a>
+            <a href="pedidos.html" class="mobile-menu-link"><i class="fas fa-shopping-bag"></i> Mis Pedidos</a>
+            <a href="#" id="mobileLogoutBtn" class="mobile-menu-link logout"><i class="fas fa-sign-out-alt"></i> Cerrar
+                Sesión</a>
+        </div>
+        <a href="productos.html" class="mobile-menu-link"><i class="fas fa-tag"></i> Productos</a>
+        <a href="carrito.html" class="mobile-menu-link"><i class="fas fa-shopping-cart"></i> Carrito</a>
+        <a href="contacto.html" class="mobile-menu-link"><i class="fas fa-envelope"></i> Contacto</a>
+    </div>
+</nav>
 
     <!-- Menú móvil (hamburguesa) -->
     <nav class="main-nav" id="mobileMenu">
