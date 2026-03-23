@@ -2488,3 +2488,400 @@ body {
     margin-right: 4px;
     font-size: 0.8rem;
 }
+/* ===== RESPONSIVE COMPLETO PARA MÓVIL ===== */
+
+/* MÓVIL PEQUEÑO (hasta 480px) */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 12px;
+    }
+    
+    /* Header móvil */
+    .header-container {
+        flex-wrap: wrap;
+        justify-content: space-between;
+        padding: 10px 12px;
+    }
+    
+    .logo img {
+        width: 70px;
+    }
+    
+    .header-actions {
+        gap: 8px;
+    }
+    
+    .header-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 0.9rem;
+    }
+    
+    .cart-count {
+        width: 18px;
+        height: 18px;
+        font-size: 0.7rem;
+        top: -3px;
+        right: -3px;
+    }
+    
+    /* Productos en móvil */
+    .products-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .product-card {
+        margin: 0;
+    }
+    
+    /* Carrito móvil */
+    .cart-item {
+        flex-direction: column;
+        text-align: center;
+        padding: 15px;
+    }
+    
+    .cart-product {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .cart-product-img {
+        width: 100px;
+        margin-bottom: 10px;
+    }
+    
+    .cart-price,
+    .cart-quantity,
+    .cart-subtotal {
+        width: 100%;
+        text-align: center;
+        margin: 5px 0;
+    }
+    
+    /* Resumen del carrito */
+    .summary-card {
+        padding: 15px;
+    }
+    
+    .summary-row {
+        font-size: 0.95rem;
+    }
+    
+    .btn-checkout {
+        width: 100%;
+        padding: 14px;
+    }
+    
+    /* Footer móvil */
+    .footer-content {
+        gap: 25px;
+    }
+    
+    .footer-section {
+        text-align: center;
+    }
+    
+    .footer-section h3::after {
+        left: 50%;
+        transform: translateX(-50%);
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    
+    .footer-links {
+        justify-content: center;
+    }
+}
+
+/* MÓVIL MEDIANO (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+    .container {
+        padding: 0 15px;
+    }
+    
+    .products-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+    
+    .product-card {
+        margin: 0;
+    }
+    
+    .cart-item {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .cart-product {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+/* ===== MENÚ HAMBURGUESA COMPLETO ===== */
+
+/* Botón hamburguesa - VISIBLE EN MÓVIL */
+@media (max-width: 768px) {
+    .menu-toggle {
+        display: flex;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: var(--primary);
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+        background: var(--gray-light);
+    }
+    
+    .menu-toggle:hover {
+        background: var(--primary);
+        color: white;
+    }
+    
+    /* Ocultar menú desktop en móvil */
+    .nav-desktop {
+        display: none !important;
+    }
+    
+    /* Mostrar menú hamburguesa cuando está activo */
+    .main-nav {
+        position: fixed;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        max-width: 320px;
+        height: 100vh;
+        background: var(--bg-card);
+        box-shadow: 5px 0 15px rgba(0, 0, 0, 0.2);
+        transition: left 0.3s ease;
+        z-index: 1001;
+        overflow-y: auto;
+        border-right: 3px solid var(--primary);
+    }
+    
+    .main-nav.active {
+        left: 0;
+    }
+    
+    .nav-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        border-bottom: 2px solid var(--primary);
+        background: var(--bg-primary);
+    }
+    
+    .menu-close {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        font-size: 1.3rem;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+    
+    .menu-close:hover {
+        background: var(--primary);
+        color: white;
+    }
+    
+    .nav-content {
+        padding: 20px;
+    }
+    
+    /* Enlaces del menú móvil */
+    .mobile-menu-link {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        color: var(--text-primary);
+        text-decoration: none;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+        margin-bottom: 5px;
+        font-family: var(--font-body);
+    }
+    
+    .mobile-menu-link:hover {
+        background: var(--primary);
+        color: white;
+        padding-left: 25px;
+    }
+    
+    .mobile-menu-link i {
+        width: 24px;
+        text-align: center;
+    }
+    
+    .mobile-menu-link.logout {
+        color: #f44336;
+    }
+    
+    .mobile-menu-link.logout:hover {
+        background: #ffebee;
+        color: #f44336;
+    }
+    
+    .mobile-auth-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 15px;
+    }
+    
+    .mobile-auth-buttons .btn-login,
+    .mobile-auth-buttons .btn-register {
+        text-align: center;
+        justify-content: center;
+    }
+    
+    .mobile-user-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        padding: 15px;
+        background: var(--gray-light);
+        border-radius: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .mobile-user-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--primary), var(--secondary));
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+    }
+}
+
+/* ===== AJUSTES ADICIONALES PARA MÓVIL ===== */
+
+@media (max-width: 768px) {
+    /* Hero section */
+    .hero {
+        padding: 60px 0;
+    }
+    
+    .hero h1 {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.95rem;
+    }
+    
+    .btn-hero {
+        padding: 12px 25px;
+        font-size: 0.9rem;
+    }
+    
+    /* Features */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    /* Categorías */
+    .categories-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .category-card {
+        height: 200px;
+    }
+    
+    /* Testimonios */
+    .testimonials-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    /* Newsletter */
+    .newsletter-form {
+        padding: 0 15px;
+    }
+    
+    .newsletter-form .form-group {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .newsletter-form input {
+        padding: 14px;
+        padding-right: 14px;
+        border-radius: 25px;
+    }
+    
+    .btn-newsletter {
+        position: static;
+        transform: none;
+        width: 100%;
+        margin-top: 10px;
+    }
+    
+    .newsletter-benefits {
+        flex-direction: column;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    /* Modal de autenticación */
+    .auth-modal-content {
+        width: 95%;
+        margin: 20% auto;
+        padding: 20px;
+    }
+    
+    /* Botón volver arriba */
+    .back-to-top {
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+    }
+}
+
+/* ===== TABLET (769px - 1024px) ===== */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .products-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+    
+    .hero h1 {
+        font-size: 2.2rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .categories-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
