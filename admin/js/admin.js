@@ -1,6 +1,6 @@
 // fronted/admin/js/admin.js - Versión completa
 
-window.API_URL = window.API_URL || 'https://json-production-48ce.up.railway.app/api';
+window.API_URL = window.API_URL || 'https://json-production-60da.up.railway.app/api';
 console.log('✅ API_URL definida:', window.API_URL);
 
 // Interceptor para añadir token a todas las peticiones
