@@ -147,7 +147,7 @@
 #direccionModal .btn-primary:hover {
     background: linear-gradient(135deg, #c2185b, #a01515);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3); 
+    box-shadow: 0 8px 20px rgba(216, 27, 96, 0.3);
 }
 
 #direccionModal .btn-primary i {
@@ -169,17 +169,17 @@
     #direccionModal .modal-body {
         padding: 1.5rem;
     }
-    
+
     #direccionModal .btn {
         width: 100%;
         justify-content: center;
     }
-    
+
     #direccionModal .modal-footer {
         flex-direction: column;
         gap: 10px;
     }
-    
+
     #direccionModal .modal-footer .btn {
         margin: 0;
     }
@@ -214,12 +214,17 @@
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Tooltip personalizado para campos requeridos */
-#direccionForm .form-control:invalid:focus + .tooltip {
+#direccionForm .form-control:invalid:focus+.tooltip {
     display: block;
 }
 
@@ -238,4 +243,131 @@
 
 .input-icon-wrapper .form-control {
     padding-left: 2.8rem;
+}
+
+/* ===== MEJORAS PARA OPCIONES DE ENTREGA ===== */
+
+/* Contenedor de opciones de entrega */
+#direccionModal .bg-light.rounded {
+    background: #f8f9fa !important;
+    border-radius: 12px !important;
+    padding: 20px !important;
+    margin-bottom: 20px !important;
+}
+
+/* Estilos para las opciones de entrega (radios) */
+#direccionModal .form-check {
+    display: flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    padding: 15px !important;
+    margin-bottom: 12px !important;
+    background: white !important;
+    border-radius: 10px !important;
+    transition: all 0.2s ease !important;
+}
+
+#direccionModal .form-check:hover {
+    background: #fcfcfc !important;
+    border-color: #d81b60 !important;
+    box-shadow: 0 2px 8px rgba(216, 27, 96, 0.1) !important;
+}
+
+/* Radio button más grande y alineado */
+#direccionModal .form-check-input {
+    margin-top: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    flex-shrink: 0 !important;
+    cursor: pointer !important;
+}
+
+/* Label del radio */
+#direccionModal .form-check-label {
+    margin-left: 0 !important;
+    cursor: pointer !important;
+    width: 100% !important;
+}
+
+/* Texto principal de la opción */
+#direccionModal .form-check-label span:first-child {
+    font-weight: 600 !important;
+    font-size: 1rem !important;
+}
+
+/* Badge de precio */
+#direccionModal .badge {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    border-radius: 20px !important;
+}
+
+/* Texto descriptivo pequeño */
+#direccionModal .text-muted {
+    font-size: 0.8rem !important;
+    color: #666 !important;
+    margin-top: 4px !important;
+}
+
+/* ===== CAMPOS DE TEXTO MÁS GRANDES ===== */
+
+/* Inputs más grandes */
+#direccionForm .form-control {
+    padding: 14px 16px !important;
+    /* Más alto */
+    font-size: 16px !important;
+    border-radius: 10px !important;
+}
+
+/* Select también más grande */
+#direccionForm select.form-control {
+    padding: 14px 16px !important;
+    font-size: 16px !important;
+}
+
+/* Etiquetas más visibles */
+#direccionForm .form-label {
+    font-weight: 600 !important;
+    margin-bottom: 8px !important;
+    font-size: 14px !important;
+    display: block !important;
+}
+
+/* Mayor separación entre campos */
+#direccionForm .mb-3,
+#direccionForm .mb-4 {
+    margin-bottom: 24px !important;
+}
+
+/* Contenedor de filas */
+#direccionForm .row {
+    margin-bottom: 8px !important;
+}
+
+/* ===== RESPONSIVE PARA MÓVIL ===== */
+@media (max-width: 576px) {
+
+    /* Opciones de entrega en columna en móvil */
+    #direccionModal .form-check {
+        flex-direction: column !important;
+        text-align: center !important;
+    }
+
+    #direccionModal .form-check-label .d-flex {
+        flex-direction: column !important;
+        text-align: center !important;
+        gap: 10px !important;
+    }
+
+    #direccionModal .badge {
+        display: inline-block !important;
+        margin-top: 8px !important;
+    }
+
+    /* Campos más grandes también en móvil */
+    #direccionForm .form-control {
+        padding: 12px 14px !important;
+        font-size: 16px !important;
+    }
 }
