@@ -125,13 +125,18 @@ window.guardarDireccionYProceder = async function () {
 async function procesarRecogidaTienda() {
     console.log('🏪 Procesando recogida en tienda');
 
+    // 🔥 Verificar que el botón existe ANTES de usarlo
     const checkoutBtn = document.getElementById('checkoutBtn');
-    const originalText = checkoutBtn ? checkoutBtn.innerHTML : '';
 
-    try {
+    if (!checkoutBtn) {
+        console.warn('⚠️ Botón checkoutBtn no encontrado, continuando sin deshabilitarlo');
+    } else {
+        const originalText = checkoutBtn.innerHTML;
         checkoutBtn.disabled = true;
         checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+    }
 
+    try {
         // 1. Obtener carrito actual
         const cart = await window.CartCore.getCart();
 
@@ -144,12 +149,12 @@ async function procesarRecogidaTienda() {
 
         // 🔥 Mapear items para incluir la talla
         const itemsParaEnviar = cart.items.map(item => {
-            console.log('📦 Procesando item del carrito:', item); // Log para depurar
+            console.log('📦 Procesando item del carrito:', item);
             return {
                 id: item.id,
                 quantity: item.quantity,
                 price: item.price,
-                talla: item.talla || null  // ← ¡ASEGURAR QUE LA TALLA SE INCLUYE!
+                talla: item.talla || null
             };
         });
 
@@ -193,8 +198,12 @@ async function procesarRecogidaTienda() {
     } catch (error) {
         console.error('❌ Error:', error);
         alert('Error: ' + error.message);
-        checkoutBtn.disabled = false;
-        checkoutBtn.innerHTML = originalText;
+
+        // Restaurar botón si existe
+        if (checkoutBtn) {
+            checkoutBtn.disabled = false;
+            checkoutBtn.innerHTML = originalText || 'Pagar';
+        }
     } finally {
         const modalElement = document.getElementById('direccionModal');
         if (modalElement) {
