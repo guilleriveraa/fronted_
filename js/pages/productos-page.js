@@ -119,14 +119,15 @@ function setupCategoryFilters() {
     });
 }
 
-// 🔥🔥🔥 CAMBIO 1: Definir la función como const para asegurar que existe
+// 🔥🔥🔥 MODIFICADO: Eliminada verificación de login y simplificado
 const addToCart = async function (productId) {
     console.log('🎯 addToCart llamado con productId:', productId);
 
-    if (!window.sessionService?.isLoggedIn()) {
-        if (window.showAuthModal) window.showAuthModal('login');
-        return;
-    }
+    // 🔥 ELIMINADA la verificación de login
+    // if (!window.sessionService?.isLoggedIn()) {
+    //     if (window.showAuthModal) window.showAuthModal('login');
+    //     return;
+    // }
 
     // --- Obtener el producto y la talla seleccionada ---
     let esTextil = false;
@@ -181,80 +182,26 @@ const addToCart = async function (productId) {
     }
 
     try {
-        // 1. Enviar al backend
-        console.log('📤 Enviando al backend:', { productId, talla });
+        // 🔥 Usar CartCore.addToCart (funciona con o sin token)
+        console.log('📤 Usando CartCore.addToCart:', { productId, talla });
 
-        const response = await fetch(`${window.API_URL}/cart/add`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer ' + window.sessionService.getToken()
-            },
-            body: JSON.stringify({
-                productId,
-                quantity: 1,
-                talla: talla
-            })
-        });
+        const resultado = await window.CartCore.addToCart(productId, 1, talla);
 
-        console.log('📥 Respuesta backend status:', response.status);
-        const data = await response.json();
-        console.log('📥 Respuesta backend data:', data);
-
-        if (response.ok) {
-            // 2. Actualizar el carrito local
-            const cart = await window.CartCore.getCart();
-            console.log('🛒 Carrito actual antes:', cart);
-
-            // Buscar si el producto ya está en el carrito con la misma talla
-            const itemExistente = cart.items.find(item =>
-                item.id === productId && item.talla === talla
-            );
-            console.log('🔍 Item existente?', itemExistente);
-
-            if (itemExistente) {
-                itemExistente.quantity += 1;
-                console.log('➕ Incrementando cantidad a:', itemExistente.quantity);
-            } else {
-                // 🔥🔥🔥 CAMBIO 2: Convertir precio a número
-                const nuevoItem = {
-                    id: productId,
-                    name: producto.nombre,
-                    price: parseFloat(producto.precio),  // ← ¡CONVERTIR A NÚMERO!
-                    quantity: 1,
-                    image: producto.imagen || '',
-                    talla: talla
-                };
-                console.log('🆕 Nuevo item creado:', nuevoItem);
-                cart.items.push(nuevoItem);
-            }
-
-            // Recalcular totales
-            window.CartCore.updateCartTotals(cart);
-            console.log('💾 Guardando carrito:', cart);
-
-            // Guardar
-            window.CartCore.saveCartToStorage(cart);
-            window.CartCore.cart = cart;
-            window.CartCore.notifyListeners();
-
+        if (resultado) {
+            console.log('✅ Producto añadido correctamente');
             alert('✅ Producto añadido al carrito');
             window.CartCore.updateCartCounters();
-
-            // Verificación final
-            const cartFinal = await window.CartCore.getCart();
-            console.log('✅ Carrito final:', cartFinal.items[0]);
-
         } else {
-            alert(data.message || 'Error al añadir producto');
+            alert('Error al añadir producto');
         }
+
     } catch (error) {
         console.error('❌ Error en addToCart:', error);
         alert('Error de conexión');
     }
 };
 
-// 🔥🔥🔥 CAMBIO 3: Exponer la función globalmente (DESPUÉS de definirla)
+// Exponer la función globalmente
 window.addToCart = addToCart;
 
 window.quickView = async function (productId) {
