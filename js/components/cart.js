@@ -209,34 +209,60 @@ function renderCartSummary(cart) {
     setupGiftEvents();
 }
 // Actualizar el total del carrito según el método de entrega
+// 🔥 Función para actualizar el total cuando cambia el método de entrega
 window.actualizarTotalPorEnvio = async function () {
     const cart = await window.CartCore.getCart();
     if (!cart) return;
 
     const metodoEntrega = document.querySelector('input[name="metodoEntrega"]:checked')?.value;
 
-    let totalConEnvio = cart.subtotal;
-
-    if (metodoEntrega === 'domicilio') {
-        totalConEnvio = cart.subtotal + 4.99;
-    } else if (metodoEntrega === 'tienda') {
-        totalConEnvio = cart.subtotal;
+    let shippingValue = 4.99;
+    if (metodoEntrega === 'tienda') {
+        shippingValue = 0;
+    } else if (metodoEntrega === 'domicilio') {
+        shippingValue = 4.99;
     }
 
-    // Actualizar el total mostrado en el resumen
+    // 🔥 CORREGIDO: Usar selectores simples y válidos
+    // Buscar la fila de envío por su estructura
+    const summaryRows = document.querySelectorAll('.summary-row');
+    let shippingRow = null;
+    let shippingElement = null;
+
+    // Recorrer las filas para encontrar la que contiene "Envío"
+    summaryRows.forEach(row => {
+        const span = row.querySelector('span:first-child');
+        if (span && span.textContent.trim() === 'Envío') {
+            shippingRow = row;
+            shippingElement = row.querySelector('.summary-value');
+        }
+    });
+
+    // Actualizar el valor del envío
+    if (shippingElement) {
+        shippingElement.textContent = shippingValue.toFixed(2) + '€';
+        console.log('✅ Envío actualizado a:', shippingValue.toFixed(2) + '€');
+    } else {
+        console.warn('⚠️ No se encontró la fila de envío');
+    }
+
+    // Actualizar el total
+    const cuponGuardado = localStorage.getItem('cupon_aplicado');
+    let descuento = 0;
+    if (cuponGuardado) {
+        try {
+            const cupon = JSON.parse(cuponGuardado);
+            descuento = parseFloat(cupon.descuento) || 0;
+        } catch (e) { }
+    }
+
+    const total = (cart.subtotal - descuento + shippingValue).toFixed(2);
     const totalElement = document.querySelector('.summary-row.total .total-value');
     if (totalElement) {
-        totalElement.textContent = totalConEnvio.toFixed(2) + '€';
-    }
-
-    // Actualizar el total del envío mostrado
-    const shippingElement = document.querySelector('.summary-row .summary-value');
-    if (shippingElement && metodoEntrega === 'tienda') {
-        // Buscar la fila de envío y cambiarla
-        const shippingRow = document.querySelector('.summary-row:has(span:first-child:contains("Envío")) .summary-value');
-        if (shippingRow) {
-            shippingRow.textContent = '0.00€';
-        }
+        totalElement.textContent = total + '€';
+        console.log('✅ Total actualizado a:', total + '€');
+    } else {
+        console.warn('⚠️ No se encontró el elemento del total');
     }
 };
 
