@@ -380,56 +380,63 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const radios = document.querySelectorAll('input[name="metodoEntrega"]');
-      // 🔥 CORREGIDO: el ID correcto es 'direccionForm', no 'formularioDireccion'
+      // 🔥 CORREGIDO: usar el ID correcto del formulario
       const formularioDir = document.getElementById('direccionForm');
       const camposRequeridos = document.querySelectorAll('#direccionForm [required]');
+
+      console.log('🔍 Elementos encontrados:');
+      console.log('  - Radios:', radios.length);
+      console.log('  - Formulario:', formularioDir ? '✅ Sí' : '❌ No');
+      console.log('  - Campos requeridos:', camposRequeridos.length);
 
       // Función para actualizar el total del carrito
       async function actualizarTotalCarrito() {
         if (window.actualizarTotalPorEnvio) {
           await window.actualizarTotalPorEnvio();
-          console.log('✅ Total actualizado según método de entrega');
-        } else {
-          console.warn('⚠️ actualizarTotalPorEnvio no está definida aún');
         }
       }
 
-      if (radios.length > 0) {
+      if (radios.length > 0 && formularioDir) {
         radios.forEach(radio => {
           radio.addEventListener('change', async function () {
+            console.log('🔄 Cambio de método:', this.value);
+
             if (this.value === 'tienda') {
-              // 🔥 CORREGIDO: ocultar formulario y quitar required
-              if (formularioDir) formularioDir.style.display = 'none';
+              // 🔥 Ocultar formulario y quitar required
+              formularioDir.style.display = 'none';
               camposRequeridos.forEach(campo => {
                 campo.required = false;
-                campo.disabled = true; // ← AÑADIDO: deshabilitar campos
+                campo.disabled = true;
               });
-              console.log('🏪 Modo recogida en tienda activado');
+              console.log('🏪 Modo recogida en tienda activado - formulario oculto');
             } else {
-              // 🔥 CORREGIDO: mostrar formulario y poner required
-              if (formularioDir) formularioDir.style.display = 'block';
+              // 🔥 Mostrar formulario y poner required
+              formularioDir.style.display = 'block';
               camposRequeridos.forEach(campo => {
                 campo.required = true;
-                campo.disabled = false; // ← AÑADIDO: habilitar campos
+                campo.disabled = false;
               });
-              console.log('📦 Modo envío a domicilio activado');
+              console.log('📦 Modo envío a domicilio activado - formulario visible');
             }
 
-            // Actualizar el total del carrito
             await actualizarTotalCarrito();
           });
         });
 
-        // 🔥 NUEVO: Ejecutar al cargar para establecer el estado inicial
+        // 🔥 Ejecutar el cambio inicial para establecer el estado correcto
         const radioSeleccionado = document.querySelector('input[name="metodoEntrega"]:checked');
         if (radioSeleccionado) {
-          const evento = new Event('change');
-          radioSeleccionado.dispatchEvent(evento);
+          const event = new Event('change');
+          radioSeleccionado.dispatchEvent(event);
         }
-
-        // Actualizar el total al cargar la página
-        actualizarTotalCarrito();
+      } else {
+        console.error('❌ No se encontraron los elementos necesarios');
+        if (!formularioDir) console.error('  - Formulario #direccionForm no encontrado');
+        if (radios.length === 0) console.error('  - Radios de método de entrega no encontrados');
       }
+
+      // Actualizar el total al cargar
+      actualizarTotalCarrito();
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
