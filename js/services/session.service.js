@@ -29,6 +29,12 @@ function onChange(callback) {
 function notifyListeners() {
     listeners.forEach(cb => cb());
 }
+// 🔥 NUEVO: Variable y función para callback después de login
+let callbackDespuesDeLogin = null;
+
+function setCallbackDespuesDeLogin(callback) {
+    callbackDespuesDeLogin = callback;
+}
 
 function saveSession(token, user) {
     localStorage.setItem(window.TOKEN_KEY, token);
@@ -68,6 +74,11 @@ async function login(email, password) {
     };
 
     saveSession(data.token, user);
+    // 🔥 Ejecutar callback después del login si existe
+    if (callbackDespuesDeLogin) {
+        await callbackDespuesDeLogin();
+        callbackDespuesDeLogin = null;
+    }
     notifyListeners(); // AÑADIR
     return { success: true, user };
 }
@@ -104,7 +115,8 @@ const sessionService = {
     login: (email, password) => login(email, password),
     register: (nombre, email, password, preguntaSeguridad, respuestaSeguridad) =>
         register(nombre, email, password, preguntaSeguridad, respuestaSeguridad),
-    onChange: (callback) => onChange(callback)
+    onChange: (callback) => onChange(callback),
+    setCallbackDespuesDeLogin: (callback) => setCallbackDespuesDeLogin(callback)
 };
 
 window.sessionService = sessionService;

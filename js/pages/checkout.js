@@ -5,15 +5,31 @@
 window.proceedToCheckout = async function () {
     console.log('🛒 proceedToCheckout llamado');
 
-    // 🔥 VERIFICAR QUE EL USUARIO ESTÁ LOGUEADO
+    // 🔥 VERIFICAR QUE EL USUARIO ESTÁ LOGUEADO (permitir carrito sin login)
     if (!window.sessionService) {
         console.error('❌ sessionService no disponible');
         alert('Error de autenticación. Recarga la página.');
         return;
     }
 
+    // 🔥 Si NO está logueado, guardar callback y pedir login
     if (!window.sessionService.isLoggedIn()) {
-        console.log('❌ Usuario no logueado');
+        console.log('❌ Usuario no logueado - Guardando carrito para después del login');
+
+        // Guardar callback para después del login
+        if (window.sessionService.setCallbackDespuesDeLogin) {
+            window.sessionService.setCallbackDespuesDeLogin(async () => {
+                console.log('🔄 Usuario logueado, sincronizando carrito y continuando...');
+                // Sincronizar carrito local con backend
+                if (window.CartCore.sincronizarCarritoLocal) {
+                    await window.CartCore.sincronizarCarritoLocal();
+                }
+                // Continuar con el checkout
+                window.proceedToCheckout();
+            });
+        }
+
+        // Mostrar modal de login
         if (window.showAuthModal) {
             window.showAuthModal('login');
         } else {
