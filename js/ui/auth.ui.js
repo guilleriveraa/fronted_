@@ -120,6 +120,14 @@ window.InitManager.register('AuthUI', function () {
         closeModal();
         loginEmail.value = '';
         loginPassword.value = '';
+
+        // 🔥🔥🔥 NUEVO: Sincronizar carrito local después del login
+        if (window.CartCore) {
+          console.log('🔄 Sincronizando carrito local con el backend...');
+          await window.CartCore.sincronizarCarritoLocal();
+          console.log('✅ Carrito sincronizado correctamente');
+        }
+
         if (window.updateSessionUI) {
           window.updateSessionUI();
         }
@@ -185,6 +193,13 @@ window.InitManager.register('AuthUI', function () {
         // 🔥 Limpiar campos nuevos
         preguntaSeguridad.value = '';
         respuestaSeguridad.value = '';
+
+        // 🔥🔥🔥 NUEVO: Sincronizar carrito local después del registro
+        if (window.CartCore) {
+          console.log('🔄 Sincronizando carrito local con el backend...');
+          await window.CartCore.sincronizarCarritoLocal();
+          console.log('✅ Carrito sincronizado correctamente');
+        }
 
         if (window.updateSessionUI) {
           window.updateSessionUI();
