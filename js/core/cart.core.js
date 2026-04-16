@@ -62,7 +62,6 @@ class CartCore {
             const token = localStorage.getItem(window.TOKEN_KEY);
 
             if (!token) {
-                // ===== MEJORADO: Intentar cargar de localStorage primero =====
                 const localCart = this.getCartFromStorage();
                 if (localCart) {
                     this.cart = localCart;
@@ -83,7 +82,6 @@ class CartCore {
 
             let cartData = await response.json();
 
-            // 🔥🔥🔥 CAMBIO 1: Procesar items para asegurar que tienen talla
             if (cartData.items) {
                 cartData.items = cartData.items.map(item => ({
                     ...item,
@@ -91,16 +89,18 @@ class CartCore {
                 }));
             }
 
-            this.cart = cartData;
+            // 🔥 NUEVA LÍNEA - Asegurar que shipping tiene valor por defecto
+            if (typeof cartData.shipping === 'undefined') {
+                cartData.shipping = 4.99;
+            }
 
-            // ===== NUEVO: Sincronizar con localStorage =====
+            this.cart = cartData;
             this.saveCartToStorage(cartData);
 
             return this.cart;
 
         } catch (error) {
             console.error('Error loading cart:', error);
-            // ===== MEJORADO: Mostrar error visual =====
             if (window.errorHandler) {
                 window.errorHandler.warning('Usando carrito offline');
             }
@@ -385,7 +385,7 @@ class CartCore {
 
     // Calcular totales del carrito (con opción de regalo)
     updateCartTotals(cart) {
-        // Calcular subtotal de productos 
+        // Calcular subtotal de productos
         const itemsTotal = cart.items.reduce((sum, item) =>
             sum + (item.price * item.quantity), 0
         );
@@ -396,9 +396,15 @@ class CartCore {
         cart.subtotal = itemsTotal + giftCost;
         cart.tax = 0;
 
-        // El envío se calcula sobre el total de productos (sin regalo)
-        // para no regalar envío gratis con el extra
-        cart.shipping = itemsTotal > 50 ? 0 : 4.99;
+        // 🔥 MODIFICADO: NO recalcular el envío automáticamente
+        // Mantener el valor actual de shipping si ya existe, si no usar 4.99 por defecto
+        if (typeof cart.shipping === 'undefined' || cart.shipping === null) {
+            cart.shipping = 4.99;
+        }
+
+        // Si el envío es 0 (recogida en tienda), mantenerlo como 0
+        // Si no, mantener el valor que tenga (que ya se actualiza desde el frontend)
+
         cart.total = cart.subtotal + cart.shipping;
     }
 

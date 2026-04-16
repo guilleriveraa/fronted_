@@ -112,7 +112,21 @@ function renderCartSummary(cart) {
     if (!cartSummary) return;
 
     const subtotal = cart.subtotal.toFixed(2);
-    const shipping = cart.shipping.toFixed(2);
+
+    // 🔥 OBTENER MÉTODO DE ENTREGA SELECCIONADO
+    const metodoEntrega = document.querySelector('input[name="metodoEntrega"]:checked')?.value;
+
+    // 🔥 CALCULAR ENVÍO SEGÚN MÉTODO
+    let shippingValue = 4.99; // valor por defecto
+    if (metodoEntrega === 'tienda') {
+        shippingValue = 0;
+    } else if (metodoEntrega === 'domicilio') {
+        shippingValue = 4.99;
+    } else {
+        shippingValue = cart.shipping || 4.99;
+    }
+
+    const shipping = shippingValue.toFixed(2);
 
     // 🎁 Obtener estado del regalo
     const giftActive = cart.gift?.active || false;
@@ -133,7 +147,8 @@ function renderCartSummary(cart) {
         }
     }
 
-    const total = (cart.subtotal - descuento + cart.shipping).toFixed(2);
+    // 🔥 TOTAL CON ENVÍO DINÁMICO
+    const total = (cart.subtotal - descuento + shippingValue).toFixed(2);
 
     cartSummary.innerHTML = `
         <div class="summary-card">
@@ -149,9 +164,9 @@ function renderCartSummary(cart) {
                     <span class="summary-value">-${descuento.toFixed(2)}€</span>
                 </div>
                 ` : ''}
-                <div class="summary-row">
+                <div class="summary-row" id="shippingRow">
                     <span>Envío</span>
-                    <span class="summary-value">${shipping}€</span>
+                    <span class="summary-value" id="shippingValue">${shipping}€</span>
                 </div>
                 
                 <!-- 🎁 NUEVO: Opción de regalo -->
@@ -173,7 +188,7 @@ function renderCartSummary(cart) {
                 <div class="summary-divider"></div>
                 <div class="summary-row total">
                     <span>TOTAL</span>
-                    <span class="total-value">${total}€</span>
+                    <span class="total-value" id="totalValue">${total}€</span>
                 </div>
             </div>
             <div class="discount-section">
@@ -187,13 +202,43 @@ function renderCartSummary(cart) {
                 </button>
                 ` : ''}
             </div>
-            
         </div>
     `;
 
     // 🎁 Añadir eventos para la opción de regalo
     setupGiftEvents();
 }
+// Actualizar el total del carrito según el método de entrega
+window.actualizarTotalPorEnvio = async function () {
+    const cart = await window.CartCore.getCart();
+    if (!cart) return;
+
+    const metodoEntrega = document.querySelector('input[name="metodoEntrega"]:checked')?.value;
+
+    let totalConEnvio = cart.subtotal;
+
+    if (metodoEntrega === 'domicilio') {
+        totalConEnvio = cart.subtotal + 4.99;
+    } else if (metodoEntrega === 'tienda') {
+        totalConEnvio = cart.subtotal;
+    }
+
+    // Actualizar el total mostrado en el resumen
+    const totalElement = document.querySelector('.summary-row.total .total-value');
+    if (totalElement) {
+        totalElement.textContent = totalConEnvio.toFixed(2) + '€';
+    }
+
+    // Actualizar el total del envío mostrado
+    const shippingElement = document.querySelector('.summary-row .summary-value');
+    if (shippingElement && metodoEntrega === 'tienda') {
+        // Buscar la fila de envío y cambiarla
+        const shippingRow = document.querySelector('.summary-row:has(span:first-child:contains("Envío")) .summary-value');
+        if (shippingRow) {
+            shippingRow.textContent = '0.00€';
+        }
+    }
+};
 
 // 🎁 NUEVO: Configurar eventos para la opción de regalo
 function setupGiftEvents() {

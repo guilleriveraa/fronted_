@@ -317,16 +317,6 @@
                 <input type="text" class="form-control form-control-lg" id="direccionCP" placeholder="Ej: 37001"
                   required>
               </div>
-              <div class="col-md-3 mb-4">
-                <label class="form-label fw-bold">País</label>
-                <select class="form-control form-control-lg" id="direccionPais">
-                  <option value="ES">España</option>
-                  <option value="FR">Francia</option>
-                  <option value="PT">Portugal</option>
-                  <option value="DE">Alemania</option>
-                  <option value="IT">Italia</option>
-                </select>
-              </div>
             </div>
           </form>
         </div>
@@ -393,27 +383,40 @@
       const formularioDir = document.getElementById('formularioDireccion');
       const camposRequeridos = document.querySelectorAll('#direccionForm [required]');
 
-      // Guardar estado inicial
-      if (radios.length > 0 && formularioDir) {
+      // Función para actualizar el total del carrito
+      async function actualizarTotalCarrito() {
+        if (window.actualizarTotalPorEnvio) {
+          await window.actualizarTotalPorEnvio();
+          console.log('✅ Total actualizado según método de entrega');
+        } else {
+          console.warn('⚠️ actualizarTotalPorEnvio no está definida aún');
+        }
+      }
+
+      if (radios.length > 0) {
         radios.forEach(radio => {
-          radio.addEventListener('change', function () {
+          radio.addEventListener('change', async function () {
             if (this.value === 'tienda') {
-              // Ocultar formulario y quitar required
-              formularioDir.style.display = 'none';
+              if (formularioDir) formularioDir.style.display = 'none';
               camposRequeridos.forEach(campo => {
                 campo.required = false;
               });
               console.log('🏪 Modo recogida en tienda activado');
             } else {
-              // Mostrar formulario y poner required
-              formularioDir.style.display = 'block';
+              if (formularioDir) formularioDir.style.display = 'block';
               camposRequeridos.forEach(campo => {
                 campo.required = true;
               });
               console.log('📦 Modo envío a domicilio activado');
             }
+
+            // Actualizar el total del carrito
+            await actualizarTotalCarrito();
           });
         });
+
+        // Actualizar el total al cargar la página
+        actualizarTotalCarrito();
       }
     });
   </script>
