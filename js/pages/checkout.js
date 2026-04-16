@@ -97,7 +97,7 @@ window.guardarDireccionYProceder = async function () {
         return;
     }
 
-    // 🔥 CASO 2: ENVÍO A DOMICILIO - Validar dirección
+    // 🔥 CASO 2: ENVÍO A DOMICILIO - Validar dirección (SIN PAÍS)
     if (metodo === 'domicilio') {
         console.log('📦 Opción envío a domicilio seleccionada - validando dirección');
 
@@ -107,23 +107,28 @@ window.guardarDireccionYProceder = async function () {
             return;
         }
 
-        // Obtener valores del formulario
+        // Obtener valores del formulario (SIN PAÍS)
         const nombre = document.getElementById('direccionNombre')?.value;
         const linea1 = document.getElementById('direccionLinea1')?.value;
         const ciudad = document.getElementById('direccionCiudad')?.value;
         const cp = document.getElementById('direccionCP')?.value;
-        const pais = document.getElementById('direccionPais')?.value;
         const linea2 = document.getElementById('direccionLinea2')?.value || '';
 
-        if (!nombre || !linea1 || !ciudad || !cp || !pais) {
+        // Validar SOLO los campos que existen
+        if (!nombre || !linea1 || !ciudad || !cp) {
+            console.log('❌ Campos faltantes:');
+            if (!nombre) console.log('  - Nombre');
+            if (!linea1) console.log('  - Dirección');
+            if (!ciudad) console.log('  - Ciudad');
+            if (!cp) console.log('  - Código postal');
             alert('Por favor, completa todos los campos obligatorios');
             return;
         }
 
-        // Construir dirección
-        let direccion = `${linea1}, ${ciudad}, ${cp}, ${pais}`;
+        // Construir dirección (SIN PAÍS en la cadena)
+        let direccion = `${linea1}, ${ciudad}, ${cp}`;
         if (linea2) {
-            direccion = `${linea1} ${linea2}, ${ciudad}, ${cp}, ${pais}`;
+            direccion = `${linea1} ${linea2}, ${ciudad}, ${cp}`;
         }
 
         const direccionData = {
@@ -133,7 +138,7 @@ window.guardarDireccionYProceder = async function () {
             piso: linea2,
             ciudad: ciudad,
             codigo_postal: cp,
-            pais: pais
+            pais: 'ES' // Valor fijo
         };
 
         localStorage.setItem('direccion_envio', JSON.stringify(direccionData));
