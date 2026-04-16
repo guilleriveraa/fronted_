@@ -147,41 +147,78 @@ class CartCore {
             resolve(cart.gift);
         });
     }
-    // 🆕 NUEVO: Añadir producto al carrito con talla
+    // 🆕 NUEVO: Añadir producto al carrito (con o sin sesión)
     async addToCart(productId, quantity = 1, talla = null) {
         const token = localStorage.getItem(window.TOKEN_KEY);
 
         try {
-            // Si no hay token, modo offline no permitido
-            if (!token) {
-                window.errorHandler?.warning('Debes iniciar sesión para añadir productos');
-                return false;
+            // 🔥 Si hay token, usar el backend
+            if (token) {
+                const response = await fetch(`${window.API_URL}/cart/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        productId,
+                        quantity,
+                        talla
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Error al añadir producto');
+                }
+
+                // Invalidar caché y recargar carrito
+                this.cart = null;
+                await this.getCart();
+                this.notifyListeners();
+
+                window.errorHandler?.success('Producto añadido al carrito');
+                return true;
             }
 
-            const response = await fetch(`${window.API_URL}/cart/add`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + token
-                },
-                body: JSON.stringify({
-                    productId,
-                    quantity,
-                    talla // 🆕 Incluir talla
-                })
-            });
+            // 🔥 Si NO hay token (usuario no logueado), guardar en localStorage
+            else {
+                // Obtener información del producto
+                const productResponse = await fetch(`${window.API_URL}/productos/${productId}`);
+                if (!productResponse.ok) throw new Error('Error al obtener producto');
+                const producto = await productResponse.json();
 
-            if (!response.ok) {
-                throw new Error('Error al añadir producto');
+                // Obtener carrito actual de localStorage
+                let cart = this.getCartFromStorage() || this.getEmptyCart();
+
+                // Buscar si el producto ya está en el carrito con la misma talla
+                const existingItem = cart.items.find(item =>
+                    item.id === productId && item.talla === talla
+                );
+
+                if (existingItem) {
+                    existingItem.quantity += quantity;
+                } else {
+                    cart.items.push({
+                        id: productId,
+                        name: producto.nombre,
+                        price: parseFloat(producto.precio),
+                        quantity: quantity,
+                        image: producto.imagen || '',
+                        talla: talla
+                    });
+                }
+
+                // Recalcular totales
+                this.updateCartTotals(cart);
+
+                // Guardar en localStorage
+                this.saveCartToStorage(cart);
+                this.cart = cart;
+                this.notifyListeners();
+
+                window.errorHandler?.success('Producto añadido al carrito');
+                return true;
             }
-
-            // Invalidar caché y recargar carrito
-            this.cart = null;
-            await this.getCart();
-            this.notifyListeners();
-
-            window.errorHandler?.success('Producto añadido al carrito');
-            return true;
 
         } catch (error) {
             console.error('Error adding to cart:', error);
@@ -454,8 +491,32 @@ class CartCore {
             console.error('Error clearing cart:', error);
         }
     }
-}
 
+
+    // 🔥 Sincronizar carrito local con el backend después del login
+    async sincronizarCarritoLocal() {
+        const token = localStorage.getItem(window.TOKEN_KEY);
+        if (!token) return;
+
+        // Obtener carrito local
+        const carritoLocal = this.getCartFromStorage();
+        if (!carritoLocal || !carritoLocal.items.length) return;
+
+        console.log('🔄 Sincronizando carrito local con el backend...');
+
+        for (const item of carritoLocal.items) {
+            await this.addToCart(item.id, item.quantity, item.talla);
+        }
+
+        // Limpiar carrito local y recargar
+        this.cart = null;
+        localStorage.removeItem('svl_cart');
+        await this.getCart();
+        this.notifyListeners();
+
+        console.log('✅ Carrito sincronizado correctamente');
+    }
+}
 // Instancia global
 window.CartCore = new CartCore();
 

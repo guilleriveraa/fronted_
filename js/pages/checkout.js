@@ -76,9 +76,9 @@ window.guardarDireccionYProceder = async function () {
         return;
     }
 
-    // 🔥 CASO 1: RECOGER EN TIENDA
+    // 🔥 CASO 1: RECOGER EN TIENDA - NO validar dirección
     if (metodo === 'tienda') {
-        console.log('🏪 Opción recogida en tienda seleccionada');
+        console.log('🏪 Opción recogida en tienda seleccionada - saltando validación de dirección');
 
         if (!window.sessionService?.isLoggedIn()) {
             alert('Debes iniciar sesión para continuar');
@@ -86,56 +86,68 @@ window.guardarDireccionYProceder = async function () {
             return;
         }
 
+        // Cerrar modal inmediatamente
+        const modalElement = document.getElementById('direccionModal');
+        if (modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) modal.hide();
+        }
+
         await procesarRecogidaTienda();
         return;
     }
 
-    // 🔥 CASO 2: ENVÍO A DOMICILIO (código actual)
-    if (!window.sessionService?.isLoggedIn()) {
-        alert('Debes iniciar sesión para continuar');
-        if (window.showAuthModal) window.showAuthModal('login');
+    // 🔥 CASO 2: ENVÍO A DOMICILIO - Validar dirección
+    if (metodo === 'domicilio') {
+        console.log('📦 Opción envío a domicilio seleccionada - validando dirección');
+
+        if (!window.sessionService?.isLoggedIn()) {
+            alert('Debes iniciar sesión para continuar');
+            if (window.showAuthModal) window.showAuthModal('login');
+            return;
+        }
+
+        // Obtener valores del formulario
+        const nombre = document.getElementById('direccionNombre')?.value;
+        const linea1 = document.getElementById('direccionLinea1')?.value;
+        const ciudad = document.getElementById('direccionCiudad')?.value;
+        const cp = document.getElementById('direccionCP')?.value;
+        const pais = document.getElementById('direccionPais')?.value;
+        const linea2 = document.getElementById('direccionLinea2')?.value || '';
+
+        if (!nombre || !linea1 || !ciudad || !cp || !pais) {
+            alert('Por favor, completa todos los campos obligatorios');
+            return;
+        }
+
+        // Construir dirección
+        let direccion = `${linea1}, ${ciudad}, ${cp}, ${pais}`;
+        if (linea2) {
+            direccion = `${linea1} ${linea2}, ${ciudad}, ${cp}, ${pais}`;
+        }
+
+        const direccionData = {
+            nombre: nombre,
+            direccion_completa: direccion,
+            calle: linea1,
+            piso: linea2,
+            ciudad: ciudad,
+            codigo_postal: cp,
+            pais: pais
+        };
+
+        localStorage.setItem('direccion_envio', JSON.stringify(direccionData));
+
+        // Cerrar modal
+        const modalElement = document.getElementById('direccionModal');
+        if (modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) modal.hide();
+        }
+
+        await procesarPagoConDireccion(direccionData);
         return;
     }
-
-    // Obtener valores del formulario (tu código actual de validación)
-    const nombre = document.getElementById('direccionNombre')?.value;
-    const linea1 = document.getElementById('direccionLinea1')?.value;
-    const ciudad = document.getElementById('direccionCiudad')?.value;
-    const cp = document.getElementById('direccionCP')?.value;
-    const pais = document.getElementById('direccionPais')?.value;
-    const linea2 = document.getElementById('direccionLinea2')?.value || '';
-
-    if (!nombre || !linea1 || !ciudad || !cp || !pais) {
-        alert('Por favor, completa todos los campos obligatorios');
-        return;
-    }
-
-    // Construir dirección (tu código actual)
-    let direccion = `${linea1}, ${ciudad}, ${cp}, ${pais}`;
-    if (linea2) {
-        direccion = `${linea1} ${linea2}, ${ciudad}, ${cp}, ${pais}`;
-    }
-
-    const direccionData = {
-        nombre: nombre,
-        direccion_completa: direccion,
-        calle: linea1,
-        piso: linea2,
-        ciudad: ciudad,
-        codigo_postal: cp,
-        pais: pais
-    };
-
-    localStorage.setItem('direccion_envio', JSON.stringify(direccionData));
-
-    // Cerrar modal (tu código actual)
-    const modalElement = document.getElementById('direccionModal');
-    if (modalElement) {
-        const modal = bootstrap.Modal.getInstance(modalElement);
-        if (modal) modal.hide();
-    }
-
-    await procesarPagoConDireccion(direccionData);
 };
 
 async function procesarRecogidaTienda() {
