@@ -380,7 +380,8 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       const radios = document.querySelectorAll('input[name="metodoEntrega"]');
-      const formularioDir = document.getElementById('formularioDireccion');
+      // 🔥 CORREGIDO: el ID correcto es 'direccionForm', no 'formularioDireccion'
+      const formularioDir = document.getElementById('direccionForm');
       const camposRequeridos = document.querySelectorAll('#direccionForm [required]');
 
       // Función para actualizar el total del carrito
@@ -397,15 +398,19 @@
         radios.forEach(radio => {
           radio.addEventListener('change', async function () {
             if (this.value === 'tienda') {
+              // 🔥 CORREGIDO: ocultar formulario y quitar required
               if (formularioDir) formularioDir.style.display = 'none';
               camposRequeridos.forEach(campo => {
                 campo.required = false;
+                campo.disabled = true; // ← AÑADIDO: deshabilitar campos
               });
               console.log('🏪 Modo recogida en tienda activado');
             } else {
+              // 🔥 CORREGIDO: mostrar formulario y poner required
               if (formularioDir) formularioDir.style.display = 'block';
               camposRequeridos.forEach(campo => {
                 campo.required = true;
+                campo.disabled = false; // ← AÑADIDO: habilitar campos
               });
               console.log('📦 Modo envío a domicilio activado');
             }
@@ -414,6 +419,13 @@
             await actualizarTotalCarrito();
           });
         });
+
+        // 🔥 NUEVO: Ejecutar al cargar para establecer el estado inicial
+        const radioSeleccionado = document.querySelector('input[name="metodoEntrega"]:checked');
+        if (radioSeleccionado) {
+          const evento = new Event('change');
+          radioSeleccionado.dispatchEvent(evento);
+        }
 
         // Actualizar el total al cargar la página
         actualizarTotalCarrito();
