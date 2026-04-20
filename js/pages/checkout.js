@@ -76,9 +76,9 @@ window.guardarDireccionYProceder = async function () {
         return;
     }
 
-    // 🔥 CASO 1: RECOGER EN TIENDA - NO validar dirección
+    // 🔥 CASO 1: RECOGER EN TIENDA
     if (metodo === 'tienda') {
-        console.log('🏪 Opción recogida en tienda seleccionada - saltando validación de dirección');
+        console.log('🏪 Opción recogida en tienda seleccionada');
 
         if (!window.sessionService?.isLoggedIn()) {
             alert('Debes iniciar sesión para continuar');
@@ -86,73 +86,63 @@ window.guardarDireccionYProceder = async function () {
             return;
         }
 
-        // Cerrar modal inmediatamente
-        const modalElement = document.getElementById('direccionModal');
-        if (modalElement) {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) modal.hide();
-        }
+        // 🔥 Preguntar cómo quiere pagar
+        const formaPago = confirm('¿Deseas pagar ahora con tarjeta?\n\n"OK" → Pago online con Stripe\n"Cancelar" → Pagar en tienda');
 
-        await procesarRecogidaTienda();
+        if (formaPago) {
+            // Pago online (Stripe) - sin gastos de envío
+            await procesarPagoRecogidaTienda();
+        } else {
+            // Pago en tienda (código actual)
+            await procesarRecogidaTienda();
+        }
         return;
     }
 
-    // 🔥 CASO 2: ENVÍO A DOMICILIO - Validar dirección (SIN PAÍS)
-    if (metodo === 'domicilio') {
-        console.log('📦 Opción envío a domicilio seleccionada - validando dirección');
-
-        if (!window.sessionService?.isLoggedIn()) {
-            alert('Debes iniciar sesión para continuar');
-            if (window.showAuthModal) window.showAuthModal('login');
-            return;
-        }
-
-        // Obtener valores del formulario (SIN PAÍS)
-        const nombre = document.getElementById('direccionNombre')?.value;
-        const linea1 = document.getElementById('direccionLinea1')?.value;
-        const ciudad = document.getElementById('direccionCiudad')?.value;
-        const cp = document.getElementById('direccionCP')?.value;
-        const linea2 = document.getElementById('direccionLinea2')?.value || '';
-
-        // Validar SOLO los campos que existen
-        if (!nombre || !linea1 || !ciudad || !cp) {
-            console.log('❌ Campos faltantes:');
-            if (!nombre) console.log('  - Nombre');
-            if (!linea1) console.log('  - Dirección');
-            if (!ciudad) console.log('  - Ciudad');
-            if (!cp) console.log('  - Código postal');
-            alert('Por favor, completa todos los campos obligatorios');
-            return;
-        }
-
-        // Construir dirección (SIN PAÍS en la cadena)
-        let direccion = `${linea1}, ${ciudad}, ${cp}`;
-        if (linea2) {
-            direccion = `${linea1} ${linea2}, ${ciudad}, ${cp}`;
-        }
-
-        const direccionData = {
-            nombre: nombre,
-            direccion_completa: direccion,
-            calle: linea1,
-            piso: linea2,
-            ciudad: ciudad,
-            codigo_postal: cp,
-            pais: 'ES' // Valor fijo
-        };
-
-        localStorage.setItem('direccion_envio', JSON.stringify(direccionData));
-
-        // Cerrar modal
-        const modalElement = document.getElementById('direccionModal');
-        if (modalElement) {
-            const modal = bootstrap.Modal.getInstance(modalElement);
-            if (modal) modal.hide();
-        }
-
-        await procesarPagoConDireccion(direccionData);
+    // 🔥 CASO 2: ENVÍO A DOMICILIO
+    if (!window.sessionService?.isLoggedIn()) {
+        alert('Debes iniciar sesión para continuar');
+        if (window.showAuthModal) window.showAuthModal('login');
         return;
     }
+
+    // Obtener valores del formulario de dirección
+    const nombre = document.getElementById('direccionNombre')?.value;
+    const linea1 = document.getElementById('direccionLinea1')?.value;
+    const ciudad = document.getElementById('direccionCiudad')?.value;
+    const cp = document.getElementById('direccionCP')?.value;
+    const linea2 = document.getElementById('direccionLinea2')?.value || '';
+
+    if (!nombre || !linea1 || !ciudad || !cp) {
+        alert('Por favor, completa todos los campos obligatorios');
+        return;
+    }
+
+    // Construir dirección
+    let direccion = `${linea1}, ${ciudad}, ${cp},`;
+    if (linea2) {
+        direccion = `${linea1} ${linea2}, ${ciudad}, ${cp}`;
+    }
+
+    const direccionData = {
+        nombre: nombre,
+        direccion_completa: direccion,
+        calle: linea1,
+        piso: linea2,
+        ciudad: ciudad,
+        codigo_postal: cp,
+    };
+
+    localStorage.setItem('direccion_envio', JSON.stringify(direccionData));
+
+    // Cerrar modal
+    const modalElement = document.getElementById('direccionModal');
+    if (modalElement) {
+        const modal = bootstrap.Modal.getInstance(modalElement);
+        if (modal) modal.hide();
+    }
+
+    await procesarPagoConDireccion(direccionData);
 };
 
 async function procesarRecogidaTienda() {
@@ -245,7 +235,92 @@ async function procesarRecogidaTienda() {
         }
     }
 }
+// 🔥 NUEVA FUNCIÓN: Pago online con recogida en tienda (sin gastos de envío)
+async function procesarPagoRecogidaTienda() {
+    console.log('💳 Procesando pago online para recogida en tienda');
 
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const originalText = checkoutBtn ? checkoutBtn.innerHTML : '';
+
+    try {
+        if (checkoutBtn) {
+            checkoutBtn.disabled = true;
+            checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+        }
+
+        // 1. Obtener carrito actual
+        const cart = await window.CartCore.getCart();
+
+        if (!cart || cart.items.length === 0) {
+            throw new Error('El carrito está vacío');
+        }
+
+        // 🔥 Forzar envío a 0 (recogida en tienda)
+        cart.shipping = 0;
+        cart.total = cart.subtotal;
+
+        // Guardar temporalmente el carrito con envío 0
+        window.CartCore.saveCartToStorage(cart);
+        window.CartCore.cart = cart;
+
+        // 2. Crear dirección para recogida en tienda
+        const userData = window.sessionService.getUserData ? window.sessionService.getUserData() : {};
+        const direccionData = {
+            nombre: userData.nombre || 'Cliente',
+            calle: 'Recoger en tienda',
+            piso: '',
+            ciudad: 'Salamanca',
+            codigo_postal: '37001',
+            pais: 'ES'
+        };
+
+        // 🎁 Obtener datos de regalo
+        const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
+
+        // 3. Crear sesión de Stripe
+        const response = await fetch(`${window.API_URL}/create-checkout-session`, {
+            method: 'POST',
+            headers: {
+                'Authorization': 'Bearer ' + window.sessionService.getToken(),
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                cuponId: null,
+                direccion: direccionData,
+                gift: {
+                    active: giftData.active,
+                    message: giftData.message || '',
+                    cost: giftData.active ? 2.00 : 0
+                },
+                esRecogidaTienda: true  // 🔥 Indicar que es recogida en tienda
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Error al crear sesión de pago');
+        }
+
+        // 4. Redirigir a Stripe
+        console.log('✅ Redirigiendo a Stripe para pago...');
+        window.location.href = data.url;
+
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error: ' + error.message);
+        if (checkoutBtn) {
+            checkoutBtn.disabled = false;
+            checkoutBtn.innerHTML = originalText;
+        }
+    } finally {
+        const modalElement = document.getElementById('direccionModal');
+        if (modalElement) {
+            const modal = bootstrap.Modal.getInstance(modalElement);
+            if (modal) modal.hide();
+        }
+    }
+}
 async function procesarPagoConDireccion(direccionData) {
     console.log('💳 procesarPagoConDireccion llamado');
     console.log('📍 Dirección a enviar:', direccionData);
