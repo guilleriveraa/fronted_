@@ -164,16 +164,20 @@
 
 /* Grid más compacto */
 .products-grid {
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)) !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
     gap: 20px !important;
 }
 
 /* Tarjeta más pequeña */
 .product-card {
-    max-width: 250px;
-    margin: 0 auto;
-    width: 100%;
+    flex: 0 0 auto !important;
+    width: 220px !important;
+    /* Ancho fijo para cada tarjeta */
 }
+
 
 /* Imagen cuadrada pero más pequeña */
 .product-image {
