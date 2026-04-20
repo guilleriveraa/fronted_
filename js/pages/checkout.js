@@ -5,31 +5,25 @@
 window.proceedToCheckout = async function () {
     console.log('🛒 proceedToCheckout llamado');
 
-    // 🔥 VERIFICAR QUE EL USUARIO ESTÁ LOGUEADO (permitir carrito sin login)
     if (!window.sessionService) {
         console.error('❌ sessionService no disponible');
         alert('Error de autenticación. Recarga la página.');
         return;
     }
 
-    // 🔥 Si NO está logueado, guardar callback y pedir login
     if (!window.sessionService.isLoggedIn()) {
         console.log('❌ Usuario no logueado - Guardando carrito para después del login');
 
-        // Guardar callback para después del login
         if (window.sessionService.setCallbackDespuesDeLogin) {
             window.sessionService.setCallbackDespuesDeLogin(async () => {
                 console.log('🔄 Usuario logueado, sincronizando carrito y continuando...');
-                // Sincronizar carrito local con backend
                 if (window.CartCore.sincronizarCarritoLocal) {
                     await window.CartCore.sincronizarCarritoLocal();
                 }
-                // Continuar con el checkout
                 window.proceedToCheckout();
             });
         }
 
-        // Mostrar modal de login
         if (window.showAuthModal) {
             window.showAuthModal('login');
         } else {
@@ -38,21 +32,18 @@ window.proceedToCheckout = async function () {
         return;
     }
 
-    // 🔥 VERIFICAR QUE EL CARRITO NO ESTÁ VACÍO
     const cart = await window.CartCore.getCart();
     if (!cart || cart.items.length === 0) {
         alert('Tu carrito está vacío. Añade productos antes de proceder al pago.');
         return;
     }
 
-    // 🔥 VERIFICAR QUE BOOTSTRAP ESTÁ DISPONIBLE
     if (typeof bootstrap === 'undefined') {
         console.error('❌ Bootstrap no está cargado');
         alert('Error: No se pudo cargar el modal. Por favor, recarga la página.');
         return;
     }
 
-    // 🔥 VERIFICAR QUE EL MODAL EXISTE
     const modalElement = document.getElementById('direccionModal');
     if (!modalElement) {
         console.error('❌ No se encontró el elemento del modal');
@@ -68,7 +59,6 @@ window.proceedToCheckout = async function () {
 window.guardarDireccionYProceder = async function () {
     console.log('📍 guardarDireccionYProceder llamado');
 
-    // Verificar método de entrega
     const metodo = document.querySelector('input[name="metodoEntrega"]:checked')?.value;
 
     if (!metodo) {
@@ -76,7 +66,6 @@ window.guardarDireccionYProceder = async function () {
         return;
     }
 
-    // 🔥 CASO 1: RECOGER EN TIENDA
     if (metodo === 'tienda') {
         console.log('🏪 Opción recogida en tienda seleccionada');
 
@@ -86,27 +75,22 @@ window.guardarDireccionYProceder = async function () {
             return;
         }
 
-        // 🔥 Preguntar cómo quiere pagar
         const formaPago = confirm('¿Deseas pagar ahora con tarjeta?\n\n"OK" → Pago online con Stripe\n"Cancelar" → Pagar en tienda');
 
         if (formaPago) {
-            // Pago online (Stripe) - sin gastos de envío
             await procesarPagoRecogidaTienda();
         } else {
-            // Pago en tienda (código actual)
             await procesarRecogidaTienda();
         }
         return;
     }
 
-    // 🔥 CASO 2: ENVÍO A DOMICILIO
     if (!window.sessionService?.isLoggedIn()) {
         alert('Debes iniciar sesión para continuar');
         if (window.showAuthModal) window.showAuthModal('login');
         return;
     }
 
-    // Obtener valores del formulario de dirección
     const nombre = document.getElementById('direccionNombre')?.value;
     const linea1 = document.getElementById('direccionLinea1')?.value;
     const ciudad = document.getElementById('direccionCiudad')?.value;
@@ -118,7 +102,6 @@ window.guardarDireccionYProceder = async function () {
         return;
     }
 
-    // Construir dirección
     let direccion = `${linea1}, ${ciudad}, ${cp},`;
     if (linea2) {
         direccion = `${linea1} ${linea2}, ${ciudad}, ${cp}`;
@@ -135,7 +118,6 @@ window.guardarDireccionYProceder = async function () {
 
     localStorage.setItem('direccion_envio', JSON.stringify(direccionData));
 
-    // Cerrar modal
     const modalElement = document.getElementById('direccionModal');
     if (modalElement) {
         const modal = bootstrap.Modal.getInstance(modalElement);
@@ -145,34 +127,31 @@ window.guardarDireccionYProceder = async function () {
     await procesarPagoConDireccion(direccionData);
 };
 
+// ===================== RECOGIDA EN TIENDA (PAGAR EN TIENDA) =====================
 async function procesarRecogidaTienda() {
     console.log('🏪 Procesando recogida en tienda');
 
-    // 🔥 Verificar que el botón existe ANTES de usarlo
     const checkoutBtn = document.getElementById('checkoutBtn');
-
-    if (!checkoutBtn) {
-        console.warn('⚠️ Botón checkoutBtn no encontrado, continuando sin deshabilitarlo');
-    } else {
-        const originalText = checkoutBtn.innerHTML;
-        checkoutBtn.disabled = true;
-        checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
-    }
+    let originalText = '';
 
     try {
-        // 1. Obtener carrito actual
+        if (checkoutBtn) {
+            originalText = checkoutBtn.innerHTML;
+            checkoutBtn.disabled = true;
+            checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
+        }
+
         const cart = await window.CartCore.getCart();
+        console.log('🛒 Carrito obtenido:', cart);
 
         if (!cart || cart.items.length === 0) {
             throw new Error('El carrito está vacío');
         }
 
-        // 🎁 Obtener datos de regalo
         const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
 
-        // 🔥 Mapear items para incluir la talla
         const itemsParaEnviar = cart.items.map(item => {
-            console.log('📦 Procesando item del carrito:', item);
+            console.log('📦 Item del carrito:', item);
             return {
                 id: item.id,
                 quantity: item.quantity,
@@ -181,9 +160,12 @@ async function procesarRecogidaTienda() {
             };
         });
 
-        console.log('📦 Items a enviar (VERIFICACIÓN):', itemsParaEnviar);
+        console.log('📤 Enviando al backend:', {
+            items: itemsParaEnviar,
+            subtotal: cart.subtotal,
+            gift: giftData
+        });
 
-        // 2. Crear pedido en backend
         const response = await fetch(`${window.API_URL}/pedidos/recogida-tienda`, {
             method: 'POST',
             headers: {
@@ -201,31 +183,27 @@ async function procesarRecogidaTienda() {
             })
         });
 
+        console.log('📥 Respuesta status:', response.status);
         const data = await response.json();
+        console.log('📥 Respuesta data:', data);
 
         if (!response.ok) {
             throw new Error(data.message || 'Error al crear pedido');
         }
 
-        // 3. Vaciar carrito
         window.CartCore.cart = { items: [], subtotal: 0, shipping: 0, total: 0 };
         window.CartCore.saveCartToStorage(window.CartCore.cart);
         window.CartCore.notifyListeners();
 
-        // 4. Mostrar confirmación
-        alert(`✅ ¡Pedido #${data.pedidoId} creado!\n\nPasa por nuestra tienda a recogerlo. Te esperamos.`);
-
-        // 5. Redirigir a página de confirmación
+        alert(`✅ ¡Pedido #${data.pedidoId} creado!\n\nCódigo de recogida: ${data.codigoRecogida}\n\nPasa por nuestra tienda a recogerlo.`);
         window.location.href = `recogida-confirmada.html?pedido=${data.pedidoId}&codigo=${data.codigoRecogida}`;
 
     } catch (error) {
-        console.error('❌ Error:', error);
+        console.error('❌ Error detallado:', error);
         alert('Error: ' + error.message);
-
-        // Restaurar botón si existe
         if (checkoutBtn) {
             checkoutBtn.disabled = false;
-            checkoutBtn.innerHTML = originalText || 'Pagar';
+            checkoutBtn.innerHTML = originalText;
         }
     } finally {
         const modalElement = document.getElementById('direccionModal');
@@ -235,7 +213,8 @@ async function procesarRecogidaTienda() {
         }
     }
 }
-// 🔥 NUEVA FUNCIÓN: Pago online con recogida en tienda (sin gastos de envío)
+
+// ===================== RECOGIDA EN TIENDA (PAGAR ONLINE) =====================
 async function procesarPagoRecogidaTienda() {
     console.log('💳 Procesando pago online para recogida en tienda');
 
@@ -248,22 +227,17 @@ async function procesarPagoRecogidaTienda() {
             checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
         }
 
-        // 1. Obtener carrito actual
         const cart = await window.CartCore.getCart();
 
         if (!cart || cart.items.length === 0) {
             throw new Error('El carrito está vacío');
         }
 
-        // 🔥 Forzar envío a 0 (recogida en tienda)
         cart.shipping = 0;
         cart.total = cart.subtotal;
-
-        // Guardar temporalmente el carrito con envío 0
         window.CartCore.saveCartToStorage(cart);
         window.CartCore.cart = cart;
 
-        // 2. Crear dirección para recogida en tienda
         const userData = window.sessionService.getUserData ? window.sessionService.getUserData() : {};
         const direccionData = {
             nombre: userData.nombre || 'Cliente',
@@ -274,10 +248,19 @@ async function procesarPagoRecogidaTienda() {
             pais: 'ES'
         };
 
-        // 🎁 Obtener datos de regalo
         const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
 
-        // 3. Crear sesión de Stripe
+        console.log('📤 Enviando a backend:', {
+            cuponId: null,
+            direccion: direccionData,
+            gift: {
+                active: giftData.active,
+                message: giftData.message || '',
+                cost: giftData.active ? 2.00 : 0
+            },
+            esRecogidaTienda: true
+        });
+
         const response = await fetch(`${window.API_URL}/create-checkout-session`, {
             method: 'POST',
             headers: {
@@ -292,22 +275,22 @@ async function procesarPagoRecogidaTienda() {
                     message: giftData.message || '',
                     cost: giftData.active ? 2.00 : 0
                 },
-                esRecogidaTienda: true  // 🔥 Indicar que es recogida en tienda
+                esRecogidaTienda: true
             })
         });
 
         const data = await response.json();
 
         if (!response.ok) {
+            console.error('❌ Error response:', response.status, data);
             throw new Error(data.message || 'Error al crear sesión de pago');
         }
 
-        // 4. Redirigir a Stripe
         console.log('✅ Redirigiendo a Stripe para pago...');
         window.location.href = data.url;
 
     } catch (error) {
-        console.error('❌ Error:', error);
+        console.error('❌ Error detallado:', error);
         alert('Error: ' + error.message);
         if (checkoutBtn) {
             checkoutBtn.disabled = false;
@@ -321,6 +304,8 @@ async function procesarPagoRecogidaTienda() {
         }
     }
 }
+
+// ===================== ENVÍO A DOMICILIO =====================
 async function procesarPagoConDireccion(direccionData) {
     console.log('💳 procesarPagoConDireccion llamado');
     console.log('📍 Dirección a enviar:', direccionData);
@@ -339,8 +324,6 @@ async function procesarPagoConDireccion(direccionData) {
             checkoutBtn.disabled = true;
             checkoutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Procesando...';
         }
-
-        console.log('📤 Enviando petición a Stripe...');
 
         const cuponGuardado = localStorage.getItem('cupon_aplicado');
         let cuponId = null;
@@ -379,11 +362,8 @@ async function procesarPagoConDireccion(direccionData) {
             throw new Error(data.message || 'Error al procesar el pago');
         }
 
-        console.log('✅ Sesión creada, redirigiendo a Stripe:', data.url);
-
-        // 🔥 SOLUCIÓN: Asegurar la redirección
         if (data.url) {
-            window.location.assign(data.url); // o window.location.href = data.url;
+            window.location.assign(data.url);
         } else {
             throw new Error('No se recibió URL de Stripe');
         }
@@ -402,7 +382,6 @@ async function procesarPagoConDireccion(direccionData) {
     }
 }
 
-// Función para limpiar después del pago (opcional)
 window.limpiarDespuesDePago = function () {
     localStorage.removeItem('direccion_envio');
     localStorage.removeItem('cupon_aplicado');
