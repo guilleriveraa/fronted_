@@ -58,12 +58,10 @@ function renderProducts(productos) {
     ];
 
     container.innerHTML = productos.map(p => {
-        // Determinar si es textil (categoria_id = 2)
-        const esTextil = p.categoria_id === 2;
-        // Determinar si es botón o cadena (categoria_id = 1 o 2 - AJUSTA SEGÚN TU BD)
-        const esBotonOCadena = p.categoria_id === 1 || p.categoria_id === 2;
+        // Dentro de renderProducts
+        const esTextil = p.categoria_id === 2;                    // Textil (ID 2)
+        const esBotonOCadena = p.categoria_id === 5 || p.categoria_id === 6;  // botones (ID 5) o cadenas (ID 6)
 
-        // HTML para selector de tallas (solo si es textil)
         let tallasHTML = '';
         if (esTextil) {
             tallasHTML = `
@@ -216,8 +214,8 @@ const addToCart = async function (productId) {
             producto = await response.json();
             console.log('📦 Producto recibido:', producto);
 
-            esTextil = producto.categoria_id === 2;
-            esBotonOCadena = producto.categoria_id === 1 || producto.categoria_id === 2; // Ajusta IDs
+            esTextil = producto.categoria_id === 2;                    // Textil (ID 2)
+            esBotonOCadena = producto.categoria_id === 5 || producto.categoria_id === 6;
             console.log('👕 ¿Es textil?', esTextil);
             console.log('🎨 ¿Es botón/cadena?', esBotonOCadena);
             console.log('📋 Categoría ID:', producto.categoria_id);
