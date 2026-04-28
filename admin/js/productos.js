@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', function () {
     console.log('🚀 Inicializando productos...');
     loadUserInfo();
     cargarProductos();
+    cargarCategorias();
 
     // Inicializar modal de Bootstrap
     const modalElement = document.getElementById('productoModal');
@@ -14,7 +15,35 @@ document.addEventListener('DOMContentLoaded', function () {
         productoModal = new bootstrap.Modal(modalElement);
     }
 });
+// Cargar categorías desde la API
+async function cargarCategorias() {
+    try {
+        const response = await fetch(`${window.API_URL}/categorias`);
+        if (!response.ok) throw new Error('Error al cargar categorías');
 
+        const categorias = await response.json();
+        const select = document.getElementById('categoria_id');
+
+        if (!select) return;
+
+        // Limpiar opciones (dejar solo la primera)
+        while (select.options.length > 1) {
+            select.remove(1);
+        }
+
+        // Añadir categorías
+        categorias.forEach(cat => {
+            const option = document.createElement('option');
+            option.value = cat.id;
+            option.textContent = cat.nombre.charAt(0).toUpperCase() + cat.nombre.slice(1);
+            select.appendChild(option);
+        });
+
+        console.log('✅ Categorías cargadas:', categorias.length);
+    } catch (error) {
+        console.error('❌ Error cargando categorías:', error);
+    }
+}
 // Cargar todos los productos
 async function cargarProductos() {
     try {
