@@ -51,22 +51,41 @@ function renderProducts(productos) {
         return;
     }
 
-    // Lista de colores para botones y cadenas
-    const colores = [
+    // Lista de colores para BOTONES (categoria_id = 5)
+    const coloresBotones = [
         'verde hierba', 'lila', 'fucsia', 'rosa', 'rojo', 'azulon', 'azul cielo',
         'plata', 'blanco', 'negro', 'amarillo', 'amarillo fluor', 'naranja', 'crema'
     ];
 
-    container.innerHTML = productos.map(p => {
-        // Dentro de renderProducts
-        const esTextil = p.categoria_id === 2;                    // Textil (ID 2)
-        const esBotonOCadena = p.categoria_id === 5 || p.categoria_id === 6;  // botones (ID 5) o cadenas (ID 6)
+    // Lista de colores para CADENAS (categoria_id = 6)
+    const coloresCadenas = [
+        'amarillo', 'verde', 'azul cielo', 'rosa', 'blanco', 'azul marino',
+        'fucsia', 'amarillo fluor', 'morado', 'naranja', 'verde claro'
+    ];
 
+    container.innerHTML = productos.map(p => {
+        // Determinar tipo de producto según tus IDs reales
+        const esTextil = p.categoria_id === 2;                    // Textil (ID 2)
+        const esBoton = p.categoria_id === 5;                     // botones (ID 5)
+        const esCadena = p.categoria_id === 6;                    // cadenas (ID 6)
+
+        // Seleccionar colores según la categoría
+        let colores = [];
+        let selectorLabel = '';
+        if (esBoton) {
+            colores = coloresBotones;
+            selectorLabel = 'Color del botón:';
+        } else if (esCadena) {
+            colores = coloresCadenas;
+            selectorLabel = 'Color de la cadena:';
+        }
+
+        // HTML para selector de tallas (solo textil)
         let tallasHTML = '';
         if (esTextil) {
             tallasHTML = `
                 <div class="talla-selector" style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 5px;">
-                    <label for="talla-${p.id}" style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 0.9rem;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 0.9rem;">
                         <i class="fas fa-tshirt" style="color: #e83083;"></i> Talla:
                     </label>
                     <select id="talla-${p.id}" class="talla-select" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
@@ -82,13 +101,13 @@ function renderProducts(productos) {
             `;
         }
 
-        // HTML para selector de colores (solo si es botón o cadena)
+        // HTML para selector de colores (solo botones o cadenas)
         let coloresHTML = '';
-        if (esBotonOCadena) {
+        if (esBoton || esCadena) {
             coloresHTML = `
                 <div class="color-selector" style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 5px;">
                     <label style="display: block; margin-bottom: 10px; font-weight: 500; font-size: 0.9rem;">
-                        <i class="fas fa-palette" style="color: #e83083;"></i> Color:
+                        <i class="fas fa-palette" style="color: #e83083;"></i> ${selectorLabel}
                     </label>
                     <div class="color-options" style="display: flex; flex-wrap: wrap; gap: 8px;">
                         ${colores.map(color => `
@@ -165,6 +184,7 @@ function renderProducts(productos) {
 // Función auxiliar para obtener el color hexadecimal
 function getColorHex(color) {
     const colores = {
+        // Colores de botones
         'verde hierba': '#4CAF50',
         'lila': '#C8A2C8',
         'fucsia': '#FF00FF',
@@ -178,7 +198,13 @@ function getColorHex(color) {
         'amarillo': '#FFFF00',
         'amarillo fluor': '#CCFF00',
         'naranja': '#FFA500',
-        'crema': '#FFFDD0'
+        'crema': '#FFFDD0',
+
+        // Colores de cadenas
+        'verde': '#4CAF50',
+        'azul marino': '#000080',
+        'morado': '#800080',
+        'verde claro': '#90EE90'
     };
     return colores[color] || '#CCCCCC';
 }
