@@ -126,9 +126,9 @@ function renderLatestProducts(productos) {
              alt="${p.nombre}"
              onerror="this.src='https://via.placeholder.com/300x300?text=Producto'">
         <div class="product-overlay">
-          <button class="btn-quick-view" onclick="quickView(${p.id})">
-            <i class="fas fa-eye"></i> Vista rápida
-          </button>
+          <a href="producto-detalle.html?id=${p.id}" class="btn-quick-view">
+            <i class="fas fa-eye"></i> Ver detalles
+          </a>
         </div>
       </div>
       <div class="product-info">
