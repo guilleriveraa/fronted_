@@ -85,7 +85,8 @@ class CartCore {
             if (cartData.items) {
                 cartData.items = cartData.items.map(item => ({
                     ...item,
-                    talla: item.talla || null
+                    talla: item.talla || null,
+                    color: item.color || null
                 }));
             }
 
@@ -148,7 +149,7 @@ class CartCore {
         });
     }
     // 🆕 NUEVO: Añadir producto al carrito (con o sin sesión)
-    async addToCart(productId, quantity = 1, talla = null) {
+    async addToCart(productId, quantity = 1, talla = null, color = null) {
         const token = localStorage.getItem(window.TOKEN_KEY);
 
         try {
@@ -163,7 +164,8 @@ class CartCore {
                     body: JSON.stringify({
                         productId,
                         quantity,
-                        talla
+                        talla,
+                        color
                     })
                 });
 
@@ -192,7 +194,7 @@ class CartCore {
 
                 // Buscar si el producto ya está en el carrito con la misma talla
                 const existingItem = cart.items.find(item =>
-                    item.id === productId && item.talla === talla
+                    item.id === productId && item.talla === talla && item.color === color
                 );
 
                 if (existingItem) {
@@ -204,7 +206,8 @@ class CartCore {
                         price: parseFloat(producto.precio),
                         quantity: quantity,
                         image: producto.imagen || '',
-                        talla: talla
+                        talla: talla,
+                        color: color
                     });
                 }
 
@@ -234,7 +237,8 @@ class CartCore {
         if (cartToSave.items) {
             cartToSave.items = cartToSave.items.map(item => ({
                 ...item,
-                talla: item.talla || null
+                talla: item.talla || null,
+                color: item.color || null
             }));
         }
 
@@ -260,11 +264,12 @@ class CartCore {
                 cart.gift = { active: false, message: '', cost: 2.00 };
             }
 
-            // 🆕 NUEVO: Asegurar que cada item tiene campo talla (para compatibilidad)
+            // 🆕 NUEVO: Asegurar que cada item tiene campo talla y color
             if (cart.items) {
                 cart.items = cart.items.map(item => ({
                     ...item,
-                    talla: item.talla || null // Si no existe, poner null
+                    talla: item.talla || null,
+                    color: item.color || null
                 }));
             }
 
@@ -505,7 +510,7 @@ class CartCore {
         console.log('🔄 Sincronizando carrito local con el backend...');
 
         for (const item of carritoLocal.items) {
-            await this.addToCart(item.id, item.quantity, item.talla);
+            await this.addToCart(item.id, item.quantity, item.talla, item.color);
         }
 
         // Limpiar carrito local y recargar
