@@ -127,7 +127,6 @@ window.guardarDireccionYProceder = async function () {
     await procesarPagoConDireccion(direccionData);
 };
 
-// ===================== RECOGIDA EN TIENDA (PAGAR EN TIENDA) =====================
 async function procesarRecogidaTienda() {
     console.log('🏪 Procesando recogida en tienda');
 
@@ -142,30 +141,19 @@ async function procesarRecogidaTienda() {
         }
 
         const cart = await window.CartCore.getCart();
-        console.log('🛒 Carrito obtenido:', cart);
-
         if (!cart || cart.items.length === 0) {
             throw new Error('El carrito está vacío');
         }
 
         const giftData = cart.gift || { active: false, message: '', cost: 2.00 };
 
-        const itemsParaEnviar = cart.items.map(item => {
-            console.log('📦 Item del carrito:', item);
-            return {
-                id: item.id,
-                quantity: item.quantity,
-                price: item.price,
-                talla: item.talla || null,
-                color: item.color || null
-            };
-        });
-
-        console.log('📤 Enviando al backend:', {
-            items: itemsParaEnviar,
-            subtotal: cart.subtotal,
-            gift: giftData
-        });
+        const itemsParaEnviar = cart.items.map(item => ({
+            id: item.id,
+            quantity: item.quantity,
+            price: item.price,
+            talla: item.talla || null,
+            color: item.color || null
+        }));
 
         const response = await fetch(`${window.API_URL}/pedidos/recogida-tienda`, {
             method: 'POST',
@@ -184,17 +172,15 @@ async function procesarRecogidaTienda() {
             })
         });
 
-        console.log('📥 Respuesta status:', response.status);
         const data = await response.json();
-        console.log('📥 Respuesta data:', data);
 
         if (!response.ok) {
             throw new Error(data.message || 'Error al crear pedido');
         }
 
-        window.CartCore.cart = { items: [], subtotal: 0, shipping: 0, total: 0 };
-        window.CartCore.saveCartToStorage(window.CartCore.cart);
-        window.CartCore.notifyListeners();
+        // 🔥🔥🔥 VACIAR CARRITO AQUÍ 🔥🔥🔥
+        console.log('🧹 Vaciando carrito después del pedido...');
+        await window.CartCore.vaciarCarritoCompleto();
 
         alert(`✅ ¡Pedido #${data.pedidoId} creado!\n\nCódigo de recogida: ${data.codigoRecogida}\n\nPasa por nuestra tienda a recogerlo.`);
         window.location.href = `recogida-confirmada.html?pedido=${data.pedidoId}&codigo=${data.codigoRecogida}`;
