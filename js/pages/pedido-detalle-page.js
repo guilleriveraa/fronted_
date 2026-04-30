@@ -353,22 +353,23 @@ function renderOrderDetails(order, items, isAdmin) {
     ${items.map(item => {
         console.log('🎽 Item recibido en renderOrderDetails:', item);
         return `
-            <div class="item-row" style="display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; padding: 15px; border-bottom: 1px solid #dee2e6; align-items: center;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <img src="${item.imagen || item.imagen_producto || '/fronted/img/default.jpg'}" 
-                         alt="${item.nombre || item.nombre_producto}" 
-                         style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"
-                         onerror="this.src='https://via.placeholder.com/60'">
-                    <div>
-                        <span style="font-weight: 500;">${item.nombre || item.nombre_producto}</span>
-                        ${item.talla ? `<br><small style="color: #e83083; font-size: 0.85rem;"><i class="fas fa-tshirt"></i> Talla: <strong>${item.talla}</strong></small>` : ''}
-                    </div>
+        <div class="item-row" style="display: grid; grid-template-columns: 3fr 1fr 1fr 1fr; padding: 15px; border-bottom: 1px solid #dee2e6; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <img src="${item.imagen || item.imagen_producto || '/fronted/img/default.jpg'}" 
+                     alt="${item.nombre || item.nombre_producto}" 
+                     style="width: 60px; height: 60px; object-fit: cover; border-radius: 4px;"
+                     onerror="this.src='https://via.placeholder.com/60'">
+                <div>
+                    <span style="font-weight: 500;">${item.nombre || item.nombre_producto}</span>
+                    ${item.talla ? `<br><small style="color: #e83083; font-size: 0.85rem;"><i class="fas fa-tshirt"></i> Talla: <strong>${item.talla}</strong></small>` : ''}
+                    ${item.color ? `<br><small style="color: #e83083; font-size: 0.85rem;"><i class="fas fa-palette"></i> Color: <span style="display: inline-block; width: 12px; height: 12px; border-radius: 50%; background: ${getColorHex(item.color)}; margin-right: 4px; border: 1px solid #ddd;"></span> <strong>${item.color}</strong></small>` : ''}
                 </div>
-                <div>${parseFloat(item.precio).toFixed(2)}€</div>
-                <div>${item.cantidad}</div>
-                <div style="font-weight: 600;">${(item.precio * item.cantidad).toFixed(2)}€</div>
             </div>
-        `;
+            <div>${parseFloat(item.precio).toFixed(2)}€</div>
+            <div>${item.cantidad}</div>
+            <div style="font-weight: 600;">${(item.precio * item.cantidad).toFixed(2)}€</div>
+        </div>
+    `;
     }).join('')}
 </div>
                 </div>
@@ -493,6 +494,31 @@ function showError(message) {
             </button>
         </div>
     `;
+}
+
+// Función para obtener el color hexadecimal
+function getColorHex(color) {
+    const colores = {
+        'verde hierba': '#4CAF50',
+        'lila': '#C8A2C8',
+        'fucsia': '#FF00FF',
+        'rosa': '#FFC0CB',
+        'rojo': '#FF0000',
+        'azulon': '#00008B',
+        'azul cielo': '#87CEEB',
+        'plata': '#C0C0C0',
+        'blanco': '#FFFFFF',
+        'negro': '#000000',
+        'amarillo': '#FFFF00',
+        'amarillo fluor': '#CCFF00',
+        'naranja': '#FFA500',
+        'crema': '#FFFDD0',
+        'verde': '#4CAF50',
+        'azul marino': '#000080',
+        'morado': '#800080',
+        'verde claro': '#90EE90'
+    };
+    return colores[color] || '#CCCCCC';
 }
 
 console.log('✅ pedido-detalle-page.js cargado');
