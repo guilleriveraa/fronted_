@@ -156,7 +156,8 @@ async function procesarRecogidaTienda() {
                 id: item.id,
                 quantity: item.quantity,
                 price: item.price,
-                talla: item.talla || null
+                talla: item.talla || null,
+                color: item.color || null
             };
         });
 
