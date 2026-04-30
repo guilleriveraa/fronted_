@@ -397,6 +397,10 @@
                 console.error('❌ Error:', err);
             }
         }
+        // Al cargar la página de éxito
+        if (window.CartCore) {
+            await window.CartCore.vaciarCarritoCompleto();
+        }
     </script>
 
 </body>
