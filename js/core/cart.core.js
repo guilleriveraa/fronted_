@@ -521,7 +521,38 @@ class CartCore {
 
         console.log('✅ Carrito sincronizado correctamente');
     }
+    // ===== NUEVO: Vaciar carrito completamente =====
+    async vaciarCarritoCompleto() {
+        const token = localStorage.getItem(window.TOKEN_KEY);
+
+        try {
+            if (token) {
+                await fetch(`${window.API_URL}/cart/clear`, {
+                    method: 'POST',
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+            }
+
+            this.cart = {
+                items: [],
+                subtotal: 0,
+                shipping: 0,
+                total: 0,
+                gift: { active: false, message: '', cost: 2.00 }
+            };
+            this.saveCartToStorage(this.cart);
+            this.notifyListeners();
+            this.updateCartCounters();
+
+            console.log('✅ Carrito vaciado completamente');
+            return true;
+        } catch (error) {
+            console.error('❌ Error vaciando carrito:', error);
+            return false;
+        }
+    }
 }
+
 // Instancia global
 window.CartCore = new CartCore();
 
