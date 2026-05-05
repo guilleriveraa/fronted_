@@ -263,11 +263,19 @@ const addToCart = async function (productId) {
 
             // Si es botón o cadena, obtener el color seleccionado
             if (esBotonOCadena) {
-                const hiddenInput = document.getElementById(`color-${productId}`);
+                // Intentar obtener el color del selector específico (para productos-page)
+                let hiddenInput = document.getElementById(`color-${productId}`);
+
+                // Si no existe, intentar con el selector genérico (para producto-detalle)
+                if (!hiddenInput) {
+                    hiddenInput = document.getElementById('selectedColor');
+                }
+
                 if (!hiddenInput) {
                     alert('Error: No se encontró el selector de colores');
                     return;
                 }
+
                 color = hiddenInput.value;
                 if (!color) {
                     alert('Por favor, selecciona un color');
