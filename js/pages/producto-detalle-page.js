@@ -1,7 +1,5 @@
 // js/pages/producto-detalle-page.js
 
-// js/pages/producto-detalle-page.js
-
 window.cargarProductoDetalle = async function (productoId) {
     const container = document.getElementById('productDetailContainer');
     if (!container) return;
@@ -74,7 +72,7 @@ window.cargarProductoDetalle = async function (productoId) {
                             <button type="button" 
                                     class="color-btn" 
                                     data-color="${color}"
-                                    style="background: ${getColorHex(color)}; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);"
+                                    style="background: ${getColorHex(color)}; width: 40px; height: 40px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; transition: all 0.2s;"
                                     title="${color}">
                             </button>
                         `).join('')}
@@ -141,7 +139,7 @@ window.cargarProductoDetalle = async function (productoId) {
         // Configurar botón de añadir al carrito
         const addBtn = document.getElementById('addToCartBtn');
         if (addBtn) {
-            addBtn.onclick = () => addToCart(producto.id, esTextil, esBoton || esCadena);
+            addBtn.onclick = () => window.addToCart(producto.id, esTextil, esBoton || esCadena);
         }
 
     } catch (error) {
@@ -178,6 +176,7 @@ function getColorHex(color) {
 // Función addToCart para producto-detalle
 window.addToCart = async function (productId, esTextil, esBotonOCadena) {
     console.log('🎯 addToCart desde detalle:', productId);
+    console.log('Parámetros:', { productId, esTextil, esBotonOCadena });
 
     let talla = null;
     let color = null;
@@ -191,6 +190,7 @@ window.addToCart = async function (productId, esTextil, esBotonOCadena) {
                 alert('Por favor, selecciona una talla');
                 return;
             }
+            console.log('📏 Talla seleccionada:', talla);
         }
     }
 
@@ -203,76 +203,7 @@ window.addToCart = async function (productId, esTextil, esBotonOCadena) {
                 alert('Por favor, selecciona un color');
                 return;
             }
-            console.log('🎨 Color seleccionado para el carrito:', color);
-        }
-    }
-
-    const resultado = await window.CartCore.addToCart(productId, 1, talla, color);
-
-    if (resultado) {
-        alert('✅ Producto añadido al carrito');
-        window.CartCore.updateCartCounters();
-    } else {
-        alert('Error al añadir producto');
-    }
-};
-
-console.log('✅ producto-detalle-page.js cargado');
-
-// Función para obtener el color hexadecimal
-function getColorHex(color) {
-    const colores = {
-        'verde hierba': '#4CAF50',
-        'lila': '#C8A2C8',
-        'fucsia': '#FF00FF',
-        'rosa': '#FFC0CB',
-        'rojo': '#FF0000',
-        'azulon': '#00008B',
-        'azul cielo': '#87CEEB',
-        'plata': '#C0C0C0',
-        'blanco': '#FFFFFF',
-        'negro': '#000000',
-        'amarillo': '#FFFF00',
-        'amarillo fluor': '#CCFF00',
-        'naranja': '#FFA500',
-        'crema': '#FFFDD0',
-        'verde': '#4CAF50',
-        'azul marino': '#000080',
-        'morado': '#800080',
-        'verde claro': '#90EE90'
-    };
-    return colores[color] || '#CCCCCC';
-}
-
-// Función addToCart para producto-detalle
-window.addToCart = async function (productId, esTextil, esBotonOCadena) {
-    console.log('🎯 addToCart desde detalle:', productId);
-
-    let talla = null;
-    let color = null;
-
-    // Obtener talla (si es textil)
-    if (esTextil) {
-        const tallaSelect = document.getElementById('tallaSelect');
-        if (tallaSelect) {
-            talla = tallaSelect.value;
-            if (!talla) {
-                alert('Por favor, selecciona una talla');
-                return;
-            }
-        }
-    }
-
-    // Obtener color (si es botón o cadena)
-    if (esBotonOCadena) {
-        const colorInput = document.getElementById('selectedColor');
-        if (colorInput) {
-            color = colorInput.value;
-            if (!color) {
-                alert('Por favor, selecciona un color');
-                return;
-            }
-            console.log('🎨 Color seleccionado para el carrito:', color);
+            console.log('🎨 Color seleccionado:', color);
         }
     }
 
