@@ -402,6 +402,52 @@
             await window.CartCore.vaciarCarritoCompleto();
         }
     </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async function () {
+            console.log('🎉 Página de pedido exitoso - Enviando correo de confirmación');
+
+            // Obtener session_id de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const sessionId = urlParams.get('session_id');
+
+            if (!sessionId) {
+                console.log('❌ No se encontró session_id en la URL');
+                return;
+            }
+
+            console.log('📧 Session ID:', sessionId);
+
+            // Esperar un poco para asegurar que el webhook ya procesó el pedido
+            setTimeout(async () => {
+                try {
+                    const token = localStorage.getItem(window.TOKEN_KEY);
+                    if (!token) {
+                        console.log('❌ No hay token de sesión');
+                        return;
+                    }
+
+                    const response = await fetch(`${window.API_URL}/pedidos/enviar-email-post-pago`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': 'Bearer ' + token
+                        },
+                        body: JSON.stringify({ sessionId: sessionId })
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        console.log('✅ Correo de confirmación enviado correctamente');
+                    } else {
+                        console.error('❌ Error:', data.message);
+                    }
+                } catch (error) {
+                    console.error('❌ Error de conexión:', error);
+                }
+            }, 3000); // Esperar 3 segundos para que el webhook termine
+        });
+    </script>
 
 </body>
 
