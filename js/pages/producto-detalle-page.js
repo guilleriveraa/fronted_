@@ -1,5 +1,7 @@
 // js/pages/producto-detalle-page.js
 
+// js/pages/producto-detalle-page.js
+
 window.cargarProductoDetalle = async function (productoId) {
     const container = document.getElementById('productDetailContainer');
     if (!container) return;
@@ -147,6 +149,75 @@ window.cargarProductoDetalle = async function (productoId) {
         container.innerHTML = '<p class="error">Error al cargar el producto</p>';
     }
 };
+
+// Función para obtener el color hexadecimal
+function getColorHex(color) {
+    const colores = {
+        'verde hierba': '#4CAF50',
+        'lila': '#C8A2C8',
+        'fucsia': '#FF00FF',
+        'rosa': '#FFC0CB',
+        'rojo': '#FF0000',
+        'azulon': '#00008B',
+        'azul cielo': '#87CEEB',
+        'plata': '#C0C0C0',
+        'blanco': '#FFFFFF',
+        'negro': '#000000',
+        'amarillo': '#FFFF00',
+        'amarillo fluor': '#CCFF00',
+        'naranja': '#FFA500',
+        'crema': '#FFFDD0',
+        'verde': '#4CAF50',
+        'azul marino': '#000080',
+        'morado': '#800080',
+        'verde claro': '#90EE90'
+    };
+    return colores[color] || '#CCCCCC';
+}
+
+// Función addToCart para producto-detalle
+window.addToCart = async function (productId, esTextil, esBotonOCadena) {
+    console.log('🎯 addToCart desde detalle:', productId);
+
+    let talla = null;
+    let color = null;
+
+    // Obtener talla (si es textil)
+    if (esTextil) {
+        const tallaSelect = document.getElementById('tallaSelect');
+        if (tallaSelect) {
+            talla = tallaSelect.value;
+            if (!talla) {
+                alert('Por favor, selecciona una talla');
+                return;
+            }
+        }
+    }
+
+    // Obtener color (si es botón o cadena)
+    if (esBotonOCadena) {
+        const colorInput = document.getElementById('selectedColor');
+        if (colorInput) {
+            color = colorInput.value;
+            if (!color) {
+                alert('Por favor, selecciona un color');
+                return;
+            }
+            console.log('🎨 Color seleccionado para el carrito:', color);
+        }
+    }
+
+    const resultado = await window.CartCore.addToCart(productId, 1, talla, color);
+
+    if (resultado) {
+        alert('✅ Producto añadido al carrito');
+        window.CartCore.updateCartCounters();
+    } else {
+        alert('Error al añadir producto');
+    }
+};
+
+console.log('✅ producto-detalle-page.js cargado');
 
 // Función para obtener el color hexadecimal
 function getColorHex(color) {
