@@ -5,66 +5,11 @@
 // ===============================
 window.InitManager.register('HomePage', function () {
   console.log('🏠 Inicializando HomePage');
-  setupBuyButtons();
-  loadLatestProducts(); // ← AÑADIDA
+  loadLatestProducts();
 });
 
 // ===============================
-// BOTONES AÑADIR AL CARRITO (EXISTENTE)
-// ===============================
-function setupBuyButtons() {
-  document.querySelectorAll('.btn-buy').forEach(btn => {
-    btn.addEventListener('click', async () => {
-
-      if (!window.sessionService || !window.sessionService.isLoggedIn()) {
-        alert('Debes iniciar sesión para añadir productos');
-        if (window.showAuthModal) {
-          window.showAuthModal('login');
-        }
-        return;
-      }
-
-      const productId = parseInt(btn.dataset.productId);
-      const token = window.sessionService?.getToken ? window.sessionService.getToken() : null;
-      if (!token) {
-        alert('Error de sesión. Por favor, inicia sesión de nuevo.');
-        return;
-      }
-
-      try {
-
-        const response = await fetch(`${window.API_URL}/cart/add`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + token
-          },
-          body: JSON.stringify({ productId, quantity: 1 })
-        });
-
-        const data = await response.json();
-
-        if (!response.ok) {
-          alert(data.message || 'Error añadiendo producto');
-          return;
-        }
-
-        if (window.CartCore && typeof window.CartCore.updateCartCounters === 'function') {
-          window.CartCore.updateCartCounters();
-        }
-
-        alert('✅ Producto añadido al carrito');
-
-      } catch (error) {
-        console.error('Error:', error);
-        alert('Error de conexión con el servidor');
-      }
-    });
-  });
-}
-
-// ===============================
-// NUEVA FUNCIÓN: Cargar últimos 3 productos
+// Cargar últimos productos
 // ===============================
 async function loadLatestProducts() {
   console.log('🚀 loadLatestProducts INICIADO');
@@ -84,31 +29,28 @@ async function loadLatestProducts() {
     if (!response.ok) throw new Error('Error al cargar productos');
 
     const productos = await response.json();
-    console.log('📦 Productos recibidos:', productos.length, productos);
+    console.log('📦 Productos recibidos:', productos.length);
 
     if (productos.length === 0) {
-      console.log('⚠️ No hay productos en la BD');
       container.innerHTML = '<p class="no-products">No hay productos disponibles</p>';
       return;
     }
 
     const ultimosProductos = productos
       .sort((a, b) => b.id - a.id)
-      .slice(0, 3);
+      .slice(0, 4); // Mostrar 4 productos
 
-    console.log('✨ Últimos 3 productos:', ultimosProductos.map(p => p.nombre));
+    console.log('✨ Últimos productos:', ultimosProductos.map(p => p.nombre));
     renderLatestProducts(ultimosProductos);
 
   } catch (error) {
     console.error('❌ Error cargando últimos productos:', error);
-    if (container) {
-      container.innerHTML = '<p class="error">Error al cargar productos</p>';
-    }
+    container.innerHTML = '<p class="error">Error al cargar productos</p>';
   }
 }
 
 // ===============================
-// NUEVA FUNCIÓN: Renderizar los productos
+// Renderizar productos (con soporte para tallas y colores)
 // ===============================
 function renderLatestProducts(productos) {
   const container = document.getElementById('latestProductsContainer');
@@ -119,75 +61,198 @@ function renderLatestProducts(productos) {
     return;
   }
 
-  container.innerHTML = productos.map(p => `
-    <div class="product-card">
-      <div class="product-image">
-        <img src="${p.imagen}"  
-             alt="${p.nombre}"
-             onerror="this.src='https://via.placeholder.com/300x300?text=Producto'">
-        <div class="product-overlay">
-          <a href="producto-detalle.html?id=${p.id}" class="btn-quick-view">
-            <i class="fas fa-eye"></i> Ver detalles
-          </a>
-        </div>
-      </div>
-      <div class="product-info">
-        <h3>${p.nombre}</h3>
-        <p class="product-description">${p.descripcion || 'Producto artesanal de Salamanca'}</p>
-        <div class="product-price">
-          <span class="current-price">${parseFloat(p.precio).toFixed(2)}€</span>
-        </div>
-        <button class="btn-add-cart" onclick="addToCart(${p.id})">
-          <i class="fas fa-shopping-cart"></i> Añadir al carrito
-        </button>
-      </div>
-    </div>
-  `).join('');
+  container.innerHTML = productos.map(p => {
+    // Determinar tipo de producto según IDs reales
+    const esTextil = p.categoria_id === 2;        // Textil
+    const esBoton = p.categoria_id === 5;         // botones
+    const esCadena = p.categoria_id === 6;        // cadenas
+
+    // Lista de colores para BOTONES
+    const coloresBotones = [
+      'verde hierba', 'lila', 'fucsia', 'rosa', 'rojo', 'azulon', 'azul cielo',
+      'plata', 'blanco', 'negro', 'amarillo', 'amarillo fluor', 'naranja', 'crema'
+    ];
+
+    // Lista de colores para CADENAS
+    const coloresCadenas = [
+      'amarillo', 'verde', 'azul cielo', 'rosa', 'blanco', 'azul marino',
+      'fucsia', 'amarillo fluor', 'morado', 'naranja', 'verde claro'
+    ];
+
+    // Seleccionar colores según categoría
+    let colores = [];
+    if (esBoton) colores = coloresBotones;
+    if (esCadena) colores = coloresCadenas;
+
+    // HTML para selector de tallas (solo textil)
+    let tallasHTML = '';
+    if (esTextil) {
+      tallasHTML = `
+                <div class="talla-selector" style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                    <label style="display: block; margin-bottom: 5px; font-weight: 500; font-size: 0.9rem;">
+                        <i class="fas fa-tshirt" style="color: #e83083;"></i> Talla:
+                    </label>
+                    <select id="talla-${p.id}" class="talla-select" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" required>
+                        <option value="">Selecciona talla</option>
+                        <option value="XS">XS</option>
+                        <option value="S">S</option>
+                        <option value="M">M</option>
+                        <option value="L">L</option>
+                        <option value="XL">XL</option>
+                        <option value="XXL">XXL</option>
+                    </select>
+                </div>
+            `;
+    }
+
+    // HTML para selector de colores (solo botones/cadenas)
+    let coloresHTML = '';
+    if ((esBoton || esCadena) && colores.length > 0) {
+      coloresHTML = `
+                <div class="color-selector" style="margin: 10px 0; padding: 10px; background: #f9f9f9; border-radius: 5px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: 500; font-size: 0.9rem;">
+                        <i class="fas fa-palette" style="color: #e83083;"></i> Color:
+                    </label>
+                    <div class="color-options" style="display: flex; flex-wrap: wrap; gap: 8px;">
+                        ${colores.map(color => `
+                            <button type="button" 
+                                    class="color-btn" 
+                                    data-producto="${p.id}"
+                                    data-color="${color}"
+                                    style="background: ${getColorHex(color)}; width: 30px; height: 30px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer;"
+                                    title="${color}">
+                            </button>
+                        `).join('')}
+                    </div>
+                    <input type="hidden" id="color-${p.id}" value="">
+                </div>
+            `;
+    }
+
+    return `
+            <div class="product-card">
+                <a href="producto-detalle.html?id=${p.id}" class="product-link">
+                    <div class="product-image">
+                        <img src="${p.imagen}" alt="${p.nombre}" onerror="this.src='https://via.placeholder.com/300x300?text=Producto'">
+                        <div class="product-overlay">
+                            <span class="btn-quick-view">Ver detalles</span>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>${p.nombre}</h3>
+                        <p class="product-description">${p.descripcion || 'Producto artesanal de Salamanca'}</p>
+                        <div class="product-price">
+                            <span class="current-price">${parseFloat(p.precio).toFixed(2)}€</span>
+                        </div>
+                    </div>
+                </a>
+                
+                ${tallasHTML}
+                ${coloresHTML}
+                
+                <button class="btn-add-cart" onclick="addToCart(${p.id})">
+                    <i class="fas fa-shopping-cart"></i> Añadir al carrito
+                </button>
+            </div>
+        `;
+  }).join('');
+
+  // Inicializar eventos de los botones de color
+  document.querySelectorAll('.color-btn').forEach(btn => {
+    btn.addEventListener('click', function () {
+      const productId = this.dataset.producto;
+      const color = this.dataset.color;
+      const hiddenInput = document.getElementById(`color-${productId}`);
+      if (hiddenInput) hiddenInput.value = color;
+
+      document.querySelectorAll(`.color-btn[data-producto="${productId}"]`).forEach(b => {
+        b.style.border = '2px solid #ddd';
+      });
+      this.style.border = '3px solid #e83083';
+      console.log(`🎨 Color seleccionado: ${color}`);
+    });
+  });
+}
+
+// Función para obtener el color hexadecimal
+function getColorHex(color) {
+  const colores = {
+    'verde hierba': '#4CAF50', 'lila': '#C8A2C8', 'fucsia': '#FF00FF',
+    'rosa': '#FFC0CB', 'rojo': '#FF0000', 'azulon': '#00008B',
+    'azul cielo': '#87CEEB', 'plata': '#C0C0C0', 'blanco': '#FFFFFF',
+    'negro': '#000000', 'amarillo': '#FFFF00', 'amarillo fluor': '#CCFF00',
+    'naranja': '#FFA500', 'crema': '#FFFDD0', 'verde': '#4CAF50',
+    'azul marino': '#000080', 'morado': '#800080', 'verde claro': '#90EE90'
+  };
+  return colores[color] || '#CCCCCC';
 }
 
 // ===============================
-// FUNCIONES GLOBALES (para los botones)
+// 🔥 NUEVA FUNCIÓN addToCart (sin bloqueo de login)
 // ===============================
-window.quickView = async function (productId) {
+window.addToCart = async function (productId) {
+  console.log('🎯 addToCart desde home llamado:', productId);
+
+  // 🔥 ELIMINADA la verificación de login - ahora funciona sin sesión
+
+  let producto = null;
+  let talla = null;
+  let color = null;
+
   try {
     const response = await fetch(`${window.API_URL}/productos/${productId}`);
-    if (!response.ok) throw new Error('Error al cargar producto');
+    if (response.ok) {
+      producto = await response.json();
+      console.log('📦 Producto:', producto.nombre);
+      console.log('📋 Categoría ID:', producto.categoria_id);
 
-    const producto = await response.json();
-    alert(`🔍 ${producto.nombre}\nPrecio: ${producto.precio}€\n${producto.descripcion || 'Sin descripción'}`);
+      // Obtener talla (para textil)
+      const tallaSelect = document.getElementById(`talla-${productId}`);
+      if (tallaSelect) {
+        talla = tallaSelect.value;
+        if (tallaSelect.style.display !== 'none' && !talla) {
+          alert('Por favor, selecciona una talla');
+          return;
+        }
+      }
+
+      // Obtener color (para botones/cadenas)
+      const colorInput = document.getElementById(`color-${productId}`);
+      if (colorInput) {
+        color = colorInput.value;
+        if (!color) {
+          alert('Por favor, selecciona un color');
+          return;
+        }
+        console.log('🎨 Color seleccionado:', color);
+      }
+    }
   } catch (error) {
-    console.error('Error:', error);
-    alert('Error al cargar el producto');
-  }
-};
-
-window.addToCart = async function (productId) {
-  if (!window.sessionService?.isLoggedIn()) {
-    if (window.showAuthModal) window.showAuthModal('login');
+    console.error('Error obteniendo producto:', error);
+    alert('Error de conexión');
     return;
   }
 
   try {
+    // 🔥 Usar CartCore.addToCart (funciona con o sin token)
+    const resultado = await window.CartCore.addToCart(productId, 1, talla, color);
 
-    const response = await fetch(`${window.API_URL}/cart/add`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + window.sessionService.getToken()
-      },
-      body: JSON.stringify({ productId, quantity: 1 })
-    });
-
-    const data = await response.json();
-
-    if (response.ok) {
+    if (resultado) {
+      console.log('✅ Producto añadido correctamente');
       alert('✅ Producto añadido al carrito');
-      if (window.CartCore) window.CartCore.updateCartCounters();
+      window.CartCore.updateCartCounters();
     } else {
-      alert(data.message || 'Error al añadir producto');
+      alert('Error al añadir producto');
     }
   } catch (error) {
-    console.error('Error:', error);
+    console.error('❌ Error en addToCart:', error);
     alert('Error de conexión');
   }
 };
+
+// Vista rápida (redirige a detalle)
+window.quickView = async function (productId) {
+  window.location.href = `producto-detalle.html?id=${productId}`;
+};
+
+console.log('✅ home-page.js cargado correctamente');
