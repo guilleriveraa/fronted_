@@ -193,8 +193,6 @@ function getColorHex(color) {
 window.addToCart = async function (productId) {
   console.log('🎯 addToCart desde home llamado:', productId);
 
-  // 🔥 ELIMINADA la verificación de login - ahora funciona sin sesión
-
   let producto = null;
   let talla = null;
   let color = null;
@@ -206,7 +204,6 @@ window.addToCart = async function (productId) {
       console.log('📦 Producto:', producto.nombre);
       console.log('📋 Categoría ID:', producto.categoria_id);
 
-      // Obtener talla (para textil)
       const tallaSelect = document.getElementById(`talla-${productId}`);
       if (tallaSelect) {
         talla = tallaSelect.value;
@@ -216,7 +213,6 @@ window.addToCart = async function (productId) {
         }
       }
 
-      // Obtener color (para botones/cadenas)
       const colorInput = document.getElementById(`color-${productId}`);
       if (colorInput) {
         color = colorInput.value;
@@ -234,13 +230,49 @@ window.addToCart = async function (productId) {
   }
 
   try {
-    // 🔥 Usar CartCore.addToCart (funciona con o sin token)
     const resultado = await window.CartCore.addToCart(productId, 1, talla, color);
 
     if (resultado) {
       console.log('✅ Producto añadido correctamente');
       alert('✅ Producto añadido al carrito');
-      window.CartCore.updateCartCounters();
+
+      // Esperar a que se actualice el carrito
+      await new Promise(resolve => setTimeout(resolve, 200));
+
+      // Obtener el carrito actualizado
+      const cartActualizado = await window.CartCore.getCart();
+      const nuevoCount = cartActualizado.items?.length || 0;
+      console.log('📊 Nuevo contador:', nuevoCount);
+
+      // 🔥 ACTUALIZAR TODOS LOS POSIBLES CONTADORES DEL MENÚ MÓVIL
+      // Buscar por ID
+      const mobileSpan = document.getElementById('mobileCartCount');
+      if (mobileSpan) {
+        mobileSpan.textContent = nuevoCount;
+        console.log('✅ Contador móvil (#mobileCartCount) actualizado a:', nuevoCount);
+      }
+
+      // Buscar dentro del menú móvil
+      const mobileMenu = document.getElementById('mobileMenu');
+      if (mobileMenu) {
+        const menuCartSpan = mobileMenu.querySelector('.cart-count, [class*="cart-count"]');
+        if (menuCartSpan) {
+          menuCartSpan.textContent = nuevoCount;
+          console.log('✅ Contador dentro del menú móvil actualizado');
+        }
+      }
+
+      // Actualizar cualquier elemento con clase 'cart-count'
+      document.querySelectorAll('.cart-count').forEach(el => {
+        el.textContent = nuevoCount;
+        console.log('✅ Actualizado:', el.id || 'clase cart-count');
+      });
+
+      // Forzar actualización del sistema de contadores
+      if (window.CartCore) {
+        await window.CartCore.updateCartCounters();
+      }
+
     } else {
       alert('Error al añadir producto');
     }

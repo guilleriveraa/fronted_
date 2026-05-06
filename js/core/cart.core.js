@@ -400,26 +400,43 @@ class CartCore {
         try {
             const cart = await this.getCart();
             const count = cart.items?.length || 0;
+            console.log('🔄 updateCartCounters - nuevo count:', count);
 
-            const counters = [
-                'headerCartCount',
-                'headerCartCount2',
-                'mobileCartCount'
-            ];
-
+            // IDs específicos
+            const counters = ['headerCartCount', 'headerCartCount2', 'mobileCartCount'];
             counters.forEach(id => {
                 const el = document.getElementById(id);
                 if (el) {
-                    const oldCount = parseInt(el.textContent);
                     el.textContent = count;
-
-                    // ===== NUEVO: Animación si cambió =====
-                    if (oldCount !== count) {
-                        el.classList.add('cart-count-changed');
-                        setTimeout(() => el.classList.remove('cart-count-changed'), 300);
-                    }
+                    console.log(`✅ Actualizado ${id} a:`, count);
+                } else {
+                    console.log(`⚠️ No encontrado: ${id}`);
                 }
             });
+
+            // 🔥 Buscar dentro del menú móvil (por si el ID no funciona)
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu) {
+                const cartLinks = mobileMenu.querySelectorAll('a[href="carrito.html"]');
+                cartLinks.forEach(link => {
+                    let span = link.querySelector('.cart-count');
+                    if (!span) {
+                        span = document.createElement('span');
+                        span.className = 'cart-count';
+                        link.appendChild(span);
+                    }
+                    span.textContent = count;
+                    console.log('✅ Contador en menú móvil creado/actualizado');
+                });
+            }
+
+            // También buscar cualquier elemento con clase cart-count
+            document.querySelectorAll('.cart-count').forEach(el => {
+                if (el.id !== 'headerCartCount' && el.id !== 'mobileCartCount') {
+                    el.textContent = count;
+                }
+            });
+
         } catch (error) {
             console.error('Error updating cart counters:', error);
         }
