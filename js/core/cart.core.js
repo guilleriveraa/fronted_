@@ -449,7 +449,14 @@ class CartCore {
                     console.error('Error en listener del carrito:', e);
                 }
             });
-            this.updateCartCounters();
+
+            // 🔥 Solo actualizar contadores si NO estamos sincronizando
+            if (!this.estaSincronizando) {
+                this.updateCartCounters();
+            } else {
+                console.log('⚠️ notifyListeners: updateCartCounters bloqueado (estaSincronizando=true)');
+            }
+
             this.notifyTimeout = null;
         }, 100);
     }
@@ -551,29 +558,50 @@ class CartCore {
     }
 
     async limpiarLocalStorageForzado() {
-        this.estaSincronizando = true;  // ← BLOQUEAR GUARDADO
         console.log('💣 EJECUTANDO LIMPIEZA FORZADA DE LOCALSTORAGE');
 
+        // Bloquear guardado durante la limpieza
+        this.estaSincronizando = true;
+
+        // Limpiar localStorage
         localStorage.removeItem('svl_cart');
         localStorage.removeItem('cart');
         localStorage.removeItem('carrito');
         sessionStorage.removeItem('svl_cart');
 
+        // Vaciar carrito en memoria
         this.cart = null;
 
+        // Recargar carrito desde backend (sin guardar)
         const token = localStorage.getItem(window.TOKEN_KEY);
         if (token) {
-            const response = await fetch(`${window.API_URL}/cart`, {
-                headers: { 'Authorization': 'Bearer ' + token }
-            });
-            if (response.ok) {
-                let cartData = await response.json();
-                this.cart = cartData;
+            try {
+                const response = await fetch(`${window.API_URL}/cart`, {
+                    headers: { 'Authorization': 'Bearer ' + token }
+                });
+                if (response.ok) {
+                    let cartData = await response.json();
+                    if (cartData.items) {
+                        cartData.items = cartData.items.map(item => ({
+                            ...item,
+                            talla: item.talla || null,
+                            color: item.color || null
+                        }));
+                    }
+                    this.cart = cartData;
+                    // 🔥 IMPORTANTE: NO llamar a saveCartToStorage
+                }
+            } catch (error) {
+                console.error('Error recargando carrito:', error);
             }
         }
 
+        // Notificar cambios (pero no debe guardar porque estaSincronizando = true)
         this.notifyListeners();
-        this.estaSincronizando = false;  // ← REACTIVAR GUARDADO
+
+        // Reactivar guardado
+        this.estaSincronizando = false;
+
         console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
         console.log('✅ Limpieza forzada completada');
     }
