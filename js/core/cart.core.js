@@ -468,24 +468,34 @@ class CartCore {
 
     // 🔥 Sincronizar carrito local con el backend después del login
     async sincronizarCarritoLocal() {
-        this.estaSincronizando = true;  // ← BLOQUEAR
         console.log('🚀 INICIO sincronizarCarritoLocal');
+
+        // Bloquear guardado
+        this.estaSincronizando = true;
 
         const token = localStorage.getItem(window.TOKEN_KEY);
         if (!token) {
+            console.log('❌ No hay token');
             this.estaSincronizando = false;
             return;
         }
 
         const carritoLocal = this.getCartFromStorage();
         if (!carritoLocal || !carritoLocal.items.length) {
+            console.log('📦 No hay carrito local para sincronizar');
+            // Limpiar igualmente
             localStorage.removeItem('svl_cart');
+            localStorage.removeItem('cart');
+            localStorage.removeItem('carrito');
+            sessionStorage.removeItem('svl_cart');
             this.estaSincronizando = false;
             return;
         }
 
+        console.log(`📦 Items a sincronizar: ${carritoLocal.items.length}`);
         const itemsToSync = JSON.parse(JSON.stringify(carritoLocal.items));
 
+        // Sincronizar items al backend
         for (const item of itemsToSync) {
             try {
                 await fetch(`${window.API_URL}/cart/add`, {
@@ -501,25 +511,54 @@ class CartCore {
                         color: item.color || null
                     })
                 });
+                console.log(`✅ Item ${item.id} sincronizado`);
             } catch (error) {
-                console.error(`Error sincronizando item ${item.id}:`, error);
+                console.error(`❌ Error sincronizando item ${item.id}:`, error);
             }
         }
 
-        // Limpiar localStorage
+        // 🔥 LIMPIAR LOCALSTORAGE (FORZADO)
+        console.log('🧹 Limpiando localStorage...');
         localStorage.removeItem('svl_cart');
         localStorage.removeItem('cart');
         localStorage.removeItem('carrito');
         sessionStorage.removeItem('svl_cart');
 
-        // Recargar carrito
+        // 🔥 Vaciar carrito en memoria
         this.cart = null;
-        await this.getCart();
 
-        this.estaSincronizando = false;  // ← REACTIVAR
-        this.notifyListeners();
+        // 🔥 Recargar carrito desde backend (usando fetch directo, no getCart)
+        const response = await fetch(`${window.API_URL}/cart`, {
+            headers: { 'Authorization': 'Bearer ' + token }
+        });
 
-        console.log('✅ Carrito sincronizado y localStorage limpiado');
+        if (response.ok) {
+            let cartData = await response.json();
+            if (cartData.items) {
+                cartData.items = cartData.items.map(item => ({
+                    ...item,
+                    talla: item.talla || null,
+                    color: item.color || null
+                }));
+            }
+            this.cart = cartData;
+            // 🔥 NO llamar a saveCartToStorage
+        }
+
+        // Reactivar guardado
+        this.estaSincronizando = false;
+
+        // Notificar cambios (sin actualizar contadores para evitar guardado)
+        this.listeners.forEach(cb => { try { cb(); } catch (e) { } });
+
+        // Actualizar contadores manualmente sin pasar por getCart
+        const count = this.cart?.items?.length || 0;
+        document.querySelectorAll('.cart-count, #headerCartCount, #mobileCartCount').forEach(el => {
+            if (el) el.textContent = count;
+        });
+
+        console.log('✅ Carrito sincronizado correctamente');
+        console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
     }
 
     // ===== Vaciar carrito completamente =====
