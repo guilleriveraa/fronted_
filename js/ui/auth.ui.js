@@ -84,8 +84,6 @@ window.InitManager.register('AuthUI', function () {
     }
   }
 
-  // En auth.ui.js, reemplaza handleLogin con esto:
-
   async function handleLogin(e) {
     // Medidas antirrecarga extremas
     e.preventDefault();
@@ -121,11 +119,25 @@ window.InitManager.register('AuthUI', function () {
         loginEmail.value = '';
         loginPassword.value = '';
 
-        // 🔥🔥🔥 NUEVO: Sincronizar carrito local después del login
+        // 🔥 Sincronizar carrito local después del login
         if (window.CartCore) {
           console.log('🔄 Sincronizando carrito local con el backend...');
           await window.CartCore.sincronizarCarritoLocal();
           console.log('✅ Carrito sincronizado correctamente');
+
+          // 🔥 FORZAR LIMPIEZA DE LOCALSTORAGE
+          console.log('🧹 Forzando limpieza de localStorage...');
+          if (window.CartCore.limpiarLocalStorageForzado) {
+            await window.CartCore.limpiarLocalStorageForzado();
+          } else {
+            // Fallback manual
+            localStorage.removeItem('svl_cart');
+            localStorage.removeItem('cart');
+            localStorage.removeItem('carrito');
+            sessionStorage.removeItem('svl_cart');
+            console.log('✅ Limpieza manual de localStorage completada');
+          }
+          console.log('✅ Limpieza de localStorage completada');
         }
 
         if (window.updateSessionUI) {
@@ -144,7 +156,7 @@ window.InitManager.register('AuthUI', function () {
     }
 
     console.log('🔐 handleLogin: FIN');
-    return false; // Por si acaso
+    return false;
   }
 
   async function handleRegister() {
@@ -194,11 +206,25 @@ window.InitManager.register('AuthUI', function () {
         preguntaSeguridad.value = '';
         respuestaSeguridad.value = '';
 
-        // 🔥🔥🔥 NUEVO: Sincronizar carrito local después del registro
+        // 🔥 Sincronizar carrito local después del registro
         if (window.CartCore) {
           console.log('🔄 Sincronizando carrito local con el backend...');
           await window.CartCore.sincronizarCarritoLocal();
           console.log('✅ Carrito sincronizado correctamente');
+
+          // 🔥 FORZAR LIMPIEZA DE LOCALSTORAGE
+          console.log('🧹 Forzando limpieza de localStorage...');
+          if (window.CartCore.limpiarLocalStorageForzado) {
+            await window.CartCore.limpiarLocalStorageForzado();
+          } else {
+            // Fallback manual
+            localStorage.removeItem('svl_cart');
+            localStorage.removeItem('cart');
+            localStorage.removeItem('carrito');
+            sessionStorage.removeItem('svl_cart');
+            console.log('✅ Limpieza manual de localStorage completada');
+          }
+          console.log('✅ Limpieza de localStorage completada');
         }
 
         if (window.updateSessionUI) {
