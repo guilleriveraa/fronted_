@@ -531,27 +531,40 @@ class CartCore {
             return;
         }
 
-        console.log(`🔄 Sincronizando ${carritoLocal.items.length} items...`);
+        console.log('📦 Items a sincronizar:', carritoLocal.items.length);
 
-        // 🔥 PRIMERO: Guardar copia de los items
+        // 🔥 1. Guardar copia de los items ANTES de cualquier cosa
         const itemsToSync = JSON.parse(JSON.stringify(carritoLocal.items));
 
-        // 🔥 SEGUNDO: Vaciar localStorage INMEDIATAMENTE
-        console.log('🧹 Eliminando localStorage...');
+        // 🔥 2. LIMPIAR TODO - Múltiples métodos
+        console.log('🧹 Limpiando localStorage...');
         localStorage.removeItem('svl_cart');
+        localStorage.removeItem('cart');
+        localStorage.removeItem('carrito');
+        sessionStorage.removeItem('svl_cart');
 
-        // 🔥 TERCERO: Vaciar carrito en memoria
+        // 🔥 3. Vaciar carrito en memoria
         this.cart = null;
 
-        // 🔥 CUARTO: Verificar que se vació
-        console.log('Verificación localStorage después de eliminar:', localStorage.getItem('svl_cart'));
+        // 🔥 4. Forzar recarga del carrito vacío
+        await this.getCart();
 
-        // 🔥 QUINTO: Sincronizar items
+        // 🔥 5. Verificar que se limpió
+        console.log('Verificación localStorage después de limpiar:', {
+            svl_cart: localStorage.getItem('svl_cart'),
+            cart: localStorage.getItem('cart')
+        });
+
+        // 🔥 6. Ahora sí, sincronizar los items
         for (const item of itemsToSync) {
             try {
-                console.log(`📤 Sincronizando item ${item.id} (${item.name}) - Cantidad: ${item.quantity}, Talla: ${item.talla}, Color: ${item.color}`);
+                console.log(`📤 Sincronizando item ${item.id}:`, {
+                    name: item.name,
+                    quantity: item.quantity,
+                    talla: item.talla,
+                    color: item.color
+                });
 
-                // Llamar directamente al backend en lugar de usar addToCart
                 const response = await fetch(`${window.API_URL}/cart/add`, {
                     method: 'POST',
                     headers: {
@@ -566,22 +579,27 @@ class CartCore {
                     })
                 });
 
-                if (response.ok) {
-                    console.log(`✅ Item ${item.id} sincronizado correctamente`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error(`❌ Error sincronizando item ${item.id}:`, errorData);
                 } else {
-                    console.error(`❌ Error sincronizando item ${item.id}:`, await response.json());
+                    console.log(`✅ Item ${item.id} sincronizado`);
                 }
             } catch (error) {
                 console.error(`❌ Error sincronizando item ${item.id}:`, error);
             }
         }
 
-        // Recargar carrito desde backend
+        // 🔥 7. Recargar carrito desde backend
+        this.cart = null;
         await this.getCart();
         this.notifyListeners();
 
         console.log('✅ Carrito sincronizado correctamente');
-        console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
+        console.log('🧹 localStorage FINAL:', {
+            svl_cart: localStorage.getItem('svl_cart'),
+            cart: localStorage.getItem('cart')
+        });
     }
     // ===== NUEVO: Vaciar carrito completamente =====
     async vaciarCarritoCompleto() {
