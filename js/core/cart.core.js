@@ -543,13 +543,34 @@ class CartCore {
 
     async limpiarLocalStorageForzado() {
         console.log('💣 EJECUTANDO LIMPIEZA FORZADA DE LOCALSTORAGE');
+
+        // 1. Limpiar localStorage
         localStorage.removeItem('svl_cart');
         localStorage.removeItem('cart');
         localStorage.removeItem('carrito');
         sessionStorage.removeItem('svl_cart');
+
+        // 2. Vaciar carrito en memoria
         this.cart = null;
-        await this.getCart();
+
+        // 3. Recargar carrito desde backend (pero sin guardar en localStorage)
+        const token = localStorage.getItem(window.TOKEN_KEY);
+        if (token) {
+            const response = await fetch(`${window.API_URL}/cart`, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (response.ok) {
+                let cartData = await response.json();
+                this.cart = cartData;
+                // 🔥 IMPORTANTE: NO llamar a saveCartToStorage aquí
+            }
+        }
+
+        // 4. Notificar cambios
         this.notifyListeners();
+
+        // 5. Verificar que el localStorage sigue vacío
+        console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
         console.log('✅ Limpieza forzada completada');
     }
 
