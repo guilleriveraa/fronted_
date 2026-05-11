@@ -125,19 +125,22 @@ window.InitManager.register('AuthUI', function () {
           await window.CartCore.sincronizarCarritoLocal();
           console.log('✅ Carrito sincronizado correctamente');
 
-          // 🔥 FORZAR LIMPIEZA DE LOCALSTORAGE
-          console.log('🧹 Forzando limpieza de localStorage...');
-          if (window.CartCore.limpiarLocalStorageForzado) {
-            await window.CartCore.limpiarLocalStorageForzado();
+          // 🔥 Limpieza post-sincronización
+          console.log('🧹 Ejecutando limpieza post-sincronización...');
+          if (window.CartCore.limpiarDespuesDeSincronizar) {
+            await window.CartCore.limpiarDespuesDeSincronizar();
           } else {
             // Fallback manual
             localStorage.removeItem('svl_cart');
             localStorage.removeItem('cart');
             localStorage.removeItem('carrito');
             sessionStorage.removeItem('svl_cart');
-            console.log('✅ Limpieza manual de localStorage completada');
+            window.CartCore.cart = null;
+            await window.CartCore.getCart();
+            window.CartCore.notifyListeners();
+            console.log('✅ Limpieza manual completada');
           }
-          console.log('✅ Limpieza de localStorage completada');
+          console.log('✅ Limpieza post-sincronización completada');
         }
 
         if (window.updateSessionUI) {
@@ -212,19 +215,22 @@ window.InitManager.register('AuthUI', function () {
           await window.CartCore.sincronizarCarritoLocal();
           console.log('✅ Carrito sincronizado correctamente');
 
-          // 🔥 FORZAR LIMPIEZA DE LOCALSTORAGE
-          console.log('🧹 Forzando limpieza de localStorage...');
-          if (window.CartCore.limpiarLocalStorageForzado) {
-            await window.CartCore.limpiarLocalStorageForzado();
+          // 🔥 Limpieza post-sincronización
+          console.log('🧹 Ejecutando limpieza post-sincronización...');
+          if (window.CartCore.limpiarDespuesDeSincronizar) {
+            await window.CartCore.limpiarDespuesDeSincronizar();
           } else {
             // Fallback manual
             localStorage.removeItem('svl_cart');
             localStorage.removeItem('cart');
             localStorage.removeItem('carrito');
             sessionStorage.removeItem('svl_cart');
-            console.log('✅ Limpieza manual de localStorage completada');
+            window.CartCore.cart = null;
+            await window.CartCore.getCart();
+            window.CartCore.notifyListeners();
+            console.log('✅ Limpieza manual completada');
           }
-          console.log('✅ Limpieza de localStorage completada');
+          console.log('✅ Limpieza post-sincronización completada');
         }
 
         if (window.updateSessionUI) {

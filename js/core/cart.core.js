@@ -585,8 +585,26 @@ class CartCore {
             return false;
         }
     }
-}
 
+
+    async limpiarDespuesDeSincronizar() {
+        console.log('🧹 Ejecutando limpieza post-sincronización');
+
+        // Limpiar localStorage
+        localStorage.removeItem('svl_cart');
+        localStorage.removeItem('cart');
+        localStorage.removeItem('carrito');
+        sessionStorage.removeItem('svl_cart');
+
+        // Vaciar memoria y recargar
+        this.cart = null;
+        await this.getCart();
+        this.notifyListeners();
+
+        console.log('✅ Limpieza post-sincronización completada');
+        console.log('localStorage final:', localStorage.getItem('svl_cart'));
+    }
+}
 // Instancia global
 window.CartCore = new CartCore();
 
