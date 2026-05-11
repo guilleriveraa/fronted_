@@ -466,11 +466,6 @@ class CartCore {
     async sincronizarCarritoLocal() {
         console.log('🚀 INICIO sincronizarCarritoLocal');
 
-        // 🔥 FORZAR LIMPIEZA INICIAL
-        localStorage.removeItem('svl_cart');
-        localStorage.removeItem('cart');
-        localStorage.removeItem('carrito');
-
         const token = localStorage.getItem(window.TOKEN_KEY);
         if (!token) {
             console.log('❌ No hay token');
