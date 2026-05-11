@@ -470,7 +470,7 @@ class CartCore {
     async sincronizarCarritoLocal() {
         console.log('🚀 INICIO sincronizarCarritoLocal');
 
-        // Bloquear guardado
+        // Bloquear guardado durante la sincronización
         this.estaSincronizando = true;
 
         const token = localStorage.getItem(window.TOKEN_KEY);
@@ -483,22 +483,44 @@ class CartCore {
         const carritoLocal = this.getCartFromStorage();
         if (!carritoLocal || !carritoLocal.items.length) {
             console.log('📦 No hay carrito local para sincronizar');
-            // Limpiar igualmente
+            // Asegurar limpieza
             localStorage.removeItem('svl_cart');
             localStorage.removeItem('cart');
             localStorage.removeItem('carrito');
-            sessionStorage.removeItem('svl_cart');
             this.estaSincronizando = false;
             return;
         }
 
         console.log(`📦 Items a sincronizar: ${carritoLocal.items.length}`);
+
+        // Limpiar localStorage ANTES de sincronizar (para evitar duplicados)
         const itemsToSync = JSON.parse(JSON.stringify(carritoLocal.items));
+        localStorage.removeItem('svl_cart');
+        localStorage.removeItem('cart');
+        localStorage.removeItem('carrito');
+        sessionStorage.removeItem('svl_cart');
+        this.cart = null;
 
         // Sincronizar items al backend
         for (const item of itemsToSync) {
             try {
-                await fetch(`${window.API_URL}/cart/add`, {
+                console.log(`📤 Sincronizando item ${item.id}:`, {
+                    name: item.name,
+                    quantity: item.quantity,
+                    talla: item.talla,
+                    color: item.color
+                });
+
+                // Verificar si el producto ya existe en el backend antes de añadir
+                const cartActual = await this.getCartActualDesdeBackend(token);
+                const yaExiste = cartActual.items.some(i => i.id === item.id && i.color === item.color);
+
+                if (yaExiste) {
+                    console.log(`⚠️ Item ${item.id} ya existe en el backend, no se duplica`);
+                    continue;
+                }
+
+                const response = await fetch(`${window.API_URL}/cart/add`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -511,54 +533,50 @@ class CartCore {
                         color: item.color || null
                     })
                 });
-                console.log(`✅ Item ${item.id} sincronizado`);
+
+                if (!response.ok) {
+                    console.error(`❌ Error sincronizando item ${item.id}:`, await response.json());
+                } else {
+                    console.log(`✅ Item ${item.id} sincronizado`);
+                }
             } catch (error) {
                 console.error(`❌ Error sincronizando item ${item.id}:`, error);
             }
         }
 
-        // 🔥 LIMPIAR LOCALSTORAGE (FORZADO)
-        console.log('🧹 Limpiando localStorage...');
-        localStorage.removeItem('svl_cart');
-        localStorage.removeItem('cart');
-        localStorage.removeItem('carrito');
-        sessionStorage.removeItem('svl_cart');
-
-        // 🔥 Vaciar carrito en memoria
+        // Recargar carrito desde backend
         this.cart = null;
-
-        // 🔥 Recargar carrito desde backend (usando fetch directo, no getCart)
-        const response = await fetch(`${window.API_URL}/cart`, {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-
-        if (response.ok) {
-            let cartData = await response.json();
-            if (cartData.items) {
-                cartData.items = cartData.items.map(item => ({
-                    ...item,
-                    talla: item.talla || null,
-                    color: item.color || null
-                }));
-            }
-            this.cart = cartData;
-            // 🔥 NO llamar a saveCartToStorage
-        }
+        await this.getCart();
 
         // Reactivar guardado
         this.estaSincronizando = false;
-
-        // Notificar cambios (sin actualizar contadores para evitar guardado)
-        this.listeners.forEach(cb => { try { cb(); } catch (e) { } });
-
-        // Actualizar contadores manualmente sin pasar por getCart
-        const count = this.cart?.items?.length || 0;
-        document.querySelectorAll('.cart-count, #headerCartCount, #mobileCartCount').forEach(el => {
-            if (el) el.textContent = count;
-        });
+        this.notifyListeners();
 
         console.log('✅ Carrito sincronizado correctamente');
         console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
+    }
+
+    // Función auxiliar para obtener carrito actual del backend
+    async getCartActualDesdeBackend(token) {
+        try {
+            const response = await fetch(`${window.API_URL}/cart`, {
+                headers: { 'Authorization': 'Bearer ' + token }
+            });
+            if (response.ok) {
+                let cartData = await response.json();
+                if (cartData.items) {
+                    cartData.items = cartData.items.map(item => ({
+                        ...item,
+                        talla: item.talla || null,
+                        color: item.color || null
+                    }));
+                }
+                return cartData;
+            }
+        } catch (error) {
+            console.error('Error obteniendo carrito actual:', error);
+        }
+        return { items: [] };
     }
 
     // ===== Vaciar carrito completamente =====
