@@ -520,23 +520,33 @@ class CartCore {
         const token = localStorage.getItem(window.TOKEN_KEY);
         if (!token) return;
 
-        // Obtener carrito local
         const carritoLocal = this.getCartFromStorage();
         if (!carritoLocal || !carritoLocal.items.length) return;
 
         console.log('🔄 Sincronizando carrito local con el backend...');
 
+        let errores = [];
+
         for (const item of carritoLocal.items) {
-            await this.addToCart(item.id, item.quantity, item.talla, item.color);
+            try {
+                await this.addToCart(item.id, item.quantity, item.talla, item.color);
+                console.log(`✅ Item ${item.id} sincronizado`);
+            } catch (error) {
+                console.error(`❌ Error sincronizando item ${item.id}:`, error);
+                errores.push(item);
+            }
         }
 
-        // Limpiar carrito local y recargar
-        this.cart = null;
-        localStorage.removeItem('svl_cart');
-        await this.getCart();
-        this.notifyListeners();
-
-        console.log('✅ Carrito sincronizado correctamente');
+        if (errores.length === 0) {
+            // Solo limpiar si todos los items se sincronizaron correctamente
+            this.cart = null;
+            localStorage.removeItem('svl_cart');
+            await this.getCart();
+            this.notifyListeners();
+            console.log('✅ Carrito sincronizado correctamente');
+        } else {
+            console.warn(`⚠️ ${errores.length} items no se sincronizaron. Carrito local preservado.`);
+        }
     }
     // ===== NUEVO: Vaciar carrito completamente =====
     async vaciarCarritoCompleto() {
