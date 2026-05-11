@@ -4,6 +4,7 @@ class CartCore {
         this.cart = null;
         this.listeners = [];
         this.notifyTimeout = null;
+        this.estaSincronizando = false;
 
         // 🎁 NUEVO: Inicializar opción de regalo
         this.gift = {
@@ -168,6 +169,12 @@ class CartCore {
 
     // ===== Guardar carrito en localStorage =====
     saveCartToStorage(cart) {
+        // 🔥 NO guardar durante la sincronización
+        if (this.estaSincronizando) {
+            console.log('⚠️ Sincronizando, no se guarda en localStorage');
+            return;
+        }
+
         let cartToSave = { ...cart };
 
         if (cartToSave.items) {
@@ -464,10 +471,12 @@ class CartCore {
 
     // 🔥 Sincronizar carrito local con el backend después del login
     async sincronizarCarritoLocal() {
+        this.estaSincronizando = true;  // ← BLOQUEAR GUARDADO
         console.log('🚀 INICIO sincronizarCarritoLocal');
 
         const token = localStorage.getItem(window.TOKEN_KEY);
         if (!token) {
+            this.estaSincronizando = false;
             console.log('❌ No hay token');
             return;
         }
@@ -475,19 +484,16 @@ class CartCore {
         const carritoLocal = this.getCartFromStorage();
         if (!carritoLocal || !carritoLocal.items.length) {
             console.log('📦 No hay carrito local para sincronizar');
-            // 🔥 Aún así, limpiar por si acaso
             localStorage.removeItem('svl_cart');
             localStorage.removeItem('cart');
             localStorage.removeItem('carrito');
+            this.estaSincronizando = false;
             return;
         }
 
         console.log(`📦 Items a sincronizar: ${carritoLocal.items.length}`);
-
-        // Guardar copia de los items
         const itemsToSync = JSON.parse(JSON.stringify(carritoLocal.items));
 
-        // Sincronizar items al backend
         for (const item of itemsToSync) {
             try {
                 console.log(`📤 Sincronizando item ${item.id}:`, {
@@ -522,38 +528,34 @@ class CartCore {
             }
         }
 
-        // 🔥 🔥 🔥 LIMPIAR LOCALSTORAGE (FORZADO) 🔥 🔥 🔥
+        // Limpiar localStorage
         console.log('🧹 Forzando limpieza de localStorage...');
         localStorage.removeItem('svl_cart');
         localStorage.removeItem('cart');
         localStorage.removeItem('carrito');
         sessionStorage.removeItem('svl_cart');
 
-        // Verificar que se limpió
-        console.log('🧹 Verificación localStorage después de limpiar:', localStorage.getItem('svl_cart'));
-
         // Recargar carrito desde backend
         this.cart = null;
         await this.getCart();
         this.notifyListeners();
 
+        this.estaSincronizando = false;  // ← REACTIVAR GUARDADO
         console.log('✅ Carrito sincronizado correctamente');
         console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
     }
 
     async limpiarLocalStorageForzado() {
+        this.estaSincronizando = true;  // ← BLOQUEAR GUARDADO
         console.log('💣 EJECUTANDO LIMPIEZA FORZADA DE LOCALSTORAGE');
 
-        // 1. Limpiar localStorage
         localStorage.removeItem('svl_cart');
         localStorage.removeItem('cart');
         localStorage.removeItem('carrito');
         sessionStorage.removeItem('svl_cart');
 
-        // 2. Vaciar carrito en memoria
         this.cart = null;
 
-        // 3. Recargar carrito desde backend (pero sin guardar en localStorage)
         const token = localStorage.getItem(window.TOKEN_KEY);
         if (token) {
             const response = await fetch(`${window.API_URL}/cart`, {
@@ -562,14 +564,11 @@ class CartCore {
             if (response.ok) {
                 let cartData = await response.json();
                 this.cart = cartData;
-                // 🔥 IMPORTANTE: NO llamar a saveCartToStorage aquí
             }
         }
 
-        // 4. Notificar cambios
         this.notifyListeners();
-
-        // 5. Verificar que el localStorage sigue vacío
+        this.estaSincronizando = false;  // ← REACTIVAR GUARDADO
         console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
         console.log('✅ Limpieza forzada completada');
     }
