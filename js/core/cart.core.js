@@ -532,31 +532,47 @@ class CartCore {
         }
 
         console.log(`🔄 Sincronizando ${carritoLocal.items.length} items...`);
-        console.log('📦 Items a sincronizar:', JSON.stringify(carritoLocal.items, null, 2));
 
-        // Guardar copia de los items
-        const itemsToSync = [...carritoLocal.items];
+        // 🔥 PRIMERO: Guardar copia de los items
+        const itemsToSync = JSON.parse(JSON.stringify(carritoLocal.items));
 
-        // 🔥 IMPORTANTE: Limpiar localStorage ANTES de sincronizar
-        console.log('🧹 Limpiando localStorage...');
+        // 🔥 SEGUNDO: Vaciar localStorage INMEDIATAMENTE
+        console.log('🧹 Eliminando localStorage...');
         localStorage.removeItem('svl_cart');
+
+        // 🔥 TERCERO: Vaciar carrito en memoria
         this.cart = null;
 
-        // Sincronizar cada item
-        let errores = 0;
+        // 🔥 CUARTO: Verificar que se vació
+        console.log('Verificación localStorage después de eliminar:', localStorage.getItem('svl_cart'));
+
+        // 🔥 QUINTO: Sincronizar items
         for (const item of itemsToSync) {
             try {
-                console.log(`📤 Sincronizando item ${item.id} (cantidad: ${item.quantity})`);
-                const resultado = await this.addToCart(item.id, item.quantity, item.talla, item.color);
-                if (resultado) {
+                console.log(`📤 Sincronizando item ${item.id} (${item.name}) - Cantidad: ${item.quantity}, Talla: ${item.talla}, Color: ${item.color}`);
+
+                // Llamar directamente al backend en lugar de usar addToCart
+                const response = await fetch(`${window.API_URL}/cart/add`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer ' + token
+                    },
+                    body: JSON.stringify({
+                        productId: item.id,
+                        quantity: item.quantity,
+                        talla: item.talla,
+                        color: item.color
+                    })
+                });
+
+                if (response.ok) {
                     console.log(`✅ Item ${item.id} sincronizado correctamente`);
                 } else {
-                    console.error(`❌ Error sincronizando item ${item.id}`);
-                    errores++;
+                    console.error(`❌ Error sincronizando item ${item.id}:`, await response.json());
                 }
             } catch (error) {
                 console.error(`❌ Error sincronizando item ${item.id}:`, error);
-                errores++;
             }
         }
 
@@ -564,13 +580,8 @@ class CartCore {
         await this.getCart();
         this.notifyListeners();
 
-        if (errores === 0) {
-            console.log('✅ Carrito sincronizado correctamente');
-        } else {
-            console.warn(`⚠️ Carrito sincronizado con ${errores} errores`);
-        }
-
-        console.log('🧹 Verificar localStorage:', localStorage.getItem('svl_cart'));
+        console.log('✅ Carrito sincronizado correctamente');
+        console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
     }
     // ===== NUEVO: Vaciar carrito completamente =====
     async vaciarCarritoCompleto() {
