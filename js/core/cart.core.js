@@ -466,6 +466,11 @@ class CartCore {
     async sincronizarCarritoLocal() {
         console.log('🚀 INICIO sincronizarCarritoLocal');
 
+        // 🔥 FORZAR LIMPIEZA INICIAL
+        localStorage.removeItem('svl_cart');
+        localStorage.removeItem('cart');
+        localStorage.removeItem('carrito');
+
         const token = localStorage.getItem(window.TOKEN_KEY);
         if (!token) {
             console.log('❌ No hay token');
@@ -520,6 +525,11 @@ class CartCore {
         this.cart = null;
         await this.getCart(true);
         this.notifyListeners();
+
+        // 🔥 FORZAR LIMPIEZA INICIAL
+        localStorage.removeItem('svl_cart');
+        localStorage.removeItem('cart');
+        localStorage.removeItem('carrito');
 
         console.log('✅ Carrito sincronizado correctamente');
         console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
