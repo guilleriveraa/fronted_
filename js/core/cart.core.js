@@ -70,9 +70,7 @@ class CartCore {
             }
 
             const response = await fetch(`${window.API_URL}/cart`, {
-                headers: {
-                    'Authorization': 'Bearer ' + token
-                }
+                headers: { 'Authorization': 'Bearer ' + token }
             });
 
             if (!response.ok) {
@@ -95,7 +93,8 @@ class CartCore {
 
             this.cart = cartData;
 
-            if (guardarEnStorage) {
+            // 🔥 MODIFICADO: No guardar durante sincronización
+            if (guardarEnStorage && !this.estaSincronizando) {
                 this.saveCartToStorage(cartData);
             }
 
@@ -377,6 +376,12 @@ class CartCore {
 
     // ===== Actualizar contadores del carrito =====
     async updateCartCounters() {
+        // 🔥 Si estamos sincronizando, no hacer nada
+        if (this.estaSincronizando) {
+            console.log('⚠️ updateCartCounters bloqueado durante sincronización');
+            return;
+        }
+
         try {
             const cart = await this.getCart();
             const count = cart.items?.length || 0;
