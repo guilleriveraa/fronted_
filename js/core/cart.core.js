@@ -31,11 +31,10 @@ class CartCore {
 
     // ===== NUEVO: Sincronización entre pestañas =====
     setupCrossTabSync() {
-        // Escuchar cambios en localStorage de otras pestañas
         window.addEventListener('storage', (event) => {
             if (event.key === 'svl_cart') {
                 console.log('🔄 Carrito modificado en otra pestaña, sincronizando...');
-                this.cart = null; // Invalidar caché
+                this.cart = null;
                 this.notifyListeners();
             }
             if (event.key === window.TOKEN_KEY) {
@@ -44,7 +43,6 @@ class CartCore {
             }
         });
 
-        // Escuchar cuando la pestaña se activa
         document.addEventListener('visibilitychange', () => {
             if (!document.hidden) {
                 console.log('👁️ Pestaña activada, refrescando carrito...');
@@ -54,8 +52,8 @@ class CartCore {
         });
     }
 
-    // Obtener carrito (desde API o localStorage)
-    async getCart(guardarEnStorage = true) {  // ← AÑADIR PARÁMETRO
+    // ===== Obtener carrito (desde API o localStorage) =====
+    async getCart(guardarEnStorage = true) {
         if (this.cart) return this.cart;
 
         try {
@@ -96,7 +94,6 @@ class CartCore {
 
             this.cart = cartData;
 
-            // 🔥 SOLO guardar si guardarEnStorage es true
             if (guardarEnStorage) {
                 this.saveCartToStorage(cartData);
             }
@@ -112,7 +109,7 @@ class CartCore {
         }
     }
 
-    // Carrito vacío por defecto
+    // ===== Carrito vacío por defecto =====
     getEmptyCart() {
         return {
             items: [],
@@ -128,20 +125,79 @@ class CartCore {
             lastUpdated: new Date().toISOString()
         };
     }
-    // 🎁 NUEVO: Establecer opción de regalo
+
+    // ===== Recuperar carrito de localStorage =====
+    getCartFromStorage() {
+        const saved = localStorage.getItem('svl_cart');
+        if (!saved) return null;
+
+        try {
+            let cart = JSON.parse(saved);
+
+            if (!cart.gift) {
+                cart.gift = { active: false, message: '', cost: 2.00 };
+            }
+
+            if (cart.items) {
+                cart.items = cart.items.map(item => ({
+                    ...item,
+                    talla: item.talla || null,
+                    color: item.color || null
+                }));
+            }
+
+            if (cart.lastUpdated) {
+                const lastUpdate = new Date(cart.lastUpdated);
+                const now = new Date();
+                const hoursDiff = (now - lastUpdate) / (1000 * 60 * 60);
+
+                if (hoursDiff > 24) {
+                    console.log('🗑️ Carrito offline demasiado antiguo, limpiando...');
+                    localStorage.removeItem('svl_cart');
+                    return null;
+                }
+            }
+
+            return cart;
+        } catch (e) {
+            console.error('Error parsing cart from storage:', e);
+            localStorage.removeItem('svl_cart');
+            return null;
+        }
+    }
+
+    // ===== Guardar carrito en localStorage =====
+    saveCartToStorage(cart) {
+        let cartToSave = { ...cart };
+
+        if (cartToSave.items) {
+            cartToSave.items = cartToSave.items.map(item => ({
+                ...item,
+                talla: item.talla || null,
+                color: item.color || null
+            }));
+        }
+
+        cartToSave = {
+            ...cartToSave,
+            lastUpdated: new Date().toISOString()
+        };
+
+        localStorage.setItem('svl_cart', JSON.stringify(cartToSave));
+    }
+
+    // ===== Establecer opción de regalo =====
     setGiftOption(active, message = '') {
         return new Promise(async (resolve) => {
             const cart = await this.getCart();
 
-            // Asegurar que existe el objeto gift
             if (!cart.gift) {
                 cart.gift = { active: false, message: '', cost: 2.00 };
             }
 
             cart.gift.active = active;
-            cart.gift.message = message.substring(0, 200); // Limitar a 200 caracteres
+            cart.gift.message = message.substring(0, 200);
 
-            // Actualizar carrito
             this.cart = cart;
             this.updateCartTotals(cart);
             this.saveCartToStorage(cart);
@@ -151,12 +207,12 @@ class CartCore {
             resolve(cart.gift);
         });
     }
-    // 🆕 NUEVO: Añadir producto al carrito (con o sin sesión)
+
+    // ===== Añadir producto al carrito =====
     async addToCart(productId, quantity = 1, talla = null, color = null) {
         const token = localStorage.getItem(window.TOKEN_KEY);
 
         try {
-            // 🔥 Si hay token, usar el backend
             if (token) {
                 const response = await fetch(`${window.API_URL}/cart/add`, {
                     method: 'POST',
@@ -164,38 +220,26 @@ class CartCore {
                         'Content-Type': 'application/json',
                         'Authorization': 'Bearer ' + token
                     },
-                    body: JSON.stringify({
-                        productId,
-                        quantity,
-                        talla,
-                        color
-                    })
+                    body: JSON.stringify({ productId, quantity, talla, color })
                 });
 
                 if (!response.ok) {
                     throw new Error('Error al añadir producto');
                 }
 
-                // Invalidar caché y recargar carrito
                 this.cart = null;
                 await this.getCart();
                 this.notifyListeners();
 
                 window.errorHandler?.success('Producto añadido al carrito');
                 return true;
-            }
-
-            // 🔥 Si NO hay token (usuario no logueado), guardar en localStorage
-            else {
-                // Obtener información del producto
+            } else {
                 const productResponse = await fetch(`${window.API_URL}/productos/${productId}`);
                 if (!productResponse.ok) throw new Error('Error al obtener producto');
                 const producto = await productResponse.json();
 
-                // Obtener carrito actual de localStorage
                 let cart = this.getCartFromStorage() || this.getEmptyCart();
 
-                // Buscar si el producto ya está en el carrito con la misma talla
                 const existingItem = cart.items.find(item =>
                     item.id === productId && item.talla === talla && item.color === color
                 );
@@ -214,10 +258,7 @@ class CartCore {
                     });
                 }
 
-                // Recalcular totales
                 this.updateCartTotals(cart);
-
-                // Guardar en localStorage
                 this.saveCartToStorage(cart);
                 this.cart = cart;
                 this.notifyListeners();
@@ -225,42 +266,19 @@ class CartCore {
                 window.errorHandler?.success('Producto añadido al carrito');
                 return true;
             }
-
         } catch (error) {
             console.error('Error adding to cart:', error);
             window.errorHandler?.error('Error al añadir producto');
             return false;
         }
     }
-    // Guardar carrito en localStorage (offline)
-    saveCartToStorage(cart) {
-        // 🔥🔥🔥 CAMBIO 2: Procesar items antes de guardar
-        let cartToSave = { ...cart };
 
-        if (cartToSave.items) {
-            cartToSave.items = cartToSave.items.map(item => ({
-                ...item,
-                talla: item.talla || null,
-                color: item.color || null
-            }));
-        }
-
-        // ===== MEJORADO: Añadir timestamp =====
-        cartToSave = {
-            ...cartToSave,
-            lastUpdated: new Date().toISOString()
-        };
-
-        localStorage.setItem('svl_cart', JSON.stringify(cartToSave));
-    }
-
-    // Cambiar cantidad de un producto
+    // ===== Cambiar cantidad de un producto =====
     async changeQty(productId, delta) {
         const token = localStorage.getItem(window.TOKEN_KEY);
 
         try {
             if (!token) {
-                // Modo offline
                 const cart = await this.getCart();
                 const item = cart.items.find(i => i.id === productId);
 
@@ -283,7 +301,6 @@ class CartCore {
                 return;
             }
 
-            // Modo online
             const response = await fetch(`${window.API_URL}/cart/update`, {
                 method: 'POST',
                 headers: {
@@ -297,25 +314,23 @@ class CartCore {
                 throw new Error('Error al actualizar carrito');
             }
 
-            this.cart = null; // Invalidar caché
-            await this.getCart(); // Recargar
+            this.cart = null;
+            await this.getCart();
             this.notifyListeners();
 
             window.errorHandler?.success('Carrito actualizado');
-
         } catch (error) {
             console.error('Error changing quantity:', error);
             window.errorHandler?.error('Error al actualizar el carrito');
         }
     }
 
-    // Eliminar producto del carrito
+    // ===== Eliminar producto del carrito =====
     async removeFromCart(productId) {
         const token = localStorage.getItem(window.TOKEN_KEY);
 
         try {
             if (!token) {
-                // Modo offline
                 const cart = await this.getCart();
                 const itemIndex = cart.items.findIndex(i => i.id === productId);
 
@@ -331,7 +346,6 @@ class CartCore {
                 return;
             }
 
-            // Modo online
             const response = await fetch(`${window.API_URL}/cart/remove/${productId}`, {
                 method: 'DELETE',
                 headers: {
@@ -348,33 +362,25 @@ class CartCore {
             this.notifyListeners();
 
             window.errorHandler?.success('Producto eliminado');
-
         } catch (error) {
             console.error('Error removing item:', error);
             window.errorHandler?.error('Error al eliminar el producto');
         }
     }
 
-    // Actualizar contadores del carrito en el header
+    // ===== Actualizar contadores del carrito =====
     async updateCartCounters() {
         try {
             const cart = await this.getCart();
             const count = cart.items?.length || 0;
             console.log('🔄 updateCartCounters - nuevo count:', count);
 
-            // IDs específicos
             const counters = ['headerCartCount', 'headerCartCount2', 'mobileCartCount'];
             counters.forEach(id => {
                 const el = document.getElementById(id);
-                if (el) {
-                    el.textContent = count;
-                    console.log(`✅ Actualizado ${id} a:`, count);
-                } else {
-                    console.log(`⚠️ No encontrado: ${id}`);
-                }
+                if (el) el.textContent = count;
             });
 
-            // 🔥 Buscar dentro del menú móvil (por si el ID no funciona)
             const mobileMenu = document.getElementById('mobileMenu');
             if (mobileMenu) {
                 const cartLinks = mobileMenu.querySelectorAll('a[href="carrito.html"]');
@@ -386,48 +392,32 @@ class CartCore {
                         link.appendChild(span);
                     }
                     span.textContent = count;
-                    console.log('✅ Contador en menú móvil creado/actualizado');
                 });
             }
-
-            // También buscar cualquier elemento con clase cart-count
-            document.querySelectorAll('.cart-count').forEach(el => {
-                if (el.id !== 'headerCartCount' && el.id !== 'mobileCartCount') {
-                    el.textContent = count;
-                }
-            });
-
         } catch (error) {
             console.error('Error updating cart counters:', error);
         }
     }
 
-    // Calcular totales del carrito (con opción de regalo)
+    // ===== Calcular totales del carrito =====
     updateCartTotals(cart) {
-        // Calcular subtotal de productos
         const itemsTotal = cart.items.reduce((sum, item) =>
             sum + (item.price * item.quantity), 0
         );
 
-        // 🎁 Añadir coste de regalo si está activo
         const giftCost = (cart.gift && cart.gift.active) ? (cart.gift.cost || 2.00) : 0;
 
         cart.subtotal = itemsTotal + giftCost;
         cart.tax = 0;
 
-        // 🔥 MODIFICADO: NO recalcular el envío automáticamente
-        // Mantener el valor actual de shipping si ya existe, si no usar 4.99 por defecto
         if (typeof cart.shipping === 'undefined' || cart.shipping === null) {
             cart.shipping = 4.99;
         }
 
-        // Si el envío es 0 (recogida en tienda), mantenerlo como 0
-        // Si no, mantener el valor que tenga (que ya se actualiza desde el frontend)
-
         cart.total = cart.subtotal + cart.shipping;
     }
 
-    // Sistema de eventos MEJORADO
+    // ===== Sistema de eventos =====
     onChange(callback) {
         if (typeof callback === 'function') {
             this.listeners.push(callback);
@@ -435,7 +425,6 @@ class CartCore {
     }
 
     notifyListeners() {
-        // ===== NUEVO: Debounce para evitar múltiples actualizaciones =====
         if (this.notifyTimeout) {
             clearTimeout(this.notifyTimeout);
         }
@@ -453,7 +442,7 @@ class CartCore {
         }, 100);
     }
 
-    // ===== NUEVO: Limpiar carrito completamente =====
+    // ===== Limpiar carrito completamente =====
     async clearCart() {
         const token = localStorage.getItem(window.TOKEN_KEY);
 
@@ -468,14 +457,12 @@ class CartCore {
             this.cart = this.getEmptyCart();
             this.saveCartToStorage(this.cart);
             this.notifyListeners();
-
         } catch (error) {
             console.error('Error clearing cart:', error);
         }
     }
 
-
-    // 🔥 Sincronizar carrito local con el backend después del login
+    // ===== Sincronizar carrito local con backend =====
     async sincronizarCarritoLocal() {
         console.log('🚀 INICIO sincronizarCarritoLocal');
 
@@ -493,38 +480,18 @@ class CartCore {
 
         console.log('📦 Items a sincronizar:', carritoLocal.items.length);
 
-        // 🔥 1. Guardar copia de los items ANTES de cualquier cosa
         const itemsToSync = JSON.parse(JSON.stringify(carritoLocal.items));
 
-        // 🔥 2. LIMPIAR TODO - Múltiples métodos
         console.log('🧹 Limpiando localStorage...');
         localStorage.removeItem('svl_cart');
         localStorage.removeItem('cart');
         localStorage.removeItem('carrito');
         sessionStorage.removeItem('svl_cart');
 
-        // 🔥 3. Vaciar carrito en memoria
         this.cart = null;
 
-        // 🔥 4. Forzar recarga del carrito vacío (esto NO debe guardar)
-        // No llamamos a getCart() aquí para evitar que guarde
-
-        // 🔥 5. Verificar que se limpió
-        console.log('Verificación localStorage después de limpiar:', {
-            svl_cart: localStorage.getItem('svl_cart'),
-            cart: localStorage.getItem('cart')
-        });
-
-        // 🔥 6. Ahora sí, sincronizar los items
         for (const item of itemsToSync) {
             try {
-                console.log(`📤 Sincronizando item ${item.id}:`, {
-                    name: item.name,
-                    quantity: item.quantity,
-                    talla: item.talla,
-                    color: item.color
-                });
-
                 const response = await fetch(`${window.API_URL}/cart/add`, {
                     method: 'POST',
                     headers: {
@@ -550,35 +517,15 @@ class CartCore {
             }
         }
 
-        // 🔥 7. Recargar carrito desde backend SIN guardar en localStorage
         this.cart = null;
-
-        const fetchResponse = await fetch(`${window.API_URL}/cart`, {
-            headers: { 'Authorization': 'Bearer ' + token }
-        });
-
-        if (fetchResponse.ok) {
-            let cartData = await fetchResponse.json();
-            if (cartData.items) {
-                cartData.items = cartData.items.map(item => ({
-                    ...item,
-                    talla: item.talla || null,
-                    color: item.color || null
-                }));
-            }
-            if (typeof cartData.shipping === 'undefined') {
-                cartData.shipping = 4.99;
-            }
-            this.cart = cartData;
-            // 🔥 IMPORTANTE: NO llamar a saveCartToStorage aquí
-        }
-
+        await this.getCart(true);
         this.notifyListeners();
 
         console.log('✅ Carrito sincronizado correctamente');
         console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
     }
-    // ===== NUEVO: Vaciar carrito completamente =====
+
+    // ===== Vaciar carrito completamente =====
     async vaciarCarritoCompleto() {
         const token = localStorage.getItem(window.TOKEN_KEY);
 
@@ -590,13 +537,7 @@ class CartCore {
                 });
             }
 
-            this.cart = {
-                items: [],
-                subtotal: 0,
-                shipping: 0,
-                total: 0,
-                gift: { active: false, message: '', cost: 2.00 }
-            };
+            this.cart = this.getEmptyCart();
             this.saveCartToStorage(this.cart);
             this.notifyListeners();
             this.updateCartCounters();
@@ -608,8 +549,8 @@ class CartCore {
             return false;
         }
     }
-
 }
+
 // Instancia global
 window.CartCore = new CartCore();
 
