@@ -517,36 +517,60 @@ class CartCore {
 
     // 🔥 Sincronizar carrito local con el backend después del login
     async sincronizarCarritoLocal() {
+        console.log('🚀 INICIO sincronizarCarritoLocal');
+
         const token = localStorage.getItem(window.TOKEN_KEY);
-        if (!token) return;
+        if (!token) {
+            console.log('❌ No hay token');
+            return;
+        }
 
         const carritoLocal = this.getCartFromStorage();
-        if (!carritoLocal || !carritoLocal.items.length) return;
+        if (!carritoLocal || !carritoLocal.items.length) {
+            console.log('📦 No hay carrito local para sincronizar');
+            return;
+        }
 
-        console.log('🔄 Sincronizando carrito local con el backend...');
+        console.log(`🔄 Sincronizando ${carritoLocal.items.length} items...`);
+        console.log('📦 Items a sincronizar:', JSON.stringify(carritoLocal.items, null, 2));
 
-        let errores = [];
+        // Guardar copia de los items
+        const itemsToSync = [...carritoLocal.items];
 
-        for (const item of carritoLocal.items) {
+        // 🔥 IMPORTANTE: Limpiar localStorage ANTES de sincronizar
+        console.log('🧹 Limpiando localStorage...');
+        localStorage.removeItem('svl_cart');
+        this.cart = null;
+
+        // Sincronizar cada item
+        let errores = 0;
+        for (const item of itemsToSync) {
             try {
-                await this.addToCart(item.id, item.quantity, item.talla, item.color);
-                console.log(`✅ Item ${item.id} sincronizado`);
+                console.log(`📤 Sincronizando item ${item.id} (cantidad: ${item.quantity})`);
+                const resultado = await this.addToCart(item.id, item.quantity, item.talla, item.color);
+                if (resultado) {
+                    console.log(`✅ Item ${item.id} sincronizado correctamente`);
+                } else {
+                    console.error(`❌ Error sincronizando item ${item.id}`);
+                    errores++;
+                }
             } catch (error) {
                 console.error(`❌ Error sincronizando item ${item.id}:`, error);
-                errores.push(item);
+                errores++;
             }
         }
 
-        if (errores.length === 0) {
-            // Solo limpiar si todos los items se sincronizaron correctamente
-            this.cart = null;
-            localStorage.removeItem('svl_cart');
-            await this.getCart();
-            this.notifyListeners();
+        // Recargar carrito desde backend
+        await this.getCart();
+        this.notifyListeners();
+
+        if (errores === 0) {
             console.log('✅ Carrito sincronizado correctamente');
         } else {
-            console.warn(`⚠️ ${errores.length} items no se sincronizaron. Carrito local preservado.`);
+            console.warn(`⚠️ Carrito sincronizado con ${errores} errores`);
         }
+
+        console.log('🧹 Verificar localStorage:', localStorage.getItem('svl_cart'));
     }
     // ===== NUEVO: Vaciar carrito completamente =====
     async vaciarCarritoCompleto() {
