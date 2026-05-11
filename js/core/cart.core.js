@@ -462,7 +462,7 @@ class CartCore {
         }
     }
 
-    // ===== Sincronizar carrito local con backend =====
+    // 🔥 Sincronizar carrito local con el backend después del login
     async sincronizarCarritoLocal() {
         console.log('🚀 INICIO sincronizarCarritoLocal');
 
@@ -475,23 +475,28 @@ class CartCore {
         const carritoLocal = this.getCartFromStorage();
         if (!carritoLocal || !carritoLocal.items.length) {
             console.log('📦 No hay carrito local para sincronizar');
+            // 🔥 Aún así, limpiar por si acaso
+            localStorage.removeItem('svl_cart');
+            localStorage.removeItem('cart');
+            localStorage.removeItem('carrito');
             return;
         }
 
-        console.log('📦 Items a sincronizar:', carritoLocal.items.length);
+        console.log(`📦 Items a sincronizar: ${carritoLocal.items.length}`);
 
+        // Guardar copia de los items
         const itemsToSync = JSON.parse(JSON.stringify(carritoLocal.items));
 
-        console.log('🧹 Limpiando localStorage...');
-        localStorage.removeItem('svl_cart');
-        localStorage.removeItem('cart');
-        localStorage.removeItem('carrito');
-        sessionStorage.removeItem('svl_cart');
-
-        this.cart = null;
-
+        // Sincronizar items al backend
         for (const item of itemsToSync) {
             try {
+                console.log(`📤 Sincronizando item ${item.id}:`, {
+                    name: item.name,
+                    quantity: item.quantity,
+                    talla: item.talla,
+                    color: item.color
+                });
+
                 const response = await fetch(`${window.API_URL}/cart/add`, {
                     method: 'POST',
                     headers: {
@@ -501,8 +506,8 @@ class CartCore {
                     body: JSON.stringify({
                         productId: item.id,
                         quantity: item.quantity,
-                        talla: item.talla,
-                        color: item.color
+                        talla: item.talla || null,
+                        color: item.color || null
                     })
                 });
 
@@ -517,14 +522,20 @@ class CartCore {
             }
         }
 
-        this.cart = null;
-        await this.getCart(true);
-        this.notifyListeners();
-
-        // 🔥 FORZAR LIMPIEZA INICIAL
+        // 🔥 🔥 🔥 LIMPIAR LOCALSTORAGE (FORZADO) 🔥 🔥 🔥
+        console.log('🧹 Forzando limpieza de localStorage...');
         localStorage.removeItem('svl_cart');
         localStorage.removeItem('cart');
         localStorage.removeItem('carrito');
+        sessionStorage.removeItem('svl_cart');
+
+        // Verificar que se limpió
+        console.log('🧹 Verificación localStorage después de limpiar:', localStorage.getItem('svl_cart'));
+
+        // Recargar carrito desde backend
+        this.cart = null;
+        await this.getCart();
+        this.notifyListeners();
 
         console.log('✅ Carrito sincronizado correctamente');
         console.log('🧹 localStorage FINAL:', localStorage.getItem('svl_cart'));
