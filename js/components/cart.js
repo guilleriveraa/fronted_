@@ -117,7 +117,7 @@ function renderCartSummary(cart) {
     const metodoEntrega = document.querySelector('input[name="metodoEntrega"]:checked')?.value;
 
     // 🔥 CALCULAR ENVÍO SEGÚN MÉTODO
-    let shippingValue = 4.99;
+    let shippingValue = 4.99; // valor por defecto
     if (metodoEntrega === 'tienda') {
         shippingValue = 0;
     } else if (metodoEntrega === 'domicilio') {
@@ -169,7 +169,7 @@ function renderCartSummary(cart) {
                     <span class="summary-value" id="shippingValue">${shipping}€</span>
                 </div>
                 
-                <!-- 🎁 Opción de regalo -->
+                <!-- 🎁 NUEVO: Opción de regalo -->
                 <div class="gift-option-summary" style="margin: 15px 0; padding: 15px; background: #f9f9f9; border-radius: 8px;">
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" id="giftCheckbox" ${giftActive ? 'checked' : ''}>
@@ -201,24 +201,6 @@ function renderCartSummary(cart) {
                     <i class="fas fa-times"></i> Quitar descuento
                 </button>
                 ` : ''}
-            </div>
-            
-            <!-- 🔥🔥🔥 BOTÓN DE CHECKOUT - AÑADIR ESTO 🔥🔥🔥 -->
-            <div class="checkout-action" style="margin-top: 25px;">
-                <button id="checkoutBtn" class="btn-checkout" onclick="proceedToCheckout()" style="
-                    width: 100%;
-                    background: #c62828;
-                    color: white;
-                    border: none;
-                    padding: 15px 20px;
-                    font-size: 1.1rem;
-                    border-radius: 50px;
-                    cursor: pointer;
-                    font-weight: 600;
-                    transition: all 0.3s ease;
-                ">
-                    <i class="fas fa-credit-card"></i> Proceder al pago
-                </button>
             </div>
         </div>
     `;
